@@ -1,0 +1,81 @@
+<div class="parent_popup" id="advanced-overlay">
+<div id="preview-scroll" style="overflow: hidden; width: 100%;">
+    <div style="padding: 20px; margin: 5px auto;" id="preview-scroll-right">
+
+        <div class="adv-menu-div" id="adv-menu-upload" style="display: none;">
+
+            <ul class="nav nav-pills pull-right" style="margin-bottom: 0;">
+                <li id="advanced-overlay-back" style="cursor: pointer;">
+                    <i style="font-size: 12px; color: #FFF;" class="icon-remove"></i>
+                </li>
+            </ul>
+
+            <div class="k-block" style="width: 400px; height: 100%; margin-top: 22px;">
+                <input name="files" id="files" type="file" />
+
+                <div style="margin-top: 10px; color: #999; text-align: center; padding-bottom: 5px;">drop files here</div>
+
+                <div class="advanced-height" style="overflow: visible;">
+                    <div class="perc"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="adv-menu-div k-block" id="adv-menu-buffer" style="display: none;">
+            <button class="k-button" id="clearBuffer"><i class="icon-trashempty"></i> Clear buffer</button>
+            <div class="advanced-height">
+                <div id="buffer"></div>
+            </div>
+        </div>
+
+        </div>
+    </div>
+</div>
+
+<script type="text/x-kendo-template" id="fileUploadTemplate">
+    <ul class="k-upload-files k-reset">
+        <li class="k-file u_#: id #">
+            <span class="k-icon k-success">uploaded</span>
+            <span class="k-filename" title="#: name #">
+            <span class="uploader-long-name">#: name #</span>
+            <div class="upload-status">
+                <div class="upload-status-progress" style="width: 0%;"></div>
+            </div>
+            </span>
+            </span>
+            <button class="k-button k-button-icontext k-upload-action uploaderRemove" data-id="#: name #" type="button" title="Stop">
+                <i class="icon-stop"></i>
+            </button>
+        </li>
+    </ul>
+</script>
+
+<script type="text/x-kendo-template" id="fileUploadDropdownTemplate">
+    <ul class="k-upload-files k-reset">
+        <li class="k-file u_#: id #">
+            <span class="k-icon k-success">uploaded</span>
+            <span class="k-filename" title="#: name #">
+            <span class="uploader-long-name">#: name #</span>
+            <div class="upload-status">
+                <div class="upload-status-progress" style="width: 0%;"></div>
+            </div>
+            </span>
+            </span>
+        </li>
+    </ul>
+</script>
+
+<script type="text/x-kendo-template" id="bufferFileTemplate">
+    <div class='bufferFile' data-id='#: id #'>
+        <img class="ico" src="#: ico #" alt="ico" />
+
+        <div class="left">#: shortname #</div>
+
+        <div class="right">
+            <button data-id="#: id #" class="k-button deleteFileFromBuffer" title="delete from buffer"><i class="icon-keyboarddelete"></i></button>
+            # if (obj != "folder") {#
+            <button data-id="#: id #" class="k-button downloadFileFromBuffer" title="download"><i class="icon-download-alt"></i></button>
+            #}#
+        </div>
+    </div>
+</script>

@@ -1,0 +1,10 @@
+web/assets/*
+!web/assets/.gitignore
+protected/runtime/*
+!protected/runtime/.gitignore
+protected/data/*.db
+web/themes/classic/views/
+app/runtime/*
+framework
+var
+.idea

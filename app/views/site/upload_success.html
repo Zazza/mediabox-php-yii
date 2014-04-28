@@ -1,0 +1,72 @@
+{%- extends "fragments/base.html" %}
+{% block content %}
+<div style="padding-left:50px">
+<a href='/oldindex/'>MediaBox Home</a>
+
+<h2 style="margin-top:20px">Statistics for upload of {{filename}}</h2>
+
+<div style="padding-left:20px;margin-top:10px;">
+<style>
+.caption {
+    font-weight:bold;
+    font-style: italic;
+    width: 200px;
+}
+h4 {
+	margin-top:10px;
+	font-size: 16px;
+}
+h4.timing {
+	margin-top:5px;
+	font-size: 14px;
+	margin-left:20px;
+}
+</style>
+<h4><i>Parameters<i></h4>
+<b style="margin-left:20px">size:</b> {{stats.file_size}} bytes
+<b style="margin-left:20px">encoding ratio:</b> {{stats.encoding_ratio}}
+<b style="margin-left:20px">block size: </b> {{stats.block_size}} bytes
+<h4><i>Summary<i></h4>
+<b style="margin-left:20px">upload time: </b>{{stats.upload_seconds|round(3)}} seconds
+<b style="margin-left:20px">upload bandwidth: </b>{{stats.bandwidth_kbps | round(3)}} Kbps
+<div>
+<h4><i>Details<i></h4>
+
+<table style="width:100%">
+{% for timing in stats.timings %}
+    {% if loop.index0 % 4 == 0 %}
+    <tr>
+    {% endif %}
+    <td>
+ 	   <table>
+    		<tr>
+    		<td><h4 class=timing>{{timing}}</h4>
+    		<tr>
+    		<td>
+				<table style='margin-left:50px'>
+				<tr>
+					<td class='caption' style="width:100px">bandwidth</td>
+					<td style="text-align:right"> {{stats.timings[timing].bandwidth_kbps|round(3)}}Kbps </td>
+				</tr>
+				<tr>
+					<td class='caption' style="width:100px">average</td>
+					<td style="text-align:right"> {{stats.timings[timing].average|round(3)}}s </td>
+				</tr>
+				<tr>
+					<td class='caption' style="width:100px">total time</td>
+					<td style="text-align:right"> {{stats.timings[timing].sum|round(3)}}s </td>
+				</tr>
+				<tr>
+					<td class='caption' style="width:100px">frequency</td>
+					<td style="text-align:right"> {{stats.timings[timing].frequency}} </td>
+				</tr>
+				</table>
+		</table>
+{% endfor %}
+</table>
+</div>
+</div>
+<br><br>
+<a href='/oldindex/'>MediaBox Home</a>
+</div>
+{% endblock %}

@@ -1,0 +1,44 @@
+{%- extends "fragments/base.html" %}
+
+{% block mediabox_content %}
+{% if session %}
+<section class="container">
+    {% include "advanced.html" %}
+
+    <div id="splitter" class="row">
+        <div class="span3" id="left-vertical">
+            {% include "left.html" %}
+        </div>
+
+        <div class="span9" id="vertical">
+            <div id="fs-container">
+                <div id="fs" class="fs-container-div">
+                    {% include "files.html" %}
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+
+    {% include "image-preview.html" %}
+    {% include "video-preview.html" %}
+</section>
+
+{% else %}
+
+<p>Please auth</p>
+
+{% endif %}
+{% endblock %}
+
+
+{% block footerscript %}
+{% if session %}
+"mediabox/app/mediabox-trash"
+{% else %}
+jquery
+{% endif %}
+{% endblock %}
+
+

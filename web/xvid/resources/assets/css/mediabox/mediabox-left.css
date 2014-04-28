@@ -1,0 +1,78 @@
+/* Left */
+.tab-left .sub {
+  font-weight: bold;
+}
+.left-section {
+  margin: 4px;
+}
+.left-section label {
+  margin: 0;
+  font-weight: normal;
+}
+/* Player */
+#playerMenu {
+  font-size: 12px;
+}
+.player-controls-zero {
+  /*position: fixed;
+  bottom: 0;*/
+}
+.player-controls-indent {
+  position: absolute;
+  bottom: 20px;
+}
+.mx-pos-slider {
+  width: 145px;
+}
+.mediaElement {
+  display: none;
+}
+#div-current-track {
+  overflow: hidden;
+}
+#volume {
+  width: 30px;
+  margin: 10px 5px;
+  padding: 0;
+}
+#track-slider {
+  float: left;
+  height: 26px;
+}
+#playerButtons {
+  float: left;
+  margin-left: 10px;
+}
+#playerButtons div {
+  float: left;
+}
+#playerButtons .ml {
+  margin-left: 3px;
+}
+.delete-playlist {
+  font-size: 10px;
+}
+#dropdown-volume {
+  width: 35px;
+  background-color: transparent;
+  border: 0;
+  box-shadow: none;
+}
+#dropdown-volume > div {
+  width: 33px;
+  height: 210px;
+}
+#dropdown-volume > div > div > div > div > a {
+  padding: 0;
+}
+#show-playlist .dropdown-menu:after,
+#show-playlist .dropdown-menu:before,
+#playlist-volume .dropdown-menu:after,
+#playlist-volume .dropdown-menu:before {
+  position: absolute;
+  top: -6px;
+  left: 10px;
+  display: inline-block;
+  border: none;
+  content: '';
+}
