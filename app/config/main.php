@@ -2,6 +2,8 @@
 return array(
 	'basePath'=>dirname(__FILE__).DIRECTORY_SEPARATOR.'..',
 	'name'=>'Mediabox',
+    'language'=>'ru',
+    'charset'=>'utf-8',
 
 	'preload'=>array('log'),
 

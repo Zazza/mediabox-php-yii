@@ -16,6 +16,12 @@ class SiteController extends Controller
         );
     }
 
+    public function beforeAction() {
+        Init::vars();
+
+        return true;
+    }
+
 	public function actionIndex()
 	{
 		$this->actionLogin();
