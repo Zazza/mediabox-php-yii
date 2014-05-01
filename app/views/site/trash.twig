@@ -1,27 +1,3 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <link rel="icon" type="image/x-icon" href="/favicon.ico">
-
-    <!-- the styles -->
-    <link href="/assets/css/xvid.css" rel="stylesheet">
-    <link href="/assets/css/mediabox/mediabox.css" rel="stylesheet">
-    <!--[if lt IE 9]>
-    <script src="/js/html5.js"></script>
-    <![endif]-->
-
-    <!--[if lt IE 8]>
-    <script src="/js/json2.js"></script>
-    <![endif]-->
-    <title>Mediabox</title>
-</head>
-<body>
-
-<div class="page">
-
     <nav id="mainnav">
         <div class="container">
             <h1 class="xvidMediaBox_25px h1logo">Xvid MediaBox</h1>
@@ -106,7 +82,6 @@
 
 
 
-    {% if App.user.id %}
     <section class="container">
         {% include "/views/site/advanced.html" %}
 
@@ -130,32 +105,8 @@
         {% include "/views/site/video-preview.html" %}
     </section>
 
-    {% else %}
 
 
-    <div class="form">
-        <form method="post" action="/site/login/">
-
-            <p class="note">Fields with <span class="required">*</span> are required.</p>
-
-            <div class="row">
-                <input type="text" name="LoginForm[username]" />
-            </div>
-
-            <div class="row">
-                <input type="text" name="LoginForm[password]" />
-            </div>
-
-            <div class="row buttons">
-                <input type="submit" name="submit" value="Login">
-            </div>
-
-        </form>
-    </div>
-
-
-
-    {% endif %}
 
 
 
@@ -169,10 +120,10 @@
     {% endif %}
     #}
 
-    <input type="hidden" id="mediabox-check-type-other" value="{{ App.session.check_type_other }}" />
-    <input type="hidden" id="mediabox-check-type-image" value="{{ App.session.check_type_image }}" />
-    <input type="hidden" id="mediabox-check-type-video" value="{{ App.session.check_type_video }}" />
-    <input type="hidden" id="mediabox-check-type-music" value="{{ App.session.check_type_music }}" />
+    <input type="hidden" id="mediabox-check-type-other" value="{{ App.session.types.other }}" />
+    <input type="hidden" id="mediabox-check-type-image" value="{{ App.session.types.image }}" />
+    <input type="hidden" id="mediabox-check-type-video" value="{{ App.session.types.video }}" />
+    <input type="hidden" id="mediabox-check-type-music" value="{{ App.session.types.music }}" />
 
     <input type="hidden" id="mediabox-view" value="{{ App.session.view }}" />
     <input type="hidden" id="mediabox-sort" value="{{ App.session.sort }}" />
@@ -185,6 +136,3 @@
 
 
     <script data-main="/assets/js/common" data-slug="mediabox-trash" src="/js/require.js"></script>
-
-</body>
-</html>

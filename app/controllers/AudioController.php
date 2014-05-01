@@ -6,7 +6,7 @@ class AudioController extends Controller
     {
         return array(
             array('allow',
-                'actions'=>array("saveList", "createList", "showList", "getTracksList", "setPlaylist", "deletePlaylist"),
+                'actions'=>array("saveList", "createList", "showList", "getTracksList", "setPlaylist", "deletePlaylist", "volume"),
                 //'roles'=>array('admin'),
                 'users'=>array('*'),
             ),
@@ -107,5 +107,11 @@ class AudioController extends Controller
         }
 
         $db->delete();
+    }
+
+    public function actionVolume() {
+        if (isset($_GET["level"])) {
+            Yii::app()->session['volume'] = $_GET["level"];
+        }
     }
 }

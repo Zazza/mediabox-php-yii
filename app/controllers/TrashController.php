@@ -17,6 +17,6 @@ class TrashController extends Controller
     }
 
     public function actionIndex() {
-        return $this->renderPartial("/site/trash", array());
+        $this->render("/site/trash", array());
     }
 }

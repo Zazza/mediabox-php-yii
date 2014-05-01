@@ -8,7 +8,7 @@ class FmController extends Controller
     {
         return array(
             array('allow',
-                'actions'=>array('fs', 'chdir', 'upload', "thumb", 'getThumb', 'copy', 'restore', 'getTypesNum', 'create', 'getTrash', 'fileToTrash', 'folderToTrash', 'remove', 'rmFolder', 'removeFileByName', 'buffer', 'past', 'deleteFileFromBuffer', 'clearBuffer', 'sort'),
+                'actions'=>array('fs', 'chdir', 'upload', "thumb", 'getThumb', 'copy', 'restore', 'getTypesNum', 'create', 'getTrash', 'fileToTrash', 'folderToTrash', 'remove', 'rmFolder', 'removeFileByName', 'buffer', 'past', 'deleteFileFromBuffer', 'clearBuffer', 'sort', 'view', 'types'),
                 //'roles'=>array('admin'),
                 'users'=>array('*'),
             ),
@@ -19,7 +19,6 @@ class FmController extends Controller
     }
 
     public function beforeAction() {
-        // Set files sort type
         if ( (!isset(Yii::app()->session['sort'])) or (Yii::app()->session['sort'] == "") ) {
             $this->_sort = "name";
         } else {
@@ -409,10 +408,11 @@ class FmController extends Controller
         };
 
         // Get Dirs
-        $nodes = Fs::model()->findAll(
-            "parent = :parent AND trash = 1 ORDER BY '.$dir_sort.'",
-            array(":parent" => $_GET["id"])
-        );
+        $criteria = new CDbCriteria;
+        $criteria->condition = 'parent = :parent AND trash = 1';
+        $criteria->order = $dir_sort;
+        $criteria->params = array(":parent" => $_GET["id"]);
+        $nodes = Fs::model()->findAll($criteria);
 
         foreach($nodes as $node) {
             if (mb_strlen($node["name"]) > 20) {
@@ -421,22 +421,25 @@ class FmController extends Controller
                 $shortname = $node["name"];
             }
 
-            $files[] = '{' .
-                '"obj": "folder",' .
-                '"name": "' . $node->name . '",' .
-                '"shortname": "' . $shortname . '",' .
-                '"id": "' . $node->id . '",' .
-                '"date": "' . $node->timestamp .
-                '"}';
+            $folder = new Folder();
+
+            $folder->obj = "folder";
+            $folder->name = urlencode($node->name);
+            $folder->shortname = urlencode($shortname);
+            $folder->id = $node->id;
+            $folder->date = $node->timestamp;
+
+            $files[] = $folder;
         };
 
 
 
         // Get Files
-        $nodes = Files::model()->findAll(
-            "parent = :parent AND trash = 1 ORDER BY ' . $file_sort . '",
-            array(":parent" => $_GET["id"])
-        );
+        $criteria = new CDbCriteria;
+        $criteria->condition = 'parent = :parent AND trash = 1';
+        $criteria->order = $file_sort;
+        $criteria->params = array(":parent" => $_GET["id"]);
+        $nodes = Files::model()->findAll($criteria);
 
         foreach($nodes as $node) {
             if (Yii::app()->params["mediaTypes"][$node["type"]]) {
@@ -453,23 +456,26 @@ class FmController extends Controller
 
             $extension = strtolower(mb_substr($node["name"], mb_strrpos($node["name"], ".") + 1));
 
-            $files[] = '{' .
-                '"id": "' . $node["id"] . '",' .
-                '"name": "' . $node["name"] . '",' .
-                '"shortname": "' . $shortname . '",' .
-                '"obj": "file",' .
-                '"type": "' . $node["type"] . '",' .
-                '"size": "' . $node["size"] . '",' .
-                '"date": "' . $node["timestamp"] . '",' .
-                '"ico": "' . $ico . '",' .
-                '"src": "' . $ico . '",' .
-                '"ext": "' . $extension . '"}';
+            $file = new File();
+
+            $file->id = $node["id"];
+            $file->name = urlencode($node["name"]);
+            $file->shortname = urlencode($shortname);
+            $file->obj = "file";
+            $file->type = $node["type"];
+            $file->size = $node["size"];
+            $file->date = $node["timestamp"];
+            $file->ico = $ico;
+            $file->src = $ico;
+            $file->ext = $extension;
+
+            $files[] = $file;
         }
 
         if (count($files) > 0) {
-            echo "[" . implode(",", $files) . "]";
+            echo json_encode($files);
         } else {
-            echo "[]";
+            echo json_encode(array());
         }
     }
 
@@ -549,5 +555,16 @@ class FmController extends Controller
 
     public function actionView() {
         Yii::app()->session['view'] = $_GET["view"];
+    }
+
+    public function actionTypes() {
+        $types = array();
+
+        $types["other"] = $_GET["other"];
+        $types["image"] = $_GET["image"];
+        $types["video"] = $_GET["video"];
+        $types["music"] = $_GET["music"];
+
+        Yii::app()->session['types'] = $types;
     }
 }

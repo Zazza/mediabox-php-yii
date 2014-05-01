@@ -3,31 +3,15 @@ class Init {
     public static function vars() {
         $current_directory = Yii::app()->session["current_directory"];
         $volume = Yii::app()->session["volume"];
-        $types = Yii::app()->session["types"];
-        if ($types != "") {
-            $types = explode("&", $types);
-            $type = array();
-            foreach($types as $part) {
-                $type = implode("=", $types[$part]);
-                if ($type[0] == "other")
-                    $check_type_other = $type[1];
-                if ($type[0] == "image")
-                    $check_type_image = $type[1];
-                if ($type[0] == "video")
-                    $check_type_video = $type[1];
-                if ($type[0] == "music")
-                    $check_type_music = $type[1];
-            }
-        } else {
-            $check_type_other = true;
-            $check_type_image = true;
-            $check_type_video = true;
-            $check_type_music = true;
+
+        if (!isset(Yii::app()->session["types"])) {
+            $types["other"] = 1;
+            $types["image"] = 1;
+            $types["video"] = 1;
+            $types["music"] = 1;
+
+            Yii::app()->session["types"] = $types;
         }
-        Yii::app()->session['check_type_other'] = $check_type_other;
-        Yii::app()->session['check_type_image'] = $check_type_image;
-        Yii::app()->session['check_type_video'] = $check_type_video;
-        Yii::app()->session['check_type_music'] = $check_type_music;
 
         $view = Yii::app()->session["view"];
 

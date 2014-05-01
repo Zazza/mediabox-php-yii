@@ -106,226 +106,239 @@ class ImageController extends Controller
         echo json_encode($result);
     }
 
-    public function actionGetAllTags() {
-        /*
-         * var collection = Util.db.getAppCollection(Xvid.CollectionNames.MBWeb.imagetags)
 
-    var res = new Array()
 
-    var crops_and_tags = _setTagsAndCrops(selected_tags, selected_crops)
 
-    if (crops_and_tags.length > 0) {
-        var query = {uid: uid, image_id: {$in: crops_and_tags}}
-        var mongo_tags_res = collection.find(query).toArray()
-    } else {
-        var query = {uid: uid}
-        var mongo_tags_res = collection.find(query).toArray()
-    }
 
-    for (var i = 0; i < mongo_tags_res.length; i++) {
-        if (!in_array(mongo_tags_res[i]["tag"], res)) {
-            if (mongo_tags_res[i]["tag"] != "")
-                res[res.length] = mongo_tags_res[i]["tag"]
+
+
+    private function _setCrops($selected_crops) {
+        $ids = array();
+        $selected_cropsArray = json_decode($selected_crops);
+
+        if (isset($selected_cropsArray)) {
+            foreach ($selected_cropsArray as $crop) {
+                if (count($ids) > 0) {
+                    $criteria = new CDbCriteria();
+                    $criteria->condition = "description = :description";
+                    $criteria->params = array(
+                        ":description"=>urldecode($crop)
+                    );
+                    $criteria->addInCondition("file_id", $ids);
+
+                    $db = ImagesCrops::model()->findAll($criteria);
+                } else {
+                    $db = ImagesCrops::model()->findAll("description = :description", array(
+                        ":description"=>urldecode($crop)
+                    ));
+                };
+
+                foreach($db as $part) {
+                    $ids[] = $part["file_id"];
+                };
+            }
         }
+
+        return $ids;
     }
 
-    return res
-         */
+    private function _setTags($selected_tags) {
+        $ids = array();
+        $selected_tagsArray = json_decode($selected_tags);
+
+        if (isset($selected_tagsArray)) {
+            foreach ($selected_tagsArray as $tag) {
+                if (count($ids) > 0) {
+                    $criteria = new CDbCriteria();
+                    $criteria->condition = "tag = :tag";
+                    $criteria->params = array(
+                        ":tag"=>urldecode($tag)
+                    );
+                    $criteria->addInCondition("file_id", $ids);
+
+                    $db = ImagesTags::model()->findAll($criteria);
+                } else {
+                    $db = ImagesTags::model()->findAll("tag = :tag", array(
+                        ":tag"=>urldecode($tag)
+                    ));
+                };
+
+                foreach($db as $part) {
+                    $ids[] = $part["file_id"];
+                };
+            }
+        }
+
+        return $ids;
+    }
+
+    public function _setTagsAndCrops($selected_tags, $selected_crops) {
+        $crops_and_tags = array();
+
+        $selTags = $this->_setTags($selected_tags);
+        $selCrops =  $this->_setCrops($selected_crops);
+
+        if (count($selTags) > 0) {
+            foreach($selTags as $tag) {
+                if (count($selCrops) > 0) {
+                    if (in_array($tag, $selCrops)) {
+                        $crops_and_tags[] = $tag;
+                    }
+                } else {
+                    $crops_and_tags = $selTags;
+                }
+            }
+        } else {
+            if (count($selCrops) > 0) {
+                $crops_and_tags = $selCrops;
+            }
+        }
+
+        return $crops_and_tags;
+    }
+
+    public function actionGetAllTags() {
+        $selected_tags = Yii::app()->session['selected_tags'];
+        $selected_crops = Yii::app()->session['selected_crops'];
+
+        $crops_and_tags = $this->_setTagsAndCrops($selected_tags, $selected_crops);
+
+        if (count($crops_and_tags) > 0) {
+            $criteria = new CDbCriteria();
+            $criteria->addInCondition("file_id", $crops_and_tags);
+            $tags = ImagesTags::model()->findAll($criteria);
+        } else {
+            $tags = ImagesTags::model()->findAll();
+        }
+
+        $result = array();
+
+        foreach($tags as $tag) {
+            $result[] = $tag->tag;
+        }
+
+        echo json_encode(array_unique($result));
     }
 
     public function actionGetAllCrops() {
-        /*
-         *     var collection = Util.db.getAppCollection(Xvid.CollectionNames.MBWeb.crop)
+        $selected_tags = Yii::app()->session['selected_tags'];
+        $selected_crops = Yii::app()->session['selected_crops'];
 
-    var res = new Array()
+        $crops_and_tags = $this->_setTagsAndCrops($selected_tags, $selected_crops);
 
-    var crops_and_tags = _setTagsAndCrops(selected_tags, selected_crops)
-
-    if (crops_and_tags.length > 0) {
-        var query = {uid: uid, image_id: {$in: crops_and_tags}}
-        var crops = collection.find(query).toArray();
-    } else {
-        var query = {uid: uid}
-        var crops = collection.find(query).toArray();
-    }
-
-    for (var i = 0; i < crops.length; i++) {
-        if (!in_array(crops[i]["description"], res)) {
-            if (crops[i]["description"])
-                res[res.length] = crops[i]["description"]
+        if (count($crops_and_tags) > 0) {
+            $criteria = new CDbCriteria();
+            $criteria->addInCondition("file_id", $crops_and_tags);
+            $crops = ImagesCrops::model()->findAll($criteria);
+        } else {
+            $crops = ImagesCrops::model()->findAll();
         }
-    }
 
-    return res
-         */
+        $result = array();
+
+        foreach($crops as $crop) {
+            $result[] = $crop->description;
+        }
+
+        echo json_encode(array_unique($result));
     }
 
     public function actionSelTag() {
-        /*
-         *             var res = Array()
-            var flag = false
+        $selected_tags = Yii::app()->session['selected_tags'];
 
-            var selected_tagsArray = JSON.parse(selected_tags.value)
-            for ( var key in selected_tagsArray ) {
-                if (conversation.query.get("tag") == decodeURIComponent(selected_tagsArray[key].tag))
-                    flag = true
+        $res = array();
+        $flag = false;
+
+        $selected_tagsArray = json_decode($selected_tags);
+        if (isset($selected_tagsArray)) {
+            foreach ($selected_tagsArray as $tag) {
+                if ($_GET["tag"] == urldecode($tag))
+                    $flag = true;
                 else
-                    res[res.length] = '{"tag": "'+selected_tagsArray[key].tag+'"}'
+                    $res[] = $tag;
             }
+        }
 
-            if (!flag)
-                res[res.length] = '{"tag": "'+encodeURIComponent(conversation.query.get("tag"))+'"}'
+        if (!$flag)
+            $res[] = urlencode($_GET["tag"]);
 
-            selected_tags.value = "[" + res.join(",") + "]"
-            selected_tags.maxAge = -1
-            selected_tags.path = "/"
-            selected_tags.save()
+        Yii::app()->session['selected_tags'] = json_encode($res);
 
-            return selected_tags.value
-         */
+        echo $selected_tags;
     }
 
     public function actionSelCrop() {
-        /*
-         *             var res = Array()
-            var flag = false
+        $selected_crops = Yii::app()->session['selected_crops'];
 
-            var selected_cropsArray = JSON.parse(selected_crops.value)
-            for ( var key in selected_cropsArray ) {
-                if (conversation.query.get("crop") == decodeURIComponent(selected_cropsArray[key].crop))
-                    flag = true
+        $res = array();
+        $flag = false;
+
+        $selected_cropsArray = json_decode($selected_crops);
+        if (isset($selected_cropsArray)) {
+            foreach ($selected_cropsArray as $crop) {
+                if ($_GET["crop"] == urldecode($crop))
+                    $flag = true;
                 else
-                    res[res.length] = '{"crop": "'+selected_cropsArray[key].crop+'"}'
+                    $res[] = $crop;
             }
-            if (!flag)
-                res[res.length] = '{"crop": "'+encodeURIComponent(conversation.query.get("crop"))+'"}'
-
-            selected_crops.value = "[" + res.join(",") + "]"
-            selected_crops.maxAge = -1
-            selected_crops.path = "/"
-            selected_crops.save()
-
-            return selected_crops.value
-        } else if (action == "getFsImg") {
-            return getFsImg(getUsername(), selected_crops, selected_tags)
         }
-         */
+
+        if (!$flag)
+            $res[] = urlencode($_GET["crop"]);
+
+        Yii::app()->session['selected_crops'] = json_encode($res);
+
+        echo $selected_crops;
     }
 
     public function actionGetFsImg() {
-        /*
-         *     var crops_and_tags = _setTagsAndCrops(selected_tags, selected_crops)
+        $selected_tags = Yii::app()->session['selected_tags'];
+        $selected_crops = Yii::app()->session['selected_crops'];
 
-    // get files
-    var files = new Array()
+        $crops_and_tags = $this->_setTagsAndCrops($selected_tags, $selected_crops);
 
-    var collection = Util.db.getAppCollection(Xvid.CollectionNames.MBWeb.files)
+        $result = array();
+        $files = Files::model()->findAll();
 
-    var query = {uid: uid}
-    var nodes = collection.find(query).toArray();
+        foreach($files as $file) {
+            $flag = true;
+            $shortname = "";
 
-    var ico
-    var type
-    var shortname
-    var flag
-    var e = new Array()
-    for (var i = 0; i < nodes.length; i++) {
-        flag = true
-        shortname = "";
+            if (count($crops_and_tags) > 0)
+                if (!in_array($file->id, $crops_and_tags))
+                    $flag = false;
 
-        if (crops_and_tags.length > 0)
-            if (!in_array(nodes[i]["_id"].toString(), crops_and_tags))
-                flag = false
+            if ($flag) {
+                if ($file->type == "image") {
+                    $ico = Yii::app()->params["mediaTypes"]["image"];
 
-        if (flag) {
-            if (nodes[i]["type"] == "image") {
-                ico = application.globals.get('mediaTypes.image')
+                    if (mb_strlen($file->name) > 20) {
+                        $shortname = mb_substr($file->name, 0, 10) . ".." . mb_substr($file->name, mb_strrpos($file->name, ".")-1);
+                    } else {
+                        $shortname = $file->name;
+                    }
 
-                if (nodes[i]["name"].length > 20) {
-                    shortname = nodes[i]["name"].substring(0, 10) + ".." + nodes[i]["name"].substring(nodes[i]["name"].lastIndexOf(".")-1)
-                } else {
-                    shortname = nodes[i]["name"]
+                    $extension = mb_substr($file->name, mb_strrpos($file->name, ".")+1);
+
+                    $model = new File();
+
+                    $model->id = $file->id;
+                    $model->name = $file->name;
+                    $model->shortname = $shortname;
+                    $model->obj = "file";
+                    $model->type = $file->type;
+                    $model->size = $file->size;
+                    $model->ico = $ico;
+                    $model->data = $ico;
+                    $model->ext = $extension;
+
+                    $result[] = $model;
                 }
-
-                var extension = nodes[i]["name"].substring(nodes[i]["name"].lastIndexOf(".")+1)
-
-                files[files.length] = '{"id": "'+nodes[i]["_id"]+'", "name": "' + nodes[i]["name"] + '", "shortname": "'+shortname+'", "obj": "file", "type": "'+nodes[i]["type"]+'", "size": "'+nodes[i]["size"]+'", "type": "'+nodes[i]["type"]+'", "ico": "'+ico+'", "data": "'+ico+'", "ext": "'+extension+'"}';
             }
         }
-    }
 
-    if ( (files.length > 0) && (crops_and_tags.length > 0) ) {
-        return "[" + files.join(",") + "]";
-    }
-         */
-    }
-
-    /*
-     * function _setCrops(selected_crops) {
-    var collection = Util.db.getAppCollection(Xvid.CollectionNames.MBWeb.crop)
-
-    var ids = new Array()
-    var selected_cropsArray = JSON.parse(selected_crops.value)
-
-    for ( var key in selected_cropsArray ) {
-        if (ids.length > 0)
-            var query = {"description": decodeURIComponent(selected_cropsArray[key].crop), image_id: {$in: ids}}
-        else
-            var query = {"description": decodeURIComponent(selected_cropsArray[key].crop)}
-
-        var mongo = collection.find(query).toArray();
-
-        for (var i = 0; i < mongo.length; i++) {
-            ids[ids.length] = mongo[i]["image_id"]
+        if ( (count($result) > 0) and (count($crops_and_tags) > 0) ) {
+            echo json_encode($result);
         }
     }
-
-    return ids
-}
-
-function _setTags(selected_tags) {
-    var collection = Util.db.getAppCollection(Xvid.CollectionNames.MBWeb.imagetags)
-
-    var ids = new Array()
-    var selected_tagsArray = JSON.parse(selected_tags.value)
-
-    for ( var key in selected_tagsArray ) {
-        if (ids.length > 0)
-            var query = {tag: decodeURIComponent(selected_tagsArray[key].tag), image_id: {$in: ids}}
-        else
-            var query = {tag: decodeURIComponent(selected_tagsArray[key].tag)}
-
-        var mongo = collection.find(query).toArray();
-
-        for (var i = 0; i < mongo.length; i++) {
-            ids[ids.length] = mongo[i]["image_id"]
-        }
-    }
-
-    return ids
-}
-
-function _setTagsAndCrops(selected_tags, selected_crops) {
-    var crops_and_tags = new Array()
-    var selTags = _setTags(selected_tags)
-    var selCrops =  _setCrops(selected_crops)
-    if (selTags.length > 0) {
-        for(key in selTags) {
-            if (selCrops.length > 0) {
-                if (in_array(selTags[key], selCrops)) {
-                    crops_and_tags[crops_and_tags.length] = selTags[key];
-                }
-            } else {
-                crops_and_tags = selTags;
-            }
-        }
-    } else {
-        if (selCrops.length > 0) {
-            crops_and_tags = selCrops;
-        }
-    }
-
-    return crops_and_tags
-}
-     */
 }
