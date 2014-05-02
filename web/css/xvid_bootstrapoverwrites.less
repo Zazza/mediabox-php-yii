@@ -1,0 +1,72 @@
+/* xoverwrites bootstrap //////////////////////////////////////// */
+
+// Xvid Overwrites that must be applied before including kendo css
+
+// make inputs look like kendo inputs
+select, input[type="text"], input[type="password"], input[type="datetime"], input[type="datetime-local"], input[type="date"], input[type="month"], input[type="time"], input[type="week"], input[type="number"], input[type="email"], input[type="url"], input[type="search"], input[type="tel"], input[type="color"], .uneditable-input {
+  padding: 2px .3em;
+  height: 2.12em;
+  line-height: 1.6em;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+// //////////////////////////////////////////////////////////////////////////////////////////
+// WELLS
+
+// span overrides for well
+.well .span6 {
+  width: 440px;
+}
+.well .span6 input.span6 {
+    width: 427px;
+}
+.well .span6 .control-group input.fullwidth,
+.well .span6 .control-group select.fullwidth
+{
+    width: 281px;
+}
+.well .span6 .control-group textarea.fullwidth
+{
+    width: 267px;
+}
+.well .span6 .control-group .k-widget input.fullwidth,
+.well .span6 .control-group .k-widget select.fullwidth {
+    width: auto;
+}
+
+.well div:last-child {
+  margin-bottom: 0;
+}
+
+.well .form-actions {
+  margin-bottom: -19px !important;
+}
+
+.well .form-actions.darkened {
+  background: @grayShapeDarkened;
+}
+
+
+.well .offset2 {
+  margin-left: 160px;
+}
+
+
+.clear {
+  clear: both;
+}
+.fixRow {
+  margin-left: @gridGutterWidth;
+}
+
+// //////////////////////////////////////////////////////////////////////////////////////////
+// MODALS
+
+.modal-header + form { // if form includes the modal-footer
+  margin-bottom: 0;
+}
+
+
+

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+
+    <!-- the styles -->
+    <link href="/css/xvid.css" rel="stylesheet">
+    <link href="/css/mediabox/mediabox.css" rel="stylesheet">
+    <!--[if lt IE 9]>
+    <script src="/js/html5.js"></script>
+    <![endif]-->
+
+    <!--[if lt IE 8]>
+    <script src="/js/json2.js"></script>
+    <![endif]-->
+    <title>Mediabox</title>
+</head>
+<body>
+
+<div id="xvidbar" class="metanav navbar">
+    <div class="navbar-inner">
+        <div class="container">
+            <ul class="nav pull-right">
+                    <li>
+                        <a href="/">Mediabox</a>
+                    </li>
+                {% if App.user.id %}
+                    <li>
+                        <a href="/user/">Users</a>
+                    </li>
+                    <li>
+                        <a href="/site/logout/">Logout</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div class="page">
+
+    {{ content|raw }}
+
+</div>
+
+<footer id="pageFooter" class="container">
+    Mediabox beta (05.2014)
+    <div class="pull-right">
+        <a href="https://github.com/Zazza/mediabox-php-yii"><i class="icon-github"></i> Github</a>
+        <br />
+    </div>
+</footer>
+
+</body>
+</html>

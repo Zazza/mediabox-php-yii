@@ -1,0 +1,162 @@
+// Scaffolding
+// Basic and global styles for generating a grid system, structural layout, and page templates
+// -------------------------------------------------------------------------------------------
+
+
+/* Scaffolding //////////////////////////////////////// */
+
+// Body reset
+// ----------
+
+
+// Always force a scrollbar in non-ie and set up advanced fontsmoothing
+html { 
+  overflow-y: scroll;
+  -webkit-font-smoothing: antialiased;
+}
+
+
+body {
+//  margin: 0 0 2em 0;
+  margin: 0 0 0 0;
+  font-family: @baseFontFamily;
+  font-size: @baseFontSize;
+  line-height: @baseLineHeight;
+  color: @textColor;
+  background-color: @bodyBackground;
+}
+
+
+// Links
+// -----
+
+a {
+  color: @linkColor;
+  text-decoration: none;
+}
+a:hover {
+  color: @linkColorHover;
+  text-decoration: underline;
+}
+
+a:focus,
+button:focus,
+input:focus,
+*:focus
+/*, select:focus*/ { 
+  -moz-outline: none;
+  outline: none;
+}
+
+#pageFooter a, 
+#xvidbar a {
+  //color: @xdarkBlue; - Issue XMC-897, main navigation issue
+  text-decoration: none;
+}
+
+#pageFooter a:hover, 
+#xvidbar a:hover {
+  //color: @xbrightBlue; - Issue XMC-897, main navigation issue
+  //text-decoration: underline; - Issue XMC-897, main navigation issue
+}
+
+.inner {
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+.blocked {
+  background: @grayLighter;
+  .border-radius(@smallCorner);
+  padding: 10px 0;
+}
+
+// Basic Page elements
+
+.page-generic {
+  background: @white;
+  .box-shadow(-2px 0 8px rgba(0,0,0,.25));
+  padding: 30px 0;
+
+  min-width: 970px; // FIXME: This doesn't seem like a brilliant idea. But it was the quickest fix I found to make things look ok when there's a horizontal scrollbar
+
+  min-height: 100%;
+
+  .box-sizing(border-box);
+}
+
+.page {
+  .page-generic;
+
+  min-height: ~"-webkit-calc(100% - 108px)"; // FIXME: Hardcoded header and footer heights...
+  min-height: ~"-moz-calc(100% - 108px)";
+  min-height: ~"calc(100% - 108px)";
+}
+
+#root .page {
+  .page-generic;
+
+  min-height: ~"-webkit-calc(100% - 160px)"; // FIXME: Hardcoded header and footer heights...
+  min-height: ~"-moz-calc(100% - 160px)";
+  min-height: ~"calc(100% - 160px)";
+}
+
+.row {
+  margin-bottom: 20px;
+}
+.spBelow2 {
+  margin-bottom: 20px;
+}
+.spBelow4 {
+  margin-bottom: 40px;
+}
+.spAbove2 {
+  margin-top: 20px;
+}
+.spAboveBelow2 {
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+#pageFooter {
+//  margin-top: 1.5em;
+  margin-bottom: -50px;
+
+  padding-top: 18px;
+  height: 36px; // FIXME: Footer height and padding hardcoded
+
+  .12px;
+  color: @grayLight;
+  overflow: hidden;
+}
+
+
+// CONFLUENCE
+
+.hasSubNavi {
+  margin-top: -20px;
+  margin-bottom: -30px;
+}
+
+// sidebar
+#rw_left_column {
+  float: left;
+  width: @gridColumnWidth * 3 + @gridGutterWidth * 1.5;
+  margin-right: @gridGutterWidth -1;
+  border-right: 1px solid @grayLine;
+  padding: 20px 10px 30px 0;
+
+}
+// content
+#rw_main_column {
+  float: left;
+  width: @gridColumnWidth * 9 + @gridGutterWidth * 8;
+  border-left: 1px solid @grayLine;
+  margin-left: -1px;
+  padding: 20px 0 30px 19px;
+
+}
+
+
+//@gridColumnWidth:         60px;
+//@gridGutterWidth:         20px;

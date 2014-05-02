@@ -1,0 +1,239 @@
+// BUTTON STYLES
+// -------------
+
+
+// Base styles
+// --------------------------------------------------
+
+// Core
+.btn {
+  display: inline-block;
+  .ie7-inline-block();
+  //padding: 4px 10px 4px;
+  // make it fit kendo
+  padding: 2px 7px 2px;
+  margin-bottom: 0; // For input.btn
+  font-size: @baseFontSize;
+  //line-height: @baseLineHeight;
+  //*line-height: 20px;
+  line-height: 1.66em; // make it fit kendo
+  color: @grayDark;
+  text-align: center;
+  text-shadow: 0 1px 1px rgba(255,255,255,.75);
+  vertical-align: middle;
+  cursor: pointer;
+  .buttonBackground(@btnBackground, @btnBackgroundHighlight);
+  border: 1px solid @btnBorder;
+  
+  // that’s right but does not look nice either…
+  //*border: 0; // Remove the border to prevent IE7's black border on input:focus
+  //border-bottom-color: darken(@btnBorder, 10%);
+  .border-radius(@smallCorner);
+  .ie7-restore-left-whitespace(); // Give IE7 some love
+  //.box-shadow(~"inset 0 1px 0 rgba(255,255,255,.2), 0 1px 2px rgba(0,0,0,.05)");
+}
+
+// Hover state
+.btn:hover {
+  text-decoration: none;
+  background-color: @btnBackgroundHighlight;
+  //*background-color: darken(@btnBackgroundHighlight, 15%); /* Buttons in IE7 don't get borders, so darken on hover */
+  // background-position: 0 -15px;
+
+  // transition is only when going to hover, otherwise the background
+  // behind the gradient (there for IE<=9 fallback) gets mismatched
+  // .transition(all .1s linear);
+
+  color: @xdarkBlue;
+  border-color: lighten(@grayLight,10%);
+}
+
+// Focus state for keyboard and accessibility
+.btn:focus {
+  .tab-focus();
+}
+
+// Active state
+.btn.active,
+.btn:active {
+  //background-color: darken(@white, 10%);
+  //background-color: darken(@white, 15%) e("\9");
+  // make fit kendo
+  // color: @selected-text-color !important;
+  // border-color: @selected-border-color;
+  outline: 0;
+  //text-shadow: 0 -1px 1px rgba(0,0,0,.35); 
+  background:darken(@grayLighter, 5%);
+  .box-shadow(~"inset 0 1px 1px rgba(0,0,0,.15)");
+}
+
+// Disabled state
+.btn.disabled,
+.btn[disabled],
+.k-button.disabled,
+.k-button[disabled] {
+  cursor: default;
+  background-color: darken(@white, 10%);
+  background-image: none;
+  color: inherit;
+  border: inherit !important;
+  .opacity(65);
+  .box-shadow(none);
+}
+
+.k-button.btn-primary.disabled,
+.k-button.btn-primary[disabled] {
+  color: @white;
+}
+
+
+// Button Sizes
+// --------------------------------------------------
+
+// Large
+.btn-large {
+  padding: 9px 14px;
+  font-size: @baseFontSize + 2px;
+  line-height: normal;
+  .border-radius(@smallCorner);
+}
+.btn-large [class^="icon-"] {
+  margin-top: 1px;
+}
+
+// Small
+.btn-small {
+  padding: 5px 9px;
+  font-size: @baseFontSize - 2px;
+  line-height: @baseLineHeight - 2px;
+}
+.btn-small [class^="icon-"] {
+  margin-top: -1px;
+}
+
+// Mini
+.btn-mini {
+  padding: 2px 6px;
+  font-size: @baseFontSize - 2px;
+  line-height: @baseLineHeight - 4px;
+}
+
+
+
+// Alternate buttons
+// --------------------------------------------------
+
+// Set text color
+// -------------------------
+.btn-primary,
+.btn-primary:hover,
+.btn-warning,
+.btn-warning:hover,
+.btn-danger,
+.btn-danger:hover,
+.btn-success,
+.btn-success:hover,
+.btn-info,
+.btn-info:hover,
+.btn-inverse,
+.btn-inverse:hover {
+  font-weight: bold;
+  color: @white;
+  text-shadow: 0 -1px 0 rgba(0,0,0,.25);
+}
+// Provide *some* extra contrast for those who can get it
+.btn-primary.active,
+.btn-warning.active,
+.btn-danger.active,
+.btn-success.active,
+.btn-info.active,
+.btn-inverse.active {
+  color: rgba(255,255,255,.75);
+}
+
+// Set the backgrounds
+// -------------------------
+.btn {
+  // reset here as of 2.0.3 due to Recess property order
+  border-color: @btnBorder;
+  border-color: @btnBorderRGBA;
+}
+.btn-primary {
+  .buttonBackground(@btnPrimaryBackground, @btnPrimaryBackgroundHighlight);
+}
+#labs .btn-primary {
+  .buttonBackground(@btnPrimaryBackgroundLabs, @btnPrimaryBackgroundHighlightLabs);
+}
+// Warning appears are orange
+.btn-warning {
+  .buttonBackground(@btnWarningBackground, @btnWarningBackgroundHighlight);
+}
+// Danger and error appear as red
+.btn-danger {
+  .buttonBackground(@btnDangerBackground, @btnDangerBackgroundHighlight);
+}
+// Success appears as green
+.btn-success {
+  .buttonBackground(@btnSuccessBackground, @btnSuccessBackgroundHighlight);
+}
+// Info appears as a neutral blue
+.btn-info {
+  .buttonBackground(@btnInfoBackground, @btnInfoBackgroundHighlight);
+}
+// Inverse appears as dark gray
+.btn-inverse {
+  .buttonBackground(@btnInverseBackground, @btnInverseBackgroundHighlight);
+}
+
+
+// Cross-browser Jank
+// --------------------------------------------------
+
+button.btn,
+input[type="submit"].btn {
+
+  // Firefox 3.6 only I believe
+  &::-moz-focus-inner {
+    padding: 0;
+    border: 0;
+  }
+
+  // IE7 has some default padding on button controls
+  *padding-top: 2px;
+  *padding-bottom: 2px;
+  &.btn-large {
+    *padding-top: 7px;
+    *padding-bottom: 7px;
+  }
+  &.btn-small {
+    *padding-top: 3px;
+    *padding-bottom: 3px;
+  }
+  &.btn-mini {
+    *padding-top: 1px;
+    *padding-bottom: 1px;
+  }
+}
+
+// Remove Border
+// --------------------------------------------------
+
+.btn-primary, .btn-info, .btn-success, .btn-warning, .btn-danger, .btn-inverse {
+    border: none;
+    padding: 5px 11px 5px;
+} 
+.btn-primary.btn-large {
+  padding: 10px 15px;
+}
+// Small
+.btn-primary.btn-small {
+  padding: 6px 10px;
+}
+// Mini
+.btn-primary.btn-mini {
+  padding: 3px 7px;
+}
+
+.btnRow {
+  margin: 1em 0 0 0;
+}

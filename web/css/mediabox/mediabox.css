@@ -1,0 +1,914 @@
+.swipebox-overflow-hidden {
+  overflow: hidden!important;
+}
+#swipebox-overlay img {
+  border: none!important;
+}
+#swipebox-overlay {
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  opacity: 0;
+  z-index: 9999;
+  overflow: hidden;
+  display: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
+}
+#swipebox-slider {
+  height: 100%;
+  left: 0;
+  top: 0;
+  width: 100%;
+  white-space: nowrap;
+  position: absolute;
+}
+#swipebox-slider .slide {
+  background: url("img/loader.gif") no-repeat center center;
+  height: 100%;
+  line-height: 1px;
+  text-align: center;
+  width: 100%;
+  display: inline-block;
+}
+#swipebox-slider .slide:before {
+  content: "";
+  display: inline-block;
+  height: 50%;
+  width: 1px;
+  margin-right: -1px;
+}
+#swipebox-slider .slide img {
+  display: inline-block;
+  max-height: 100%;
+  max-width: 100%;
+  width: auto;
+  height: auto;
+  vertical-align: middle;
+}
+#swipebox-action,
+#swipebox-caption {
+  position: absolute;
+  left: 0;
+  z-index: 999;
+  height: 50px;
+  width: 100%;
+}
+#swipebox-action {
+  bottom: -50px;
+}
+#swipebox-action.visible-bars {
+  bottom: 0;
+}
+#swipebox-action.force-visible-bars {
+  bottom: 0!important;
+}
+#swipebox-caption {
+  top: -50px;
+  text-align: center;
+}
+#swipebox-caption.visible-bars {
+  top: 0;
+}
+#swipebox-caption.force-visible-bars {
+  top: 0!important;
+}
+#swipebox-action #swipebox-prev,
+#swipebox-action #swipebox-next,
+#swipebox-action #swipebox-close {
+  background-image: url("img/icons.png");
+  background-repeat: no-repeat;
+  border: none!important;
+  text-decoration: none!important;
+  cursor: pointer;
+  position: absolute;
+  width: 50px;
+  height: 50px;
+  top: 0;
+}
+#swipebox-action #swipebox-close {
+  background-position: 15px 12px;
+  left: 40px;
+}
+#swipebox-action #swipebox-prev {
+  background-position: -32px 13px;
+  right: 100px;
+}
+#swipebox-action #swipebox-next {
+  background-position: -78px 13px;
+  right: 40px;
+}
+#swipebox-action #swipebox-prev.disabled,
+#swipebox-action #swipebox-next.disabled {
+  filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=30);
+  opacity: 0.3;
+}
+#swipebox-slider.rightSpring {
+  -moz-animation: rightSpring 0.3s;
+  -webkit-animation: rightSpring 0.3s;
+}
+#swipebox-slider.leftSpring {
+  -moz-animation: leftSpring 0.3s;
+  -webkit-animation: leftSpring 0.3s;
+}
+@-moz-keyframes rightSpring {
+  0% {
+    margin-left: 0px;
+  }
+  50% {
+    margin-left: -30px;
+  }
+  100% {
+    margin-left: 0px;
+  }
+}
+@-moz-keyframes leftSpring {
+  0% {
+    margin-left: 0px;
+  }
+  50% {
+    margin-left: 30px;
+  }
+  100% {
+    margin-left: 0px;
+  }
+}
+@-webkit-keyframes rightSpring {
+  0% {
+    margin-left: 0px;
+  }
+  50% {
+    margin-left: -30px;
+  }
+  100% {
+    margin-left: 0px;
+  }
+}
+@-webkit-keyframes leftSpring {
+  0% {
+    margin-left: 0px;
+  }
+  50% {
+    margin-left: 30px;
+  }
+  100% {
+    margin-left: 0px;
+  }
+}
+/* Skin
+--------------------------*/
+#swipebox-overlay {
+  background: #0d0d0d;
+}
+#swipebox-action,
+#swipebox-caption {
+  text-shadow: 1px 1px 1px black;
+  background-color: #0d0d0d;
+  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #0d0d0d), color-stop(100%, #000000));
+  background-image: -webkit-linear-gradient(#0d0d0d, #000000);
+  background-image: -moz-linear-gradient(#0d0d0d, #000000);
+  background-image: -o-linear-gradient(#0d0d0d, #000000);
+  background-image: linear-gradient(#0d0d0d, #000000);
+  -webkit-box-shadow: 0 1px 1px 1px #212121, inset 0 1px 1px 1px black;
+  -moz-box-shadow: 0 1px 1px 1px #212121, inset 0 1px 1px 1px black;
+  box-shadow: 0 1px 1px 1px #212121, inset 0 1px 1px 1px black;
+  filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=95);
+  opacity: 0.95;
+}
+#swipebox-action {
+  -webkit-box-shadow: 0 -1px -1px 1px #212121, inset 0 -1px -1px 1px #000000;
+  -moz-box-shadow: 0 -1px -1px 1px #212121, inset 0 -1px -1px 1px #000000;
+  box-shadow: 0 -1px -1px 1px #212121, inset 0 -1px -1px 1px #000000;
+}
+#swipebox-caption {
+  color: white!important;
+  font-size: 15px;
+  line-height: 43px;
+  font-family: Helvetica, Arial, sans-serif;
+}
+/* jquery.Jcrop.css v0.9.12 - MIT License */
+/*
+  The outer-most container in a typical Jcrop instance
+  If you are having difficulty with formatting related to styles
+  on a parent element, place any fixes here or in a like selector
+
+  You can also style this element if you want to add a border, etc
+  A better method for styling can be seen below with .jcrop-light
+  (Add a class to the holder and style elements for that extended class)
+*/
+.jcrop-holder {
+  direction: ltr;
+  text-align: left;
+}
+/* Selection Border */
+.jcrop-vline,
+.jcrop-hline {
+  background: #ffffff url("Jcrop.gif");
+  font-size: 0;
+  position: absolute;
+}
+.jcrop-vline {
+  height: 100%;
+  width: 1px !important;
+}
+.jcrop-vline.right {
+  right: 0;
+}
+.jcrop-hline {
+  height: 1px !important;
+  width: 100%;
+}
+.jcrop-hline.bottom {
+  bottom: 0;
+}
+/* Invisible click targets */
+.jcrop-tracker {
+  height: 100%;
+  width: 100%;
+  /* "turn off" link highlight */
+  -webkit-tap-highlight-color: transparent;
+  /* disable callout, image save panel */
+  -webkit-touch-callout: none;
+  /* disable cut copy paste */
+  -webkit-user-select: none;
+}
+/* Selection Handles */
+.jcrop-handle {
+  background-color: #333333;
+  border: 1px #eeeeee solid;
+  width: 7px;
+  height: 7px;
+  font-size: 1px;
+}
+.jcrop-handle.ord-n {
+  left: 50%;
+  margin-left: -4px;
+  margin-top: -4px;
+  top: 0;
+}
+.jcrop-handle.ord-s {
+  bottom: 0;
+  left: 50%;
+  margin-bottom: -4px;
+  margin-left: -4px;
+}
+.jcrop-handle.ord-e {
+  margin-right: -4px;
+  margin-top: -4px;
+  right: 0;
+  top: 50%;
+}
+.jcrop-handle.ord-w {
+  left: 0;
+  margin-left: -4px;
+  margin-top: -4px;
+  top: 50%;
+}
+.jcrop-handle.ord-nw {
+  left: 0;
+  margin-left: -4px;
+  margin-top: -4px;
+  top: 0;
+}
+.jcrop-handle.ord-ne {
+  margin-right: -4px;
+  margin-top: -4px;
+  right: 0;
+  top: 0;
+}
+.jcrop-handle.ord-se {
+  bottom: 0;
+  margin-bottom: -4px;
+  margin-right: -4px;
+  right: 0;
+}
+.jcrop-handle.ord-sw {
+  bottom: 0;
+  left: 0;
+  margin-bottom: -4px;
+  margin-left: -4px;
+}
+/* Dragbars */
+.jcrop-dragbar.ord-n,
+.jcrop-dragbar.ord-s {
+  height: 7px;
+  width: 100%;
+}
+.jcrop-dragbar.ord-e,
+.jcrop-dragbar.ord-w {
+  height: 100%;
+  width: 7px;
+}
+.jcrop-dragbar.ord-n {
+  margin-top: -4px;
+}
+.jcrop-dragbar.ord-s {
+  bottom: 0;
+  margin-bottom: -4px;
+}
+.jcrop-dragbar.ord-e {
+  margin-right: -4px;
+  right: 0;
+}
+.jcrop-dragbar.ord-w {
+  margin-left: -4px;
+}
+/* The "jcrop-light" class/extension */
+.jcrop-light .jcrop-vline,
+.jcrop-light .jcrop-hline {
+  background: #ffffff;
+  filter: alpha(opacity=70) !important;
+  opacity: .70!important;
+}
+.jcrop-light .jcrop-handle {
+  -moz-border-radius: 3px;
+  -webkit-border-radius: 3px;
+  background-color: #000000;
+  border-color: #ffffff;
+  border-radius: 3px;
+}
+/* The "jcrop-dark" class/extension */
+.jcrop-dark .jcrop-vline,
+.jcrop-dark .jcrop-hline {
+  background: #000000;
+  filter: alpha(opacity=70) !important;
+  opacity: 0.7 !important;
+}
+.jcrop-dark .jcrop-handle {
+  -moz-border-radius: 3px;
+  -webkit-border-radius: 3px;
+  background-color: #ffffff;
+  border-color: #000000;
+  border-radius: 3px;
+}
+/* Simple macro to turn off the antlines */
+.solid-line .jcrop-vline,
+.solid-line .jcrop-hline {
+  background: #ffffff;
+}
+/* Fix for twitter bootstrap et al. */
+.jcrop-holder img,
+img.jcrop-preview {
+  max-width: none;
+}
+.fm-body {
+  margin: 20px;
+}
+#top-menu {
+  padding: 0 20px;
+}
+#top-menu-right {
+  padding-top: 3px;
+}
+.bar {
+  height: 18px;
+  background: green;
+}
+#treeview .k-sprite {
+  background-image: url("/img/mediabox/coloricons-sprite.png");
+}
+.rootfolder {
+  background-position: 0 0;
+}
+.folder {
+  background-position: 0 -16px;
+}
+.buf_object {
+  padding: 3px;
+}
+.files-actions li {
+  position: relative;
+  top: 4px;
+}
+#image-actions li,
+.files-simple-actions li,
+#back,
+#advanced-overlay-back,
+#saveCrop,
+#clearCrop,
+#addTag {
+  margin-right: 20px;
+  cursor: pointer;
+}
+.fname,
+.fullname {
+  line-height: 14px;
+  font-size: 13px;
+}
+.file_icon_size {
+  color: #777;
+}
+.dfile {
+  font-size: 12px;
+}
+.fm_file,
+.fm_dirs,
+.fm_dirs_up {
+  float: left;
+  width: 130px;
+  padding: 1px;
+  height: 120px;
+  margin-right: 5px;
+}
+.icons {
+  overflow: hidden;
+  padding: 4px 4px 0;
+}
+/*background-color: #FFFFFF; border: 1px solid #CCCCCC; */
+.icons img {
+  background-color: #FFFFFF;
+  border: 1px solid #DDDDDD;
+  padding: 5px;
+  height: 60px;
+  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.25);
+}
+.fm_file_li {
+  text-align: left;
+  height: 26px;
+  overflow: hidden;
+}
+.fm_file_li > div {
+  padding: 4px 4px 0 4px;
+  height: 26px;
+}
+.fm_unsellabel,
+.fm_sellabel {
+  overflow: hidden;
+}
+.actions {
+  display: none;
+}
+#header {
+  position: static;
+  top: 0;
+  width: 100%;
+  height: 28px;
+}
+#treeview,
+#imageview {
+  overflow: auto;
+  padding: 10px 0;
+}
+#treeview .k-group {
+  background-color: transparent;
+  margin: 0;
+}
+#imageview {
+  width: auto;
+  line-height: 24px;
+}
+#treeview .k-state-selected {
+  color: #000;
+}
+#main-menu {
+  padding-left: 10px;
+}
+#advanced-panel {
+  border: 1px solid #EEEEEE;
+  height: 400px;
+  position: absolute;
+  right: 0;
+  width: 300px;
+  z-index: 1000;
+  box-shadow: -3px 3px 4px rgba(0, 0, 0, 0.15);
+  overflow: auto;
+  display: none;
+}
+#advanced-panel-left .advanced-panel-div {
+  cursor: pointer;
+}
+.advanced-panel-div {
+  height: 36px;
+  width: 50px;
+}
+.advanced-panel-div > i {
+  position: relative;
+  left: 15px;
+  top: 10px;
+}
+.adv-menu-div {
+  width: 443px;
+  height: 400px;
+  overflow: hidden;
+  margin: auto;
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+}
+.advanced-height {
+  overflow-x: hidden;
+  overflow-y: auto;
+  height: 170px;
+}
+#fs-menu {
+  border: 0;
+}
+#fs-menu a,
+#fs-menu a:hover {
+  text-decoration: none;
+}
+.adv-menu-img {
+  position: relative;
+  left: 5px;
+  padding-right: 5px;
+}
+.check-type {
+  position: relative;
+  top: -4px;
+}
+#player-controls {
+  padding: 4px;
+  /*height: 120px;*/
+}
+#track-main-info {
+  padding: 2px 6px;
+}
+#current-track {
+  float: left;
+  width: 150px;
+  height: 22px;
+  margin: 2px 10px 5px 0;
+  line-height: 13px;
+  padding: 0 10px;
+  font-size: 11px;
+}
+.droptarget {
+  height: auto;
+  width: auto;
+}
+.sort > span {
+  font-size: 10px;
+  cursor: pointer;
+  padding: 1px 10px;
+}
+.structure {
+  overflow: hidden;
+  margin: 10px 0 0 10px;
+}
+#preview {
+  border-radius: 0;
+}
+#preview-scroll {
+  padding: 0 5px;
+  margin: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  border-radius: 0;
+  width: 100%;
+}
+.fs-type div > i,
+.fs-type li > span {
+  cursor: pointer;
+}
+.fs-footer-menu {
+  font-size: 11px;
+  border-bottom: 0 none;
+  border-left: 0 none;
+  border-right: 0 none;
+}
+.track {
+  min-height: 24px;
+  overflow: hidden;
+  cursor: pointer;
+}
+/*.track:hover{background-color: #777;}*/
+.track-title {
+  float: left;
+  padding-top: 4px;
+}
+.track-duration {
+  float: right;
+}
+.dname_li,
+.file_list_date {
+  float: right;
+  color: #AAA;
+  text-align: right;
+  width: 180px;
+}
+.ddate_li,
+.file_list_size {
+  float: right;
+  padding-right: 5px;
+  color: #AAA;
+  text-align: right;
+  width: 80px;
+}
+.fm_ajax-loader {
+  display: none;
+  position: fixed;
+  height: 100%;
+  width: 100%;
+  background: url("/img/mediabox/loading-image.gif") 320px 40px no-repeat;
+}
+.fm_pre {
+  margin-bottom: 3px;
+}
+.image-crop,
+.image-tag,
+.tagAll,
+.cropAll {
+  margin: 2px 4px;
+  font-size: 10px;
+}
+.image-crop,
+.tagAll,
+.cropAll {
+  cursor: pointer;
+}
+#image-comment-form {
+  overflow: hidden;
+  margin: 10px 0;
+}
+#image-comment-editor {
+  height: 67px;
+  width: 312px;
+}
+#image-comment-save {
+  margin: 5px 0;
+}
+#preview-div-img {
+  margin-top: 10px;
+  text-align: center;
+  box-shadow: -2px -2px 4px rgba(0, 0, 0, 0.15);
+}
+#image-meta > div,
+#image-cloud > div,
+#video-meta > div {
+  float: left;
+  margin-left: 15px;
+}
+.bufferFile {
+  margin: 5px 0;
+  overflow: hidden;
+}
+#playerButtons div {
+  font-size: 11px;
+  position: relative;
+  top: 2px;
+}
+.bufferFile .ico {
+  float: left;
+  height: 15px;
+  padding: 3px 4px 0 0;
+}
+.bufferFile .left {
+  float: left;
+  padding-top: 3px;
+  overflow: hidden;
+}
+.bufferFile .right {
+  float: right;
+  overflow: hidden;
+}
+#player-footer {
+  position: fixed;
+  bottom: 0;
+  width: 218px;
+}
+/*#left-footer {position: fixed; bottom: 0; width: 100%;}*/
+.structure-img-fs {
+  overflow-y: auto;
+}
+.playlist-track-current {
+  font-weight: bold;
+}
+.one_folder {
+  font-weight: bold;
+}
+#clearBuffer {
+  margin-bottom: 5px;
+}
+#pl-audio {
+  font-size: 12px;
+  height: 255px;
+  overflow-y: auto;
+  min-width: 200px;
+}
+#headerMenu {
+  overflow: hidden;
+  padding: 5px 20px 0;
+}
+#headerMenu i {
+  color: black;
+  font-size: 14px;
+  padding: 5px;
+}
+#headerMenu div {
+  margin-right: 10px;
+}
+#headerMenu a {
+  text-decoration: none;
+}
+#plMenu {
+  border: 0;
+  background: none;
+}
+.left-section {
+  width: auto;
+  height: auto;
+  padding: 4px 10px;
+}
+.left-section > div {
+  padding: 3px 0;
+}
+.left-section a {
+  cursor: pointer;
+}
+.f-list-alt {
+  background-color: #F1F4F4;
+}
+.f-file-select {
+  background-color: #D1E4EF;
+  border-radius: 2px 2px 2px 2px;
+  border: 1px solid #D6DEDE;
+}
+.perc,
+.percDropdown {
+  overflow-y: auto;
+  padding-right: 20px;
+  max-height: 300px;
+  width: 370px;
+}
+/* word-wrap */
+.name,
+.track-title,
+#current-track,
+.bufferFile .left,
+.uploader-long-name,
+.imageCommentText {
+  /* kendo .k-filename { white-space: nowrap; } */
+  /*  white-space: normal;
+  white-space: -moz-pre-wrap;
+  white-space: -pre-wrap;
+  white-space: -o-pre-wrap;*/
+  word-wrap: normal;
+  color: #00407D;
+  font-size: 12px;
+}
+.parent_popup {
+  display: none;
+  color: #FFF;
+  height: 100%;
+  background-image: url('/css/mediabox/img/overlay.png');
+  background-repeat: repeat;
+  position: fixed;
+  width: 100%;
+  z-index: 100;
+  top: 0;
+  left: 0;
+}
+#fs-top-menu li.dropdown > a,
+#fs-top-menu #fs-second-panel a {
+  color: #0067C9;
+}
+#fs-top-menu li.dropdown > a:hover,
+#fs-top-menu #fs-second-panel a {
+  color: #00407D;
+}
+#file-context-menu,
+#folder-context-menu,
+#file-trash-context-menu,
+#folder-trash-context-menu {
+  position: absolute;
+  display: none;
+}
+.download > .name {
+  color: #FFF;
+  text-decoration: underline;
+}
+#image-cloud a.dropdown-toggle {
+  color: #FFF;
+  cursor: pointer;
+}
+#image-cloud .caret {
+  border-top: 4px solid #FFFFFF;
+}
+#image-crops,
+#image-tags,
+#image-comments {
+  color: #000;
+  text-align: center;
+  padding: 5px;
+}
+#image-comments ul.dropdown-menu > li > a {
+  color: #000;
+}
+.dropdown-menu a {
+  color: #000;
+}
+.upload-status {
+  height: 10px;
+  width: 300px;
+  border: 1px solid #CCC;
+  padding: 1px;
+}
+.upload-status-progress {
+  height: 10px;
+  background-color: #6CC51F;
+}
+/*kendo*/
+.k-block > .k-header,
+.k-window-titlebar {
+  border-bottom: 0px none;
+}
+.k-upload-button {
+  width: 120px;
+}
+.k-upload-button > span {
+  font-size: 13px;
+}
+.k-filename {
+  width: 310px;
+  max-width: none;
+}
+.k-progress {
+  width: 300px;
+}
+.k-upload-files .k-button {
+  float: right;
+  padding-top: 18px;
+}
+/* Left */
+.tab-left .sub {
+  font-weight: bold;
+}
+.left-section {
+  margin: 4px;
+}
+.left-section label {
+  margin: 0;
+  font-weight: normal;
+}
+/* Player */
+#playerMenu {
+  font-size: 12px;
+}
+.player-controls-zero {
+  /*position: fixed;
+  bottom: 0;*/
+}
+.player-controls-indent {
+  position: absolute;
+  bottom: 20px;
+}
+.mx-pos-slider {
+  width: 145px;
+}
+.mediaElement {
+  display: none;
+}
+#div-current-track {
+  overflow: hidden;
+}
+#volume {
+  width: 30px;
+  margin: 10px 5px;
+  padding: 0;
+}
+#track-slider {
+  float: left;
+  height: 26px;
+}
+#playerButtons {
+  float: left;
+  margin-left: 10px;
+}
+#playerButtons div {
+  float: left;
+}
+#playerButtons .ml {
+  margin-left: 3px;
+}
+.delete-playlist {
+  font-size: 10px;
+}
+#dropdown-volume {
+  width: 35px;
+  background-color: transparent;
+  border: 0;
+  box-shadow: none;
+}
+#dropdown-volume > div {
+  width: 33px;
+  height: 210px;
+}
+#dropdown-volume > div > div > div > div > a {
+  padding: 0;
+}
+#show-playlist .dropdown-menu:after,
+#show-playlist .dropdown-menu:before,
+#playlist-volume .dropdown-menu:after,
+#playlist-volume .dropdown-menu:before {
+  position: absolute;
+  top: -6px;
+  left: 10px;
+  display: inline-block;
+  border: none;
+  content: '';
+}

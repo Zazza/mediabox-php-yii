@@ -29,7 +29,7 @@
 
                 <li class="dropdown">
                     <a data-toggle="dropdown" href="#">
-                        <i class="icon-sortbysizeascending"></i>
+                        <i class="icon-sort"></i>
                         <b class="caret"></b>
                     </a>
                     <ul class="dropdown-menu">
@@ -58,7 +58,7 @@
 <div id="file-context-menu" class="dropdown clearfix" data-id="">
     <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu" style="display:block;">
         <li>
-            <a tabindex="-1" href="#" data-role="open"><i class="icon-cursor"></i> Open</a>
+            <a tabindex="-1" href="#" data-role="open"><i class="icon-folder-open"></i> Open</a>
         </li>
         <li>
             <a tabindex="-1" href="#" data-role="download"><i class="icon-download-alt"></i> Download</a>
@@ -89,13 +89,13 @@
 <div id="file-trash-context-menu" class="dropdown clearfix" data-id="">
     <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu" style="display:block;">
         <li>
-            <a tabindex="-1" href="#" data-role="open"><i class="icon-cursor"></i> Open</a>
+            <a tabindex="-1" href="#" data-role="open"><i class="icon-folder-open"></i> Open</a>
         </li>
         <li>
             <a tabindex="-1" href="#" data-role="download"><i class="icon-download-alt"></i> Download</a>
         </li>
         <li>
-            <a tabindex="-1" href="#" data-role="restore"><i class="icon-restore"></i> Restore</a>
+            <a tabindex="-1" href="#" data-role="restore"><i class="icon-undo"></i> Restore</a>
         </li>
         <li>
             <a tabindex="-1" href="#" data-role="remove"><i class="icon-remove"></i> Delete</a>
@@ -118,7 +118,7 @@
 <script type="text/x-kendo-template" id="dirListTemplate">
     <div class="ddir fm_file_li" title="#: name #" data-id="#: id #" style="cursor: pointer">
         <div class="fm_unsellabel" id="#: name #">
-            <div style="float: left; padding-right: 5px;"><img src="/assets/img/mediabox/ftypes/folder.png" style="width: 15px;" alt="[DIR]" /></div>
+            <div style="float: left; padding-right: 5px;"><img src="/img/mediabox/ftypes/folder.png" style="width: 15px;" alt="[DIR]" /></div>
             <div style="float: left;" class="dname">#: name #</div>
 
             <div class="dname_li">#: date #</div>
@@ -144,7 +144,7 @@
 <script type="text/x-kendo-template" id="dirGridTemplate">
     <div title="#: name #" data-id="#: id #" class="ddir fm_file" style="text-align: center; cursor: pointer">
         <div class="fm_unsellabel" id="#: name #">
-            <div class="fm_pre"><img src="/assets/img/mediabox/ftypes/folder.png" style="height: 70px;" alt="[DIR]" /></div>
+            <div class="fm_pre"><img src="/img/mediabox/ftypes/folder.png" style="height: 70px;" alt="[DIR]" /></div>
             <div class="fname">#: shortname #</div>
             <div class="fullname" style="display: none">#: name #</div>
         </div>

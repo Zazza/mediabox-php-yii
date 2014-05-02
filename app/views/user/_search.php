@@ -17,11 +17,6 @@
 	</div>
 
 	<div class="row">
-		<?php echo $form->label($model,'group_id'); ?>
-		<?php echo $form->textField($model,'group_id',array('size'=>10,'maxlength'=>10)); ?>
-	</div>
-
-	<div class="row">
 		<?php echo $form->label($model,'username'); ?>
 		<?php echo $form->textField($model,'username',array('size'=>60,'maxlength'=>64)); ?>
 	</div>

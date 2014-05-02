@@ -1,0 +1,508 @@
+// Xvid specific components
+
+// TYPO /////////////////////////////////////////////////
+.errorMessage {
+	color: @red;
+}
+
+// LOG IN DROPDOWN
+// ---------------------------
+
+.remember {
+  display: inline;
+  padding-left: .25em;
+  padding-right: .5em;
+}
+.remember input[type="checkbox"] {
+  margin-left: 0;
+}
+.dropdown-menu .forgot {
+  display: inline;
+  padding: 0; 
+  color: @grayLight;
+}
+
+form.inner {
+  padding-top: 10px;
+  padding-bottom: 10px;
+  margin: 0;
+}
+
+// MAINNAV on none microsites
+
+.nav-main {
+	font-size: 16px;
+	font-weight: bold;
+	padding-top: 3px;
+}
+.nav-main li li {
+	font-size: @baseFontSize,
+}
+
+.metanav #mainnav {
+
+	//clear: both;
+	margin: 30px 0 20px 0;
+
+	.container {
+		border-bottom: none;
+		margin-top: 30px;
+	}
+	.nav-main > li > a {
+		color: @xdarkBlue;
+		padding: 9px 10px 11px;
+	}
+	.nav-main > li > a:hover,
+	.nav-main > li.dropdown.open > a,
+	.nav-main > li.dropdown.open > a:hover  {
+		color: lighten(@xdarkBlue, 15%);
+	}
+	.nav-main > li.active > a, .nav-main > li.active > a:hover {
+		background: none;
+		color: @xbrightBlue;
+	}
+	
+	.nav-main > li.dropdown.open.active > a,
+	.nav-main > li.dropdown.active > a:hover {
+		background: none;
+		color: lighten(@xdarkBlue, 15%);
+	}
+
+	// active caret
+	.nav-main > li.dropdown.active .dropdown-toggle .caret {
+		border-bottom-color: @xdarkBlue;
+  		border-top-color: @xdarkBlue;
+	}
+	// hover active caret
+	.nav-main > li.dropdown.active.open .dropdown-toggle .caret,
+	.nav-main > li.dropdown.active > a:hover .caret {
+		border-bottom-color: lighten(@xdarkBlue, 15%);
+  		border-top-color: lighten(@xdarkBlue, 15%);
+	}
+
+	.h1logo {
+		margin-right: 20px;
+	}
+
+		
+}
+
+.negative h1,
+.negative h2,
+.negative h3,
+.negative h4,
+.negative { 
+	color: @white;
+}
+
+
+// MY MEDIABOX ––– INFO TAB + ACCOUNT SUBSCRIPTIONS ///////////////////////////////////////////////////////////
+//
+//
+
+.rowPlans {
+	margin: 1em 0 1em -5px;
+}
+// header for mediabox / mediacoder
+.InfoRow {
+	margin-bottom:10px;
+	h2 {
+		line-height: 28px;
+	}
+	.percentage {
+		color: @labelColor;
+		font-weight: bold;
+	}
+
+	.percentage {
+		p {
+			margin-left: @gridColumnWidth*1.5;	
+		}
+		p.txtTab {
+			// make it like h2
+			.25pxSizeOnly;
+			line-height: 28px;
+			margin: 0 0 .25em @gridColumnWidth*1.5;
+		}
+	}
+
+	.percentage .value {
+		
+	}
+	.percentage .spanOutdent {
+		// add a bit more space (15px – leaves 5px gutter)
+		margin-left: -@gridColumnWidth*1.5 - 15;
+		width: @gridColumnWidth*1.5 - @gridGutterWidth/4 + 15;
+		.14pxSizeOnly;
+		.line25px14px;
+		text-align: right;
+		display: inline-block;
+		font-weight: normal;
+		white-space: nowrap;
+		word-spacing: 0;
+		letter-spacing: 0;
+	}
+	/*.percentage + p {
+		.14px;
+		display: block;
+		//margin-top: -4px;
+		
+	}*/
+	.progress {
+		margin: 6px 0 0 0;
+	}
+	.infoCell {
+		color: @labelColor;
+		padding-top: .7em;
+	}
+}
+
+// INFO GRID
+
+#mymediaCoderInfoGrid {
+	.16px;
+	.jobStatus {
+		width: 150px;
+		float: left;
+	}
+	.jobStatusTxt {
+		display: block;
+		margin-left: @gridColumnWidth*1.5;
+	}
+	.jobStatusTxt .value {
+		font-weight: bold;
+	}
+	.jobStatusTxt .spanOutdent {
+		.14pxSizeOnly;
+		margin-left: -@gridColumnWidth*1.5 - 15;
+		width: @gridColumnWidth*1.5 - @gridGutterWidth/4 + 15;
+		text-align: right;
+		display: inline-block;
+		white-space: nowrap;
+		word-spacing: 0;
+	}
+	.progress {
+		height: 13px;
+		margin: 4px 0 0 0;
+		width: 220px;
+		float: left;
+	}
+	.progress .bar {
+		height: 13px;
+	}
+	.jobStatus, .jobPreset {
+		//color : @grayLight;
+		color: @labelColor;
+
+	}
+	.jobPreset {
+		.12pxSizeOnly;
+	}
+}
+
+
+
+
+
+// ///////////////////////////////////////////////
+// old styles – not needed
+
+// container for single job row definitions
+//
+.jobInfo {
+}
+
+
+// single job row definitions
+//
+
+.jobInfoRow, .jobInfoRow.row {
+	.16px;
+	background-color : @grayLighter;
+	border-top:1px solid @grayLine;
+	padding-top : 10px;
+	// override the negative row indent
+	margin: 0;
+
+	.fileName, .showDetailsLink {
+		display: inline-block;
+		cursor: pointer;
+		color: @grayDark;
+		text-decoration: none;
+	}
+
+	.fileName span, .showDetailsLink span {
+		display: block;
+		max-width: 85%;
+		float: left;
+		.text-overflow();
+	}
+	.jobStatus {
+		width: 240px;
+		float: left;
+	}
+	.percentage {
+		display: block;
+		margin-left: @gridColumnWidth*1.5;
+	}
+	.percentage .value {
+		font-weight: bold;
+	}
+	.percentage .spanOutdent {
+		.14pxSizeOnly;
+		margin-left: -@gridColumnWidth*1.5;
+		width: @gridColumnWidth*1.5 - @gridGutterWidth/2;
+		text-align: right;
+		display: inline-block;
+	}
+	.progress {
+		height: 13px;
+		margin: 4px 0 0 0;
+		width: 220px;
+		float: left;
+	} .progress .bar {
+		height: 13px;
+	}
+	.jobStatus, .jobPreset {
+		color : @grayLight;	
+	}
+	.jobPreset {
+		.12pxSizeOnly;
+	}
+}
+.jobInfoRow.row div:first-child {
+	margin-left: 0;
+}
+.jobInfoRow:last-child, .jobInfoRow.row:last-child {
+	margin-bottom: 20px;
+	.bottom-border-radius(@smallCorner);
+}
+
+// ///////////////////////////////////////////////
+
+// MY MEDIABOX ––– PRESETS TAB
+//
+//
+
+
+
+// ACCOUNT
+.userImage {
+	width: 70px;
+	height: 70px;
+	margin-right: 15px;
+	float: left;
+	.border-radius(@smallCorner);
+	overflow: hidden;
+}
+.userImageBtnHolder {
+	width: 195px;
+	float: left;
+}
+.userImageBtnHolder .k-upload {
+	margin-bottom: .5em;
+}
+
+
+
+// PLANS AND PRICES MEDIABOX
+
+.singlePlan {
+	.border-radius(@mediumCorner);
+	//background: @xdarkBlue;
+	.gradientBar(@xdarkBlue, darken(@xdarkBlue, 10%));
+	margin-left: 5px;
+	width: 184px;
+	//width: 140px;
+	float: left;
+	text-align: center;
+}
+.singlePlan.tableCont {
+	width: 100%;
+	background: @grayLighter;	
+}
+
+#flexiDetailsContent , #jobDetailsContent {
+	display: none;
+}
+.singlePlan.bright {
+	//background: @xbrightBlue;
+	//.gradientBar(@xbrightGreen, darken(@xbrightGreen, 15%));
+	.gradientBar(lighten(@xbrightBlue, 10%), @xbrightBlue);	
+}
+.singlePlan.flexi {
+	//background: @xbrightBlue;
+	.gradientBar(@xbrightBlue, darken(@xbrightBlue, 15%));	
+}
+
+.singlePlan h2 {
+	font-weight: bold;
+	margin: .25em 0 0 0;
+}
+.price {
+	.25px;
+	line-height: 18px;
+	margin-top: 1em;
+	small {
+		color: @secondaryLinkColor;
+		letter-spacing: 0;
+	}
+}
+
+.singlePlan .inner {
+	padding: 10px;
+}
+
+
+
+
+// ADDITIONAL FORM ELEMENTS
+
+// toggle fieldset buttonrow
+
+.toggleFieldset .btn {
+	font-weight: bold;
+}
+.toggleFieldset .radio {
+	margin-top: 3px;
+	background-position: -20px 2px;	
+}
+.toggleFieldset .active .radio {
+	background-position: -40px 2px;	
+}
+
+// TOGGLES
+.containsToggle fieldset {
+	display: none;
+	margin: 20px 0 30px;
+}
+.containsToggle fieldset.active {
+	display: block;
+}
+
+// toggle fieldset select
+.containsSelectToggle fieldset {
+	display: none;
+	margin: 20px 0 30px;
+}
+.containsSelectToggle fieldset.active {
+	display: block;
+}
+//.isSelectToggle
+
+
+// MEDIACODER IMAGES ///////////////////////////////////////////////////////////
+//.headerImage {
+//	float: right;
+//	margin: -20px 0 -30px 0;
+//}
+
+.hasImage {
+	margin: -20px 0;
+	padding: 20px 260px 40px 0;
+	background-repeat: no-repeat;
+	background-position: right top;
+	min-height: 130px;
+}
+.homeHeader {
+	background-image: url(../img/mediacoder/header/home.png);
+	//padding-right: 300px;	
+}
+.featureHeader {
+	background-image: url(../img/mediacoder/header/formats.png);
+	//padding-right: 300px;	
+}
+.demoHeader {
+	background-image: url(../img/mediacoder/header/demo.png);
+	//padding-right: 300px;	
+}
+
+.certificationHeader {
+        background-image: url(../img/solutions/header/devices.png);
+        //padding-right: 300px;
+}
+
+.softwareHeader {
+        background-image: url(../img/solutions/header/software.png);
+        //padding-right: 300px;
+}
+
+.labsHeader {
+        background-image: url(../img/labs/header/labs.png);
+        //padding-right: 300px;
+}
+
+// icons in headline
+.fIcn {
+	margin-top: -.25em;
+}
+
+// MEDIACODER DEMOPAGE ///////////////////////////////////////////////////////////
+//
+
+.step {
+	//prevent jquery from animationg the with param
+	width: 100% !important;
+}
+#demo_step2, #demo_step3 {
+	display: none;
+}
+// CAPTCHA OVERWRITES
+#recaptcha_area {
+	.recaptchatable {
+		border: none !important;
+		td {
+			border: none;
+			//padding: 0 !important;
+			width: auto !important;
+		}
+		.recaptcha_image_cell {
+			background: none !important;
+			padding: 0 !important;
+		}
+		tr > td:first-child {
+			padding-left: 0 !important;
+		}
+	}
+	#recaptcha_response_field {
+		//border: 1px solid @inputBorder !important;
+		border-color: @inputBorder !important;
+		&:focus {
+			border-color: @formFocusOutline !important;
+		}
+	}
+}
+// VIDEO
+#preview .mejs-container {
+	//margin: 0 auto;
+}
+
+
+// TEASER
+
+.imgTeaserLeft {
+	.box-sizing(border-box);
+	padding-left: 80px;
+	img {
+		float: left;
+		margin-left: -80px;
+	}
+	.teaserTxt {
+
+	}
+}
+
+// GENERAL ADDITIONS ///////////////////////////////////////////////////////////
+//
+//
+
+// extends: .row
+.stripe {
+	padding: 15px;
+	background-color: @grayLighter;
+	.border-radius(@mediumCorner);
+	margin: 0 0 10px 0;	
+}
+.stripe .InfoRow {
+	margin: 0;	
+}

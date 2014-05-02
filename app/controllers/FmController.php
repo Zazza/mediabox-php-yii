@@ -4,13 +4,23 @@ class FmController extends Controller
 {
     private $_sort;
 
+    /**
+     * @return array action filters
+     */
+    public function filters()
+    {
+        return array(
+            'accessControl', // perform access control for CRUD operations
+            'postOnly + delete', // we only allow deletion via POST request
+        );
+    }
+
     public function accessRules()
     {
         return array(
             array('allow',
                 'actions'=>array('fs', 'chdir', 'upload', "thumb", 'getThumb', 'copy', 'restore', 'getTypesNum', 'create', 'getTrash', 'fileToTrash', 'folderToTrash', 'remove', 'rmFolder', 'removeFileByName', 'buffer', 'past', 'deleteFileFromBuffer', 'clearBuffer', 'sort', 'view', 'types'),
-                //'roles'=>array('admin'),
-                'users'=>array('*'),
+                'users'=>array('@'),
             ),
             array('deny',
                 'users'=>array('*'),
@@ -118,8 +128,8 @@ class FmController extends Controller
         $nodes = Files::model()->findAll($criteria);
 
         foreach($nodes as $node) {
-            if (Yii::app()->params["mediaTypes"][$node["type"]]) {
-                $ico = Yii::app()->params["mediaTypes"][$node["type"]];
+            if (isset(Yii::app()->params["mediaTypes"][$node->type])) {
+                $ico = Yii::app()->params["mediaTypes"][$node->type];
             } else {
                 $ico = Yii::app()->params["mediaTypes"]["any"];
             };
@@ -178,7 +188,7 @@ class FmController extends Controller
         if ($file->validate()) {
             $file->save();
 
-            if (Yii::app()->params["mediaTypes"][$file->type]) {
+            if (isset(Yii::app()->params["mediaTypes"][$file->type])) {
                 $ico = Yii::app()->params["mediaTypes"][$file->type];
             } else {
                 $ico = Yii::app()->params["mediaTypes"]["any"];
@@ -442,8 +452,8 @@ class FmController extends Controller
         $nodes = Files::model()->findAll($criteria);
 
         foreach($nodes as $node) {
-            if (Yii::app()->params["mediaTypes"][$node["type"]]) {
-                $ico = Yii::app()->params["mediaTypes"][$node["type"]];
+            if (isset(Yii::app()->params["mediaTypes"][$node->type])) {
+                $ico = Yii::app()->params["mediaTypes"][$node->type];
             } else {
                 $ico = Yii::app()->params["mediaTypes"]["any"];
             };

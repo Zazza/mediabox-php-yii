@@ -1,0 +1,284 @@
+// HIDE FORM ON LOADING // HIDE FORMS UNTILL AJAX RESPONSE
+
+body form,
+body.loaded .formHolderAsync form {
+    .opacity(0);
+    .transition(opacity 1s ease-out);
+    -webkit-transform: translateY(0);
+    -moz-transform: translateY(0);
+    -ms-transform: translateY(0);
+    -o-transform: translateY(0);
+    transform: ttranslateY(0);
+}
+
+body.loaded form,
+body.loaded .formHolderAsync.sync form {
+    .opacity(100);    
+}
+
+// ajax forms
+.formHolderAsync {
+    position: relative;
+    &::after {
+        content: '';
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        height: 68px;
+        width: 68px;
+        margin: -34px 0 0 -34px;
+        background: url(../img/loading-image.gif) no-repeat center center #fff;
+        .border-radius(@smallCorner);
+    }
+}
+.formHolderAsync.sync::after {
+    display: none;
+}
+
+
+// LOGIN BOX
+
+.rememberHolder {
+    margin-top: 8px;
+}
+.accountNav input.span3 {
+    width: 210px;
+}
+
+// icons
+
+.xIcn {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  .ie7-restore-right-whitespace();
+  line-height: 14px;
+  vertical-align: text-top;
+  background-image: url("@{XiconSpritePath}");
+  background-position: 14px 14px;
+  background-repeat: no-repeat;
+
+}
+
+.disabled span.xIcn {
+    .opacity(35);
+}
+
+// RANGE INPUT
+// ---------------------------
+
+/* slider root element */
+.slider {
+    background:darken(@grayLighter, 5%);
+    height:6px;
+    width: 220px;
+    position:relative;
+    cursor:pointer;
+    //border:1px solid #333;
+    float:left;
+    clear:right;
+    margin-top:10px;
+    .border-radius(3px);
+    .box-shadow(inset 0 1px 1px rgba(0,0,0,.35));
+}
+
+/* progress bar (enabled with progress: true) */
+.slider .progress {
+    height:5px;
+    background-color:#C5FF00;
+    display:none;
+    opacity:0.6;
+}
+
+/* drag handle */
+.handle {
+    .gradientBar(@btnBackground, @btnBackgroundHighlight);
+    height:12px;
+    width:12px;
+    top:-6px;
+    .border-radius(6px);
+    position:absolute;
+    display:block;
+    margin-top:1px;
+    border: 1px solid @btnBorder;
+    border-bottom-color: darken(@btnBorder, 10%);
+    cursor:move;
+    .box-shadow(0 2px 3px rgba(0,0,0,.2));
+
+}
+
+/* the input field */
+.range {
+    float:left;
+    width:40px;
+    margin:0 0 0 15px;
+    text-align:center;
+    //border:1px inset #ddd;
+    //font-size:20px;
+    //padding:3px 0;
+    //.border-radius(@smallCorner);
+}
+
+
+// CUSTOM SELECTS
+
+select {
+  //font-family: @baseFontFamily !important;
+}
+
+option {
+    font-family: Arial, sans-serif !important;
+    line-height: @baseLineHeight !important;
+}
+select > option {
+    padding-bottom: 2px;
+    padding-top: 2px;
+}
+
+.selectWrapper {
+    display: inline-block;
+    position: relative;
+    .border-radius(@smallCorner);
+    border: 1px solid @btnBorder;
+    border-bottom-color: darken(@btnBorder, 10%);
+    .gradientBar(@btnBackground, @btnBackgroundHighlight);
+    height: 20px;
+    padding: 4px;
+    width: 212px;
+    vertical-align: middle;
+}
+
+.selectWrapper select {
+    position: absolute;
+    z-index: 2;
+    .opacity(0);
+}
+
+.selectText {
+    position: absolute;
+    z-index: 1;
+    top: 4px;
+    left: 6px;
+    display: inline-block;
+    width: 192px;
+    .text-overflow();
+}
+.disabled .selectText {
+    color: #888;
+}
+
+
+// CUSTOM ICONS
+
+.xIcn.dropdown {
+    background-position: 0 0;
+    height: 20px;
+    float: right;
+    margin-right: 5px;
+}
+
+// CUSTOM CHECKBOX
+
+div.customChecker, div.customRadio {
+    position: relative;
+    float: left;
+}
+//.form-horizontal div.customChecker,
+//.form-horizontal div.customRadio {
+//    margin-left: -18px;   
+//}
+
+.xIcn.check, 
+.xIcn.radio {
+    display: block;
+    float: left;
+    height: 19px;
+    width: 19px;
+    background-position: -140px 2px;
+    &.isChecked {
+        background-position: -160px 2px;
+    }
+}
+.xIcn.radio {
+    background-position: -100px 2px;
+    &.isChecked {
+        background-position: -120px 2px;
+    }
+}
+.well .xIcn.check {
+    background-position: -60px 2px;
+    &.isChecked {
+        background-position: -80px 2px;
+    }
+}
+.well .xIcn.radio {
+    background-position: -20px 2px;
+    &.isChecked {
+        background-position: -40px 2px;
+    }
+}
+
+
+div.customChecker input[type="checkbox"],
+div.customRadio input[type="radio"] {
+    .opacity(0);
+    margin: 0;
+    height: 19px;
+    width: 19px;
+}
+
+div.customUpload {
+    position: relative;
+    width: 340px;
+    height: 30px;
+    overflow: hidden;
+    cursor: pointer !important;
+    input[type="file"] {
+        .opacity(0);
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        float: right;
+        width: 340px;
+        border: none;
+        //border-right: 100px solid #f00;
+    }
+    .selectedFile {
+        padding: 0px 10px;
+        float: left;
+        display: block;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        font-size: 12px;
+        width: 210px;
+
+        cursor: pointer;
+
+        // apply form styles
+        display: inline-block;
+        background-color: @inputBackground;
+        border: 1px solid @inputBorder;
+        .border-radius(@smallCorner 0 0 @smallCorner);
+        .box-shadow(inset 0 1px 1px rgba(0,0,0,.075));
+        padding: 4px;
+        vertical-align: middle;
+    }
+    .uploadAction {
+        float: left;
+        display: block;
+    }
+}
+
+@-moz-document url-prefix() { 
+    div.customUpload input[type="file"] {
+        width: 280px;
+        -moz-transform: translate(-34px, 0px) scale(1.2, 1);
+    }
+}
+
+textarea.fullwidth {
+    resize: vertical;
+}
+

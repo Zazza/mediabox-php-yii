@@ -1,0 +1,199 @@
+// Xvid general Overwrite and Additions
+
+html, body {
+  height: 100%;
+}
+
+.spacer1 {
+  margin-right: 0.5em;
+}
+
+.spacer2 {
+  margin-right: 1em;
+}
+
+.spacer3 {
+  margin-right: 1.5em;
+}
+
+
+// //////////////////////////////////////////////////////////////////////////////////////////
+// TYPE
+
+.big {
+  .18px;
+}
+.big li {
+  .18px;
+}
+.or {
+  display: inline-block;
+  margin: 0 .75em;
+}
+.green, a.green:hover {
+  color: @xbrightGreen;
+}
+a.secondary {
+  color: @secondaryLinkColor;
+}
+a.secondary:hover {
+  color: darken(@secondaryLinkColor, 15%);
+}
+
+p.lead + p {
+  margin-top: -.5em;
+}
+
+// //////////////////////////////////////////////////////////////////////////////////////////
+// NAVS
+.dropdown-menu a {
+  margin-bottom: 2px;
+}
+.navbar .nav .active > a, .navbar .nav .active > a:hover {
+  background-color: @xdarkBlue;
+}
+
+
+
+// //////////////////////////////////////////////////////////////////////////////////////////
+// BUTTONS
+
+// has to be explicitly assigned to buttons
+button,
+.btn
+ {
+  -webkit-font-smoothing: antialiased;
+}
+
+
+
+// //////////////////////////////////////////////////////////////////////////////////////////
+// FORMS
+
+.form-horizontal .control-group {
+  margin-bottom: 15px;
+}
+.form-horizontal .control-label {
+  width: 145px;
+}
+
+.diggit2 {
+  width: 60px !important;
+}
+.diggit3 {
+  width: 60px !important;
+}
+.diggit4 {
+  width: 70px !important;
+}
+.diggit8 {
+  width: 120px !important;
+}
+
+input[required],
+input:required
+ {
+  background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAICAYAAADwdn+XAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAK8AAACvABQqw0mAAAABx0RVh0U29mdHdhcmUAQWRvYmUgRmlyZXdvcmtzIENTM5jWRgMAAAAYdEVYdENyZWF0aW9uIFRpbWUAMDMuMDkuMjAxMlGBysQAAACwSURBVCiRjdAxagJBGIbhZ0NKsUmVkCtIOklu4CXcIi7OBbzMwFZ7gBDSxlJY8ADp7CVJaSdxLByFFOp+MMUP8778/1eklBxTVqGHGRZNHec65KbLp0spxpPpHQK+sMQULTYYYtXU8eOc4BY9bPGUHzyjwB92Fzc4dlBW4QGvWZrwibapYzqP/+/gMcO/eR5cg0+Csgp9jPIp0aGP+7IKL50EGVzjvanjFm/4wfc1wR60/i/7VG0ZEAAAAABJRU5ErkJggg==');
+  background-position: right 9px;
+  background-repeat: no-repeat;
+}
+
+.req {
+  position: absolute;
+  border: 1px solid #ff0;
+  right: 10px;
+  top: 5px;
+}
+
+
+
+// needed for validation
+.controls {
+    position: relative;
+}
+// HTML5 invalid states
+// Shares styles with the .control-group.error above
+input:focus:required:invalid,
+textarea:focus:required:invalid,
+select:focus:required:invalid {
+  color: @orange;
+  border-color: @orange;
+  &:focus {
+    border-color: @orange;
+    .box-shadow(0 0 6px lighten(@orange, 20%));
+  }
+}
+
+// webkit hacks as it does not accept margins on legends...
+legend {
+    margin-bottom: 0;    
+}
+
+legend + label {
+    -webkit-margin-top-collapse: separate;
+}
+legend + .labelgroup {
+    margin-top: 20px;
+    -webkit-margin-top-collapse: separate;
+    
+}
+
+fieldset + fieldset {
+    margin-top: 20px;
+}
+
+// p following inputs (might be helptext)
+input + p,
+span.k-widget + p {
+  margin: .5em 0 0 0;
+}
+.smallHelp {
+  color: @labelHelpColor;
+  .12px;
+}
+
+
+// //////////////////////////////////////////////////////////////////////////////////////////
+// LABELS
+
+.label,
+.badge {
+  text-shadow: 0 -1px 0 rgba(0,0,0,.15);
+}
+
+// //////////////////////////////////////////////////////////////////////////////////////////
+// BARS
+
+.progress {
+  .box-shadow(~"inset 0 1px 2px rgba(0,0,0,.1), 0 1px 0 rgba(255,255,255,.75)");
+}
+
+// WORKING
+.progress.started .bar {
+  // is default
+  //#gradient > .vertical(lighten(@xbrightBlue, 10%), @xbrightBlue);
+}
+// Success (green)
+.progress.success .bar {
+  #gradient > .vertical(lighten(@xbrightGreen, 10%), @xbrightGreen);
+}
+// Aborted (red)
+.progress.failure .bar {
+  #gradient > .vertical(lighten(@red, 10%), @red);
+}
+// Warning (orange)
+.progress.warning .bar {
+  #gradient > .vertical(lighten(@orange, 10%), @orange);
+}
+
+// //////////////////////////////////////////////////////////////////////////////////////////
+// BARS
+
+// darken in wells and grids
+.well .progress,
+.k-grid td .progress {
+  #gradient > .vertical(darken(@grayLighter, 9%), darken(@grayLighter, 7%));
+}
+
+.me-cannotplay {background-image:url("../img/cannot-play.png");}
+.me-cannotplay a {display : none;}

@@ -1,0 +1,523 @@
+// //////////////////////////////////////////////////////////////////////////////////////////
+// BASIC FORM ELEMENTS
+
+.k-button:hover {
+	text-decoration: none;
+	color: @xdarkBlue;
+	border-color: lighten(@grayLight,10%); 
+	.k-icon {
+		.opacity(100);
+	}
+}
+.k-button:active {
+	.box-shadow(inset 0 1px 1px rgba(0,0,0,.25));
+}
+.k-dropdown-wrap:hover,
+.k-dropdown-wrap.k-state-active,
+.k-dropdown-wrap.k-state-hover,
+.k-dropdown-wrap.k-state-focused,
+.k-dropdown-wrap.k-state-border-down,
+.k-list-container 
+{
+    //border-color: lighten(@grayLight,10%) !important;
+    border-color: @btnBorderHover !important; // important needed!
+}
+.k-slider-track {
+    background:darken(@grayLighter, 5%);
+    height:6px;
+    .border-radius(3px);
+    .box-shadow(inset 0 1px 2px rgba(0,0,0,.15));    
+}
+.k-filename {
+    padding-bottom: 0;
+}
+.k-upload-button input {
+    width: auto;
+}
+.k-item.k-state-hover,
+.k-link:hover,
+td.k-state-hover  {
+    background-image: none;
+    filter: none;
+}
+.k-autocomplete, .k-combobox, .k-datepicker, .k-timepicker, .k-datetimepicker, .k-numerictextbox, .k-dropdown, .k-selectbox, .k-textbox {
+	width: 210px;
+}
+.k-textbox {
+	background-image: none;
+}
+.k-edit-label, .k-edit-field, .editor-label, .editor-field {
+	padding-bottom: 5px;
+}
+.k-numerictextbox {
+	width: auto;
+}
+
+// nested inputs must not get the bootstrap overwrites…
+.k-textbox > input,
+.k-autocomplete .k-input,
+.k-dropdown-wrap .k-input,
+.k-picker-wrap .k-input,
+.k-numeric-wrap .k-input {
+	-webkit-box-sizing: content-box;
+	-moz-box-sizing: content-box;
+	box-sizing: content-box;	
+}
+
+// //////////////////////////////////////////////////////////////////////////////////////////
+// VALIDATION
+
+// needs also editing the kendo sprite!
+.k-tooltip-validation {
+	border-color: @orange;
+	background-color: @white;
+	color: @orange;
+	font-weight: bold;
+	.12px;
+}
+span.k-tooltip {
+	position: absolute;
+	z-index: 1;
+	right: 0;
+	top: 20px;
+	padding: 1px 5px 2px 6px;
+}
+
+// VALIDTION IN WINDOWS (using left aligned labels)
+.k-window .k-tooltip-validation {
+	margin-top: -0.75em !important;	
+}
+
+.k-callout-n {
+	left: 20px;
+}
+
+// //////////////////////////////////////////////////////////////////////////////////////////
+// GRID
+
+// -----
+// overwrite bootstrap definition
+//.tab-content {
+    // due to kendo ui components
+    // overflow: visible;
+//}
+//div.k-grid {
+    // kendo ui does not compute right height which destroys layout, so:
+    // height: auto !important;
+    //margin-bottom: 6em;
+//}
+// not needed if height is only set via css
+
+
+.k-grid {
+	border: none;
+	margin-bottom: 20px;
+}
+.k-grid-content {
+	// debug:
+    // max-height: 150px;
+
+    // equals 8 entries
+    max-height: 395px;
+
+
+    border-left: 1px solid @grayLine;
+    border-right: 1px solid @grayLine;
+    // background has no effect on "blitzer" when changing view
+    background: @grayLighter;
+    border-bottom: none;
+    border-top: none;
+	width: inherit;
+
+	// can be auto to hide scrollbar…
+	overflow-y: auto;
+
+
+}
+div.k-grid-header,
+div.k-grid-footer,
+.k-grid-pager {
+	border: 1px solid @grayLine;
+}
+div.k-grid-header {
+	.border-radius(@mediumCorner @mediumCorner 0 0);
+}
+.k-grid-header .k-header {
+	font-weight: bold;
+	background-image: none;
+	background-color: transparent;
+}
+
+.k-grid .k-toolbar {
+	background: none;
+	padding: 0 0 10px 0;
+	border: none;
+}
+.k-grid-toolbar .k-grid-add {
+	float: right;
+	.12pxSizeOnly;
+	font-weight: bold;
+	margin-right: 0;
+}
+.k-grid-content {
+	//overflow-y: auto;
+}
+.k-grid tr {
+}
+
+.k-grid td {
+	border-top: 1px solid @grayLine !important;
+	background: @grayLighter;
+	vertical-align: top;
+	min-height: 1.75em;
+	border: none;
+	line-height: inherit;
+	padding: 15px 10px .75em 10px;
+}
+
+
+.k-grid tr:first-child td {
+	border-top: none !important;	
+}
+.k-grid tr:hover td {
+	background: darken(@grayLighter, 5%);	
+}
+
+//.k-grid .k-grid-edit-row td {}
+// adjust buttons in grid
+.k-grid tbody td > .k-button.k-grid-delete,
+.k-grid tbody td > .k-button.k-grid-Copy,
+.k-grid tbody td > .k-button.k-grid-Delete, 
+.k-grid tbody td > .k-button.k-grid-edit,
+.k-grid tbody td > .k-button.k-grid-update,
+.k-grid tbody td > .k-button.k-grid-cancel
+ {
+	.12pxSizeOnly;
+	font-weight: bold;
+	padding: 1px 5px;
+	margin: -.25em .3em .3em .3em;
+	width: 75px;
+	text-align: left;
+}
+
+.showDetailsLink {
+	position: relative;
+	display: inline-block;
+	cursor: pointer;
+	z-index: 1;
+	font-weight: bold;
+	max-width: 85%;
+	white-space: nowrap;
+}
+.showDetailsLink span {
+	display: block;
+	max-width: 100%;
+	float: left;
+	.text-overflow();
+}
+
+
+// SORTING IN GRIDS
+
+
+// PAGER
+
+.k-grid-pager {
+	.bottom-border-radius(@mediumCorner);
+}
+
+.k-pager-info {
+	.12pxSizeOnly;
+	color: @grayLight;
+}
+.k-pager-wrap > .k-link,
+.k-pager-numbers .k-link,
+.k-pager-numbers .k-state-selected {
+	.border-radius(@smallCorner);
+}
+
+
+.k-pager-numbers {
+	margin: 0 3px;
+	li {
+		margin: 0 1px;
+	}
+}
+
+.k-pager-numbers .k-link {
+	line-height: 22px;
+    padding: 0 7px;
+    border-width: 1px;
+    border-style: solid;
+    //margin: 0 2px;
+}
+.k-pager-numbers .k-link:hover {
+	border-width: 1px;
+}
+
+.k-pager-wrap .k-link:hover {
+	background: inherit;
+	.box-shadow(0px 1px 1px rgba(0,0,0,.1)); 
+}
+
+.k-pager-numbers .k-state-selected {
+	background:darken(@grayLighter, 5%);
+	.box-shadow(~"inset 0 1px 1px rgba(0,0,0,.15)");
+    border-color: @white;
+    color: @grayDark;   
+}
+
+.k-i-arrow-w {
+	background-position: 0 -47px;
+}
+.k-i-arrow-e {
+	background-position: 0 -15px;
+}
+
+// //////////////////////////////////////////////////////////////////////////////////////////
+// SPECIAL GRIDS
+
+// mediacoder 
+
+#customerPresetsGrid .k-grid-content table {
+	// make presetname bold
+	tr td:first-child{
+		font-weight: bold;
+	}
+}
+
+// //////////////////////////////////////////////////////////////////////////////////////////
+// GRRID EDIT POPUP
+
+.k-window-titlebar {
+	padding: 9px 0 13px 0;
+	background-color: @grayLighter;
+  	border-bottom:1px solid @grayLine;
+}
+.k-window-title {
+	.18px;
+	color: @xdarkBlue;
+	font-weight: bold;
+	left: 15px;
+	right: 15px;
+}
+
+.k-window-actions.k-header {
+	background-color: transparent;
+	background-image: none;
+	border: none;
+	padding-top: 9px;
+}
+
+.k-i-close, .k-delete, .k-group-delete {
+	background-position: -31px -16px;
+}
+div.k-window-content {
+	padding: 15px;
+	.k-edit-form-container{
+		text-align: right;
+	}
+	.k-edit-form-container .k-edit-field {
+		text-align: left;
+	}
+	legend {
+		font-weight: bold;
+		.14px;
+		//margin: 0 -15px 0 -15px;
+		//padding: 0 15px .5em 15px;
+	}
+}
+
+//
+//
+
+// legend is too specific... replace it with any other html markup....
+
+.k-edit-form-container {
+	width: @gridColumnWidth * 8 + 20;
+	margin: -15px;
+	background-color: @grayLighter;
+	padding: 15px;
+
+}
+.k-edit-form-container > a {
+	// make update/cancel buttons bold
+	font-weight: bold;
+}
+
+
+.editorContainer {
+	text-align: left;
+	margin-bottom: 1.5em;
+	margin: -15px -15px 15px -15px;
+	padding: 15px;
+	background: @white;
+	border-bottom: 1px solid @grayLine;
+}
+
+.editorContainer .k-textbox.fullWidth {
+	//width: 337px;
+	width: 100%;
+}
+.editorContainer .k-edit-field {
+	width: 66%;
+}
+
+
+
+// fieldset.fullWidth / .halfWidth indicates that it is a 2col form
+
+.editorContainer fieldset.fullWidth  {
+	.k-edit-label {
+		width: 14%;
+		padding-right: 2%;
+	}
+}
+.editorContainer fieldset.fullWidth .k-edit-field {
+	width: 83%;
+}
+
+.editorContainer fieldset.halfWidth  {
+	width: 48%;
+	.k-edit-field {
+		width: 65%;
+		.k-autocomplete, .k-combobox, .k-datepicker, .k-timepicker, .k-datetimepicker, .k-numerictextbox, .k-dropdown, .k-selectbox, .k-textbox {
+			width: 100%;
+		}
+	}
+	.k-edit-field.short { width : 55%;}
+	.k-edit-label.large { width : 40%;}
+	.prepend {
+		//display: inline-block;
+		//width: 65%;
+		.k-autocomplete, .k-combobox, .k-datepicker, .k-timepicker, .k-datetimepicker, .k-numerictextbox, .k-dropdown, .k-selectbox, .k-textbox {
+			width: 65%;
+		}
+	}
+}
+
+/*
+div.k-window-content fieldset.halfWidth.pull-left legend {
+	margin: 0 0 0 -15px;
+	padding: 0 0 .5em 15px;
+}
+div.k-window-content fieldset.halfWidth.pull-right legend {
+	margin: 0 -15px 0 0;
+	padding: 0 15px .5em 0;
+}*/
+
+//.editorContainer fieldset.fullWidth .k-textbox.fullWidth {
+	//width: 416px;
+	//width: 100%;
+//}
+.editorContainer .k-edit-label label {
+	white-space: nowrap;	
+}
+.editorContainer legend + .k-edit-label,
+.editorContainer legend + div .k-edit-label
+ {
+	margin-top: .5em;
+}
+
+div.clearer {
+	clear: both;
+}
+
+// hide special fields in editmode
+.editMode .hideInEditmode {
+	display: none;
+}
+.addMode .hideInAddmode {
+	display: none;
+}
+
+// SPECIAL GRRID EDIT POPUPS
+
+// token field in: mymediacoder app edit grid – which is disabled
+#editor_app_token {
+	cursor: text;
+}
+
+// //////////////////////////////////////////////////////////////////////////////////////////
+// INPUTS
+
+// get rid of disabled rendering
+// is it a bug?
+.k-numerictextbox .k-input[readonly="readonly"] {
+	background-color: @white;
+	cursor: default;
+}
+
+
+// UPLOAD
+.k-upload-files, .k-upload-files .k-button  {
+	background: none;
+	border: none;
+	padding: 0;
+	
+}
+.k-upload-files .k-button  {
+	top: 0;
+	font-weight: bold;
+	padding: 0 0 0 8px;
+	color: @xdarkBlue;
+}
+.k-upload-files .k-button:active {
+	.box-shadow(none);
+}
+
+
+
+// ////////////////
+
+// reformat grids
+
+/*
+
+div.k-grid-header {
+	background-image: none;
+	.box-shadow(0 3px 6px rgba(0, 0, 0, .1));
+	border-width: 0 0 1px 0;
+	position: relative;
+	z-index: 1;
+}
+
+.k-grid-pager {
+	.box-shadow(0 -3px 6px rgba(0, 0, 0, .1));
+	position: relative;
+	z-index: 1;
+	background-image: none;
+	background-color: @formActionsBackgroundWell;
+	border-width: 1px 0 0 0;
+	padding: 8px 0 8px 8px;
+}
+
+.k-grid-header .k-header {
+	background-image: none;
+	background-color: transparent;
+	border-width: 0;
+}
+.k-grid-header-wrap, .k-grid-footer-wrap {
+	border-width: 0;
+}
+.k-grid-content {
+	border: none;
+}
+*/
+
+.k-pager-numbers .k-state-selected {
+	border-color: @btnBorder;
+} 
+
+.k-grid-header .k-header {
+	padding: 10px 10px 5px 10px;
+}
+
+
+
+
+
+
+
+
+

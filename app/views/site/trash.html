@@ -1,0 +1,74 @@
+    <nav id="mainnav">
+        <div class="container">
+            <h1 class="xvidMediaBox_25px h1logo">Xvid MediaBox</h1>
+
+            <ul class="nav nav-pills" id="trash-topmenu" style="display: none;">
+                <li id="trash-restore-all">
+                    <a href="#"><i class="icon-undo"></i> Restore All</a>
+                </li>
+                <li id="trash-remove-all">
+                    <a href="#"><i class="icon-trash"></i> Delete All</a>
+                </li>
+            </ul>
+
+        </div>
+    </nav>
+
+
+
+
+
+    <section class="container">
+        {% include "/views/site/advanced.html" %}
+
+        <div id="splitter" class="row">
+            <div class="span3" id="left-vertical">
+                {% include "/views/site/left.html" %}
+            </div>
+
+            <div class="span9" id="vertical">
+                <div id="fs-container">
+                    <div id="fs" class="fs-container-div">
+                        {% include "/views/site/files.html" %}
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+
+        {% include "/views/site/image-preview.html" %}
+        {% include "/views/site/video-preview.html" %}
+    </section>
+
+
+
+
+
+
+    <input type="hidden" id="start_dir" value="{{ App.session.startdir }}" />
+    <input type="hidden" id="storage" value="{{ App.params.config.storage }}" />
+    <input type="hidden" id="volume-level" value="{{ App.session.volume_level }}" />
+    <input type="hidden" id="buffer_count" value="" />
+    {#
+    {% if App.session.playlist is defined %}
+    <input type="hidden" id="current-playlist" value="{{ App.session.playlist }}" />
+    {% endif %}
+    #}
+
+    <input type="hidden" id="mediabox-check-type-other" value="{{ App.session.types.other }}" />
+    <input type="hidden" id="mediabox-check-type-image" value="{{ App.session.types.image }}" />
+    <input type="hidden" id="mediabox-check-type-video" value="{{ App.session.types.video }}" />
+    <input type="hidden" id="mediabox-check-type-music" value="{{ App.session.types.music }}" />
+
+    <input type="hidden" id="mediabox-view" value="{{ App.session.view }}" />
+    <input type="hidden" id="mediabox-sort" value="{{ App.session.sort }}" />
+
+    <input type="hidden" id="x1" />
+    <input type="hidden" id="x2" />
+    <input type="hidden" id="y1" />
+    <input type="hidden" id="y2" />
+
+
+
+    <script data-main="/js/common" data-slug="mediabox-trash" src="/js/require.js"></script>

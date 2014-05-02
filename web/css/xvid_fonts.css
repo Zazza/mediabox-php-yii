@@ -1,0 +1,14 @@
+@font-face {
+  font-family: 'BetaSuisse';
+  src: url('../fonts/BetaSuiBoo.eot');
+  src: url('../fonts/BetaSuiBoo.eot?#iefix') format('embedded-opentype'), url('../fonts/BetaSuiBoo.woff') format('woff'), url('../fonts/BetaSuiBoo.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'BetaSuisse';
+  src: url('../fonts/BetaSuiBol.eot');
+  src: url('../fonts/BetaSuiBol.eot?#iefix') format('embedded-opentype'), url('../fonts/BetaSuiBol.woff') format('woff'), url('../fonts/BetaSuiBol.ttf') format('truetype');
+  font-weight: bold;
+  font-style: normal;
+}

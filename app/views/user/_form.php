@@ -20,12 +20,6 @@
 	<?php echo $form->errorSummary($model); ?>
 
 	<div class="row">
-		<?php echo $form->labelEx($model,'group_id'); ?>
-		<?php echo $form->textField($model,'group_id',array('size'=>10,'maxlength'=>10)); ?>
-		<?php echo $form->error($model,'group_id'); ?>
-	</div>
-
-	<div class="row">
 		<?php echo $form->labelEx($model,'username'); ?>
 		<?php echo $form->textField($model,'username',array('size'=>60,'maxlength'=>64)); ?>
 		<?php echo $form->error($model,'username'); ?>
@@ -39,7 +33,7 @@
 
 	<div class="row">
 		<?php echo $form->labelEx($model,'role'); ?>
-		<?php echo $form->textField($model,'role',array('size'=>16,'maxlength'=>16)); ?>
+		<?php echo $form->dropDownList($model, 'role', array('User'=>'User','Admin'=>'Admin')); ?>
 		<?php echo $form->error($model,'role'); ?>
 	</div>
 

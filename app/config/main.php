@@ -58,7 +58,7 @@ return array(
 		),
         'viewRenderer' => array(
             'class' => 'ext.ETwigViewRenderer',
-            'fileExtension' => '.twig',
+            'fileExtension' => '.html',
             'options' => array(
                 'autoescape' => true,
             )
@@ -69,28 +69,29 @@ return array(
         'config' => array(
             'session_limit' => 3600,
             'session_long_limit' => 2592000,
-            'storage' => 'http://tushkan.com/fm'
+            //'storage' => 'http://tushkan.com/fm'
+            'storage' => 'http://storage'
         ),
 
         'mediaTypes' => array(
-            'image' => '/assets/img/mediabox/ftypes/image.png',
-            'doc' => '/assets/img/mediabox/ftypes/msword.png',
-            'pdf' => '/assets/img/mediabox/ftypes/pdf.png',
-            'txt' => '/assets/img/mediabox/ftypes/text.png',
-            'exe' => '/assets/img/mediabox/ftypes/executable.png',
-            'xls' => '/assets/img/mediabox/ftypes/excel.png',
-            'audio' => '/assets/img/mediabox/ftypes/audio.png',
-            'html' => '/assets/img/mediabox/ftypes/html.png',
-            'zip' => '/assets/img/mediabox/ftypes/compress.png',
-            'video' => '/assets/img/mediabox/ftypes/flash.png',
-            'any' => '/assets/img/mediabox/ftypes/unknown.png',
-            'folder' => '/assets/img/mediabox/ftypes/folder.png'
+            'image' => '/img/mediabox/ftypes/image.png',
+            'doc' => '/img/mediabox/ftypes/msword.png',
+            'pdf' => '/img/mediabox/ftypes/pdf.png',
+            'txt' => '/img/mediabox/ftypes/text.png',
+            'exe' => '/img/mediabox/ftypes/executable.png',
+            'xls' => '/img/mediabox/ftypes/excel.png',
+            'audio' => '/img/mediabox/ftypes/audio.png',
+            'html' => '/img/mediabox/ftypes/html.png',
+            'zip' => '/img/mediabox/ftypes/compress.png',
+            'video' => '/img/mediabox/ftypes/flash.png',
+            'any' => '/img/mediabox/ftypes/unknown.png',
+            'folder' => '/img/mediabox/ftypes/folder.png'
         ),
 
         'extension' => array(
             array('image', 'bmp', 'jpg', 'jpeg', 'gif', 'png'),
             array('audio', 'ogg', 'mp3'),
-            array('video', 'mp4', 'mov', 'wmv', 'flv', 'avi', 'mpg', '3gp'),
+            array('video', 'mp4', 'mov', 'wmv', 'flv', 'avi', 'mpg', '3gp', 'ogv', 'webm'),
             array('text', 'txt'),
             array('doc', 'doc', 'rtf', 'docx'),
             array('pdf', 'pdf', 'djvu'),

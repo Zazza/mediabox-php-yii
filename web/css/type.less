@@ -1,0 +1,358 @@
+// Typography.less
+// Headings, body text, lists, code, and more for a versatile and durable typography system
+// ----------------------------------------------------------------------------------------
+
+/* Typography //////////////////////////////////////// */
+
+// BODY TEXT
+// ---------
+
+p {
+//  margin: 0 0 @baseLineHeight / 2;
+  margin: 0 0 .5em;
+  small {
+    //font-size: @baseFontSize - 2;
+    .12px; 
+    color: @grayLight;
+  }
+}
+p.small {
+  .12px; 
+}
+.small {
+  .12px; 
+}
+.lead {
+  margin-bottom: @baseLineHeight;
+  font-size: 20px;
+  font-weight: 200;
+  line-height: @baseLineHeight * 1.5;
+}
+
+// HEADINGS
+// --------
+
+h1, h2, h3, h4, h5, h6 {
+  margin: 0 0 .25em;
+  font-family: @headingsFontFamily;
+  font-weight: @headingsFontWeight;
+  color: @headingsColor;
+  text-rendering: optimizelegibility; // Fix the character spacing for headings
+  small {
+    margin-top: .25em;
+    font-weight: normal;
+    color: @textColor;
+  }
+}
+h1 {
+  .36px;
+  small {
+    display: block;
+    .25px;
+  }
+}
+h2 {
+  .25px;
+  small {
+    display: block;
+    .18px;
+  }
+  .small {
+    .18px;
+  }
+}
+.span4 h2 {
+  line-height: @baseLineHeight * 1.4;
+}
+
+
+h3,
+.likeH3 {
+  .18px;
+  font-weight: bold;
+  color: @textColor;
+  small {
+    font-size: 14px;
+  }
+}
+h4, h5, h6 {
+  line-height: @baseLineHeight;
+}
+h4 {
+  font-size: 14px;
+  small {
+    font-size: 12px;
+  }
+}
+h5 {
+  font-size: 12px;
+}
+h6 {
+  font-size: 11px;
+  color: @grayLight;
+  text-transform: uppercase;
+}
+
+// Page header
+.page-header {
+  padding-bottom: @baseLineHeight - 1;
+  margin: @baseLineHeight 0;
+  border-bottom: 1px solid @grayLighter;
+}
+.page-header h1 {
+  line-height: 1;
+}
+
+// class based h
+.blueSmall {
+  .18px;
+  font-weight: normal;
+  color: @headingsColor; 
+}
+
+// services overrides
+
+#services h1, 
+#services h2, 
+#services h3, 
+#services h4, 
+#services h5, 
+#services h6 {
+  color: @xbrightBlue;
+}
+
+// labs overrides
+
+#labs h1,
+#labs h2,
+#labs h3,
+#labs h4,
+#labs h5,
+#labs h6 {
+  color: @xdarkPurple;
+}
+
+// LISTS
+// -----
+
+// Unordered and Ordered lists
+ul, ol {
+  padding: 0;
+  margin: 0 0 1.25em 25px;
+}
+ul ul,
+ul ol,
+ol ol,
+ol ul {
+  margin-bottom: 0;
+}
+ul {
+  list-style: disc;
+}
+ol {
+  list-style: decimal;
+}
+li {
+  line-height: @baseLineHeight;
+}
+ul.unstyled,
+ol.unstyled {
+  margin-left: 0;
+  list-style: none;
+}
+
+// Description Lists
+dl {
+  margin-bottom: @baseLineHeight;
+}
+dt,
+dd {
+  line-height: @baseLineHeight;
+}
+dt {
+  font-weight: bold;
+  line-height: @baseLineHeight - 1; // fix jank Helvetica Neue font bug
+}
+dd {
+  margin-left: @baseLineHeight / 2;
+}
+// Horizontal layout (like forms)
+.dl-horizontal {
+  dt {
+    float: left;
+    width: 145px;
+    clear: left;
+    text-align: right;
+    .text-overflow();
+  }
+  dd {
+    margin-left: 160px;
+  }
+}
+
+
+
+
+
+
+// MISC
+// ----
+
+// Horizontal rules
+hr {
+  margin: @baseLineHeight 0;
+  border: 0;
+  border-top: 1px solid @hrBorder;
+  border-bottom: 1px solid @white;
+}
+
+// Emphasis
+strong {
+  font-weight: bold;
+}
+em {
+  font-style: italic;
+}
+.muted {
+  color: @grayLight;
+}
+
+// Abbreviations and acronyms
+abbr[title] {
+  cursor: help;
+  border-bottom: 1px dotted @grayLight;
+}
+abbr.initialism {
+  font-size: 90%;
+  text-transform: uppercase;
+}
+
+// Blockquotes
+blockquote {
+  padding: 0 0 0 15px;
+  margin: 0 0 @baseLineHeight;
+  border-left: 5px solid @grayLighter;
+  p {
+    margin-bottom: 0;
+    #font > .shorthand(16px,300,@baseLineHeight * 1.25);
+  }
+  small {
+    display: block;
+    line-height: @baseLineHeight;
+    color: @grayLight;
+    &:before {
+      content: '\2014 \00A0';
+    }
+  }
+
+  // Float right with text-align: right
+  &.pull-right {
+    float: right;
+    padding-right: 15px;
+    padding-left: 0;
+    border-right: 5px solid @grayLighter;
+    border-left: 0;
+    p,
+    small {
+      text-align: right;
+    }
+  }
+}
+
+// Quotes
+q:before,
+q:after,
+blockquote:before,
+blockquote:after {
+  content: "";
+}
+
+// LISTS
+.arrowList {
+  list-style: none;
+  margin: 0 0 1.25em 0;
+  li {
+    padding-left: 16px;
+  }
+  .icn {
+    float: left;
+    margin: .45em 0 0 -14px;
+  }
+}
+.arrowList.big {
+  li {
+    padding-left: 20px;
+  }
+  .icn {
+    float: left;
+    margin: .45em 0 0 -18px;
+  }
+}
+
+// Addresses
+address {
+  display: block;
+  margin-bottom: @baseLineHeight;
+  font-style: normal;
+  line-height: @baseLineHeight;
+}
+
+// /////////////////////////////////////////////
+// Misc
+small {
+  font-size: 80%;
+}
+cite {
+  font-style: normal;
+}
+
+.brightTxt {
+  color: @gray;
+}
+
+.baseTxt {
+  font-size: @baseFontSize;
+  color: @textColor;
+}
+
+.lineAbove {
+  border-top: 1px solid @grayLine;
+  padding-top: @gridGutterWidth / 2;
+  margin-top: @gridGutterWidth / 2;
+}
+
+.inlineBlock {
+  display: inline;
+  *zoom: 1;
+  display: inline-block;
+}
+
+// like control-label & dl
+.outdent {
+  width: 155px;  
+}
+
+
+
+//////////////////////////////////////////////
+// LINKS
+
+.icnLink, .icnLink:hover {
+  color: @linkColor;
+  font-weight: bold;
+}
+
+.download {
+  .icn {
+    background-position: -160px -20px;
+    margin-right: .25em;
+  }
+}
+
+.emph {
+  .icn {
+    background-position: -139px -18px;
+    margin-right: -.15em;
+  }
+}
+
