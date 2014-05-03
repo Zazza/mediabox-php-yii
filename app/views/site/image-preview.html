@@ -103,8 +103,8 @@
 
     <div style="height: 28px; position: fixed; width: 100%; bottom: 0;">
         <ul class="nav nav-pills pull-left" style="margin-left: 20px;">
-            <li id="saveCrop"><i style="font-size: 12px;" class="icon-selectionadd"></i>&nbsp;<span>Save crop</span></li>
-            <li id="clearCrop"><i style="font-size: 12px;" class="icon-selectionremove"></i>&nbsp;<span>Clear crop</span></li>
+            <li id="saveCrop"><i style="font-size: 12px;" class="icon-crop"></i>&nbsp;<span>Save crop</span></li>
+            <li id="clearCrop"><i style="font-size: 12px;" class="icon-crop"></i>&nbsp;<span>Clear crop</span></li>
             <li id="addTag"><i style="font-size: 12px;" class="icon-tag"></i>&nbsp;<span>Add tag</span></li>
         </ul>
 
@@ -121,8 +121,11 @@
 </div>
 
 <script type="text/x-kendo-template" id="imageCommentsTemplate">
-    <div style="margin: 10px;">
-        <h5>#: time #</h5>
+    <div>
+        <div>
+            <span style="font-weight: bold;">#: user #</span>
+            <span style="font-size: 11px;">#: time #</span>
+        </div>
         <div class="imageCommentText">#: text #</div>
     </div>
 </script>

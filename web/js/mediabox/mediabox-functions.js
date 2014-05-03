@@ -3,7 +3,6 @@ define(function (require) {
 
     var $ = require('jquery');
     require('shifty');
-
     require('webtoolkit');
 
     var MediaboxFunctions = function() {
@@ -90,7 +89,7 @@ define(function (require) {
         }
 
         function shiftyAdd() {
-            $('.fm_file > div').shifty({
+            $('.dfile > div').shifty({
                 className: 'f-file-select',
                 select: function(el){
                     el.removeClass("fm_unsellabel").addClass("fm_sellabel");
@@ -159,7 +158,11 @@ define(function (require) {
         function addFileToFS(value) {
             var viewList = $("#view-selector").data("kendoDropDownList");
             if ($("#mediabox-view").val() == "list") {
-                var templateContent = $("#fileListTemplate").html();
+                if (value["type"] == "image") {
+                    var templateContent = $("#imageListTemplate").html();
+                } else {
+                    var templateContent = $("#fileListTemplate").html();
+                }
             } else if ($("#mediabox-view").val() == "grid") {
                 if (value["type"] == "image") {
                     var templateContent = $("#imageGridTemplate").html();
@@ -178,6 +181,7 @@ define(function (require) {
                     size:       formatSize(value["size"]),
                     ico:        value["ico"],
                     ext:        value["ext"],
+                    mimetype:   value["mimetype"],
                     type:       value["type"],
                     href:       getFileUri(value["id"]) //$("#storage").val()+"/get/?id=" + value["id"]
                 }
@@ -267,6 +271,10 @@ define(function (require) {
                         }
                     });
 
+                    // Swipebox bind
+                    $(".slideshow").unbind('click');
+                    $("#fullscreen").unbind('click');
+
                     $(".fm_ajax-loader").hide();
                     $(".swipebox").swipebox();
 
@@ -330,6 +338,10 @@ define(function (require) {
                             //return $(".dfile").clone();
                         }
                     });
+
+                    // Swipebox bind
+                    $(".slideshow").unbind('click');
+                    $("#fullscreen").unbind('click');
 
                     $(".fm_ajax-loader").hide();
                     $(".swipebox").swipebox();

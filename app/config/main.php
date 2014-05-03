@@ -90,7 +90,7 @@ return array(
 
         'extension' => array(
             array('image', 'bmp', 'jpg', 'jpeg', 'gif', 'png'),
-            array('audio', 'ogg', 'mp3'),
+            array('audio', 'ogg', 'mp3', ),
             array('video', 'mp4', 'mov', 'wmv', 'flv', 'avi', 'mpg', '3gp', 'ogv', 'webm'),
             array('text', 'txt'),
             array('doc', 'doc', 'rtf', 'docx'),
@@ -100,6 +100,10 @@ return array(
             array('xls', 'xls', 'xlsx'),
             array('html', 'htm', 'html', 'shtml'),
             array('zip', 'zip', 'rar', 'tar', 'gz', '7z')
+        ),
+
+        'mimetypes' => array(
+            'ogv' => 'video/ogg'
         )
 	),
 );

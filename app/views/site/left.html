@@ -48,10 +48,12 @@
             <div class="toPlaylist"><i class="adv-menu-img icon-music"></i> <a>All to playlist</a></div>
         </div>
 
+        {% if App.user.role == 'admin' %}
         <div class="sub">More</div>
         <div class="blocked left-section">
             <div data-id="all"><i class="adv-menu-img icon-trash"></i> <a href="/trash/">Trash</a></div>
         </div>
+        {% endif %}
 
         <div class="sub">Images tags</div>
         <div class="blocked left-section">

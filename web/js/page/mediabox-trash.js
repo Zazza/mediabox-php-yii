@@ -60,7 +60,7 @@ define(function (require) {
                     break
                 };
                 case 'restore': {
-                    restore("file=" + file_id)
+                    restore("file[]=" + file_id)
                     break
                 };
                 case 'remove': {
@@ -89,7 +89,7 @@ define(function (require) {
 
             switch(role) {
                 case 'restore': {
-                    restore("folder=" + dir_id)
+                    restore("folder[]=" + dir_id)
                     break
                 };
                 case 'remove': {
@@ -174,15 +174,15 @@ define(function (require) {
             var data;
 
             $(".ddir > div").each(function() {
-                if ($(this).hasClass("fm_sellabel")) {
-                    data += "&folder=" + $(this).parent().attr("data-id");
-                }
+                //if ($(this).hasClass("fm_sellabel")) {
+                    data += "&folder[]=" + $(this).parent().attr("data-id");
+                //}
             });
 
             $(".dfile > div").each(function() {
-                if ($(this).hasClass("fm_sellabel")) {
-                    data += "&file=" + $(this).parent().attr("data-id");
-                }
+                //if ($(this).hasClass("fm_sellabel")) {
+                    data += "&file[]=" + $(this).parent().attr("data-id");
+                //}
             });
 
             restore(data);
@@ -200,9 +200,9 @@ define(function (require) {
                 for(var i=0;i<arr.length;i++) {
                     var arr_parts = arr[i].split("=")
 
-                    if (arr_parts[0] == "file") {
+                    if (arr_parts[0] == "file[]") {
                         $(".dfile[data-id='"+arr_parts[1]+"']").fadeOut();
-                    } else if (arr_parts[0] == "folder") {
+                    } else if (arr_parts[0] == "folder[]") {
                         $(".ddir[data-id='"+arr_parts[1]+"']").fadeOut();
                     }
                 }

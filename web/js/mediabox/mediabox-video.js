@@ -13,6 +13,7 @@ define(function (require) {
         init: function( options ) {
             var track = this;
             var data_id = $(track).attr('data-id');
+            var mimetype = $(track).attr('data-mimetype');
             var uri = MediaboxFunctions.getFileUri($(track).attr('data-id'));
 
             $(this).addClass("current");
@@ -23,7 +24,7 @@ define(function (require) {
             $("#video-second-panel").show();
 
             $("#" + mediaElement).attr("src", uri)
-            $("#" + mediaElement).attr("type", 'video/' + $(track).attr('data-ext'));
+            $("#" + mediaElement).attr("type", mimetype);
 
             /**
              * SET meta information
@@ -35,32 +36,6 @@ define(function (require) {
             $("#video-meta .size").html("");
             $("#video-meta .size").html($(".current .file_icon_size").text());
             $("#video-meta .download").attr("href", uri);
-            /*
-            player = new MediaElement(mediaElement, {
-                plugins: ['flash'],
-                defaultVideoWidth: 480,
-                defaultVideoHeight: 270,
-                pluginWidth: -1,
-                pluginHeight: -1,
-                //enablePseudoStreaming: true,
-                success: function(player, domObject){
-
-                    player.volume = $("#volume").val()/100;
-
-                    //player.load();
-                    player.play();
-
-                    plugin_active = true;
-                },
-                error : function(player) {
-                    console.log('medialement problem is detected: %o', player);
-                    $(".me-cannotplay").remove();
-                    $("#preview-scroll-right").append('<div class="video-unsupported" style="width: 640; height: 480;">Format not supported</div>');
-
-                    plugin_active = false;
-                }
-            });
-            */
 
             player = new MediaElementPlayer("#" + mediaElement, {
                 plugins: ['flash', 'silverlight'],

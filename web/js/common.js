@@ -3,18 +3,16 @@ require.config({
     paths: {
         jquery: '/js/libs/jquery-1.10.2.min',
         bootstrap: '/js/libs/bootstrap2.0.4',
-        kendo: '/js/kendoui_min',
+        kendo: '/js/kenju',
         mediaelement: '/mediaelement/mediaelement-and-player',
 
         domready: '/js/require.domready',
 
         Jcrop: '/js/libs/jquery.Jcrop.min',
         json: '/js/libs/jquery.json-2.4.min',
-        mousewheel: '/js/libs/jquery.mousewheel',
         swipebox: '/js/libs/jquery.swipebox',
         timer: '/js/libs/jquery.timer',
         loadImage: '/js/libs/load-image',
-        stickem: '/js/libs/jquery.stickem',
         shifty: '/js/libs/shift.jquery',
         webtoolkit: '/js/libs/webtoolkit.url',
 

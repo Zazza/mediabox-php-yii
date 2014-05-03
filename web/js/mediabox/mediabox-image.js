@@ -176,10 +176,10 @@ define(function (require) {
                                     var monthNames = [ "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" ];
                                     var time = timestamp.getHours() + ":" + timestamp.getMinutes() + ", " + timestamp.getDate() + "-" + monthNames[timestamp.getMonth()] + "-" + timestamp.getFullYear();
 
-                                    comment(time, value.text);
+                                    comment(time, value.username, value.text);
                                     */
                                     // PHP Backend
-                                    comment(value.timestamp, value.text);
+                                    comment(value.timestamp, value.user, value.text);
                                 })
                             }
                         })
@@ -431,14 +431,15 @@ define(function (require) {
         $("#y2").val('');
     };
 
-    function comment(time, text) {
+    function comment(time, username, text) {
         var templateContent = $("#imageCommentsTemplate").html();
         var template = kendo.template(templateContent);
 
         var data = [
             {
                 time:   time,
-                text:   decodeURIComponent(text)
+                text:   decodeURIComponent(text),
+                user:   username
             }
         ];
 
@@ -448,13 +449,13 @@ define(function (require) {
 
     $("#image-comment-save").click(function(){
         var _id = $("#preview-div-img").attr("data-id");
-        $.ajax({ type: "GET", url: '/image/addComment/', dataType: "JSON", data: "id=" + _id + "&text=" + encodeURIComponent($("#image-comment-editor").val()) })
+        $.ajax({ type: "GET", url: '/image/addComment/', data: "id=" + _id + "&text=" + encodeURIComponent($("#image-comment-editor").val()) })
             .done(function(res) {
                 var timestamp = new Date();
                 var monthNames = [ "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" ];
                 var time = timestamp.getHours() + ":" + timestamp.getMinutes() + ", " + timestamp.getDate() + "-" + monthNames[timestamp.getMonth()] + "-" + timestamp.getFullYear();
 
-                comment(time, $("#image-comment-editor").val());
+                comment(time, "fff", $("#image-comment-editor").val());
 
                 $("#new-comment-window").data("kendoWindow").close();
             })

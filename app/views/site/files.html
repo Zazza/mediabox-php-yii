@@ -128,9 +128,21 @@
 </script>
 
 <script type="text/x-kendo-template" id="fileListTemplate">
-    <div title="#: name #" data-type="#: type #" data-id="#: id #" data-ext="#: ext #" class="dfile fm_file_li" style="cursor: pointer">
+    <div title="#: name #" data-type="#: type #" data-id="#: id #" data-mimetype="#: mimetype #" data-ext="#: ext #" class="dfile fm_file_li" style="cursor: pointer">
         <div class="fm_unsellabel" id="#: name #">
-            <div style="float: left; padding-right: 5px;"><a class="fm_pre"><img src="#: ico #" style="height: 15px;" alt="[FILE]" /></a></div>
+            <div style="float: left; padding-right: 5px;" class="fm_pre"><img src="#: ico #" style="height: 15px;" alt="[FILE]" /></div>
+            <div style="float: left;" class="fname"><a class="file-open-link">#: name #</a></div>
+
+            <div class="file_list_date">#: date #</div>
+            <div class="file_list_size">#: size #</div>
+        </div>
+    </div>
+</script>
+
+<script type="text/x-kendo-template" id="imageListTemplate">
+    <div title="#: name #" data-type="#: type #" data-id="#: id #" data-mimetype="#: mimetype #" data-ext="#: ext #" class="dfile fm_file_li image_dfile" style="cursor: pointer">
+        <div class="fm_unsellabel" id="#: name #">
+            <div style="float: left; padding-right: 5px;" class="fm_pre swipebox" data-url="#: href #"><img src="#: ico #" style="height: 15px;" alt="[FILE]" /></div>
             <div style="float: left;" class="fname"><a class="file-open-link">#: name #</a></div>
 
             <div class="file_list_date">#: date #</div>
@@ -152,9 +164,9 @@
 </script>
 
 <script type="text/x-kendo-template" id="fileGridTemplate">
-    <div title="#: name #" data-type="#: type #" data-id="#: id #" data-ext="#: ext #" class="dfile fm_file" style="text-align: center; cursor: pointer">
+    <div title="#: name #" data-type="#: type #" data-mimetype="#: mimetype #" data-id="#: id #" data-ext="#: ext #" class="dfile fm_file" style="text-align: center; cursor: pointer">
         <div class="fm_unsellabel" id="#: name #">
-            <div class="fm_pre swipebox" href="#: href #"><a class="fm_pre"><img src="#: ico #" style="height: 70px;" alt="[FILE]" /></a></div>
+            <div class="fm_pre" href="#: href #"><a class="fm_pre"><img src="#: ico #" style="height: 70px;" alt="[FILE]" /></a></div>
             <div class="fname"><a class="file-open-link">#: shortname #</a></div>
             <div class="fullname" style="display: none">#: name #</div>
 
@@ -164,9 +176,9 @@
 </script>
 
 <script type="text/x-kendo-template" id="imageGridTemplate">
-    <div title="#: name #" data-type="image" data-id="#: id #" data-ext="#: ext #" class="dfile fm_file" style="text-align: center; cursor: pointer">
+    <div title="#: name #" data-type="image" data-id="#: id #" data-mimetype="#: mimetype #" data-ext="#: ext #" class="dfile fm_file image_dfile" style="text-align: center; cursor: pointer">
         <div class="fm_unsellabel icons" id="#: name #">
-            <div class="fm_pre swipebox" href="#: href #"><img class="file-img-preview" src="/fm/getThumb/?name=#: id #" alt="[FILE]" /></div>
+            <div class="fm_pre swipebox" data-url="#: href #"><img class="file-img-preview" src="/fm/getThumb/?name=#: id #" alt="[FILE]" /></div>
             <div class="fname_icon"><a class="file-open-link">#: shortname #</a></div>
             <div class="fullname" style="display: none">#: name #</div>
 

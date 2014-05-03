@@ -16,6 +16,7 @@ define("swipebox", ["jquery"], function($){
             ui.getNext();
         });
 
+
 		var defaults = {
 			useCSS : true,
 			hideBarsDelay : 3000
@@ -24,6 +25,7 @@ define("swipebox", ["jquery"], function($){
 			plugin = this,
 			$elem = $(elem),
 			elem = elem,
+            index,
 			selector = elem.selector,
 			$selector = $(selector),
 			isTouch = document.createTouch !== undefined || ('ontouchstart' in window) || ('onmsgesturechange' in window) || navigator.msMaxTouchPoints,
@@ -41,17 +43,8 @@ define("swipebox", ["jquery"], function($){
 		plugin.settings = {}
 
 		plugin.init = function(){
-
 			plugin.settings = $.extend({}, defaults, options);
 
-            /*
-			$selector.click(function(e){
-				e.preventDefault();
-				e.stopPropagation();
-				index = $elem.index($(this));
-				ui.init(index);
-			});
-			*/
             $(".slideshow").click(function(e){
                 e.preventDefault();
                 e.stopPropagation();
@@ -113,7 +106,7 @@ define("swipebox", ["jquery"], function($){
 						'background-image' : bg
 					});
 				}
-				
+
 				$elem.each(function(){
 					$('#swipebox-slider').append('<div class="slide"></div>');
 				});
@@ -374,7 +367,7 @@ define("swipebox", ["jquery"], function($){
 					return false;
 				}
 
-				$this.loadImg($elem.eq(index).attr('href'), function(){
+                $this.loadImg($elem.eq(index).attr('data-url'), function(){
 					$('#swipebox-slider .slide').eq(index).html(this);
 				});
 			},
@@ -430,7 +423,8 @@ define("swipebox", ["jquery"], function($){
 			},
 
             fullscreen : function (){
-                index = $(".current").index(".dfile");
+                index = $(".current").index(".image_dfile");
+
                 ui.init(index);
             },
 

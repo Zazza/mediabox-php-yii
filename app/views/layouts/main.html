@@ -28,9 +28,11 @@
                         <a href="/">Mediabox</a>
                     </li>
                 {% if App.user.id %}
+                    {% if App.user.role == 'admin' %}
                     <li>
                         <a href="/user/">Users</a>
                     </li>
+                    {% endif %}
                     <li>
                         <a href="/site/logout/">Logout</a>
                     </li>

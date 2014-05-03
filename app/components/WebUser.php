@@ -4,7 +4,6 @@ class WebUser extends CWebUser {
 
     function getRole() {
         if($user = $this->getModel()){
-            // в таблице User есть поле role
             return $user->role;
         }
     }

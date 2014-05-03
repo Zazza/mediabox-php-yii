@@ -4,17 +4,6 @@ class FmController extends Controller
 {
     private $_sort;
 
-    /**
-     * @return array action filters
-     */
-    public function filters()
-    {
-        return array(
-            'accessControl', // perform access control for CRUD operations
-            'postOnly + delete', // we only allow deletion via POST request
-        );
-    }
-
     public function accessRules()
     {
         return array(
@@ -43,7 +32,15 @@ class FmController extends Controller
     public function actionFs()
     {
         if (!isset($_GET["id"])) {
-            echo '[{"text": "Upload", "id": "0", "expanded": true, "hasChildren": true, "spriteCssClass": "rootfolder"}]';
+            $array = array(0 => array(
+                "text"              => "Upload",
+                "id"                => "0",
+                "expanded"          => true,
+                "hasChildren"       => true,
+                "spriteCssClass"    => "rootfolder"
+            ));
+
+            echo json_encode($array);
         } else {
             $array = array();
 
@@ -53,10 +50,15 @@ class FmController extends Controller
             );
 
             foreach($nodes as $node) {
-                $array[] = '{"text": "' . $node->name . '", "id": "' . $node->id . '", "hasChildren": ' . $this->hasChildren($node->id) . ', "spriteCssClass": "folder"}';
+                $array[] = array(
+                    "text"              => $node->name,
+                    "id"                => $node->id,
+                    "hasChildren"       => $this->hasChildren($node->id),
+                    "spriteCssClass"    => "folder"
+                );
             }
 
-            echo "[" . implode(",", $array) . "]";
+            echo json_encode($array);
         }
     }
 
@@ -142,6 +144,13 @@ class FmController extends Controller
 
             $extension = strtolower(mb_substr($node["name"], mb_strrpos($node["name"], ".") + 1));
 
+            if (isset(Yii::app()->params["mimetypes"][$extension])) {
+                $mimetype = Yii::app()->params["mimetypes"][$extension];
+            } else {
+                $mimetype = $node["type"] . "/" . $extension;
+            };
+
+
             $file = new File();
 
             $file->id = $node["id"];
@@ -149,6 +158,7 @@ class FmController extends Controller
             $file->shortname = urlencode($shortname);
             $file->obj = "file";
             $file->type = $node["type"];
+            $file->mimetype = $mimetype;
             $file->size = $node["size"];
             $file->date = $node["timestamp"];
             $file->ico = $ico;
@@ -202,10 +212,46 @@ class FmController extends Controller
                 $shortname = $filename;
             }
 
-            if ($file->type == "image") {
-                echo '{"id": "' . $file->id . '", "name": "' . $filename . '", "shortname": "' . $shortname . '", "obj": "file", "type": "' . $file->type . '", "size": "' . $file->size . '", "date": "' . $file->timestamp . '", "ico": "' . $ico . '", "src": "fm/getThumb/?name=' . $file->id . '"}';
+            $extension = strtolower(mb_substr($filename, mb_strrpos($filename, ".") + 1));
+
+            if (isset(Yii::app()->params["mimetypes"][$extension])) {
+                $mimetype = Yii::app()->params["mimetypes"][$extension];
             } else {
-                echo '{"id": "' . $file->id . '", "name": "' . $filename . '", "shortname": "' . $shortname . '", "obj": "file", "type": "' . $file->type . '", "size": "' . $file->size . '", "date": "' . $file->timestamp . '", "ico": "' . $ico . '", "src": "' . $ico . '"}';
+                $mimetype = $file->type . "/" . $extension;
+            };
+
+            if ($file->type == "image") {
+                $model = new File();
+
+                $model->id = $file->id;
+                $model->name = urlencode($filename);
+                $model->shortname = urlencode($shortname);
+                $model->obj = "file";
+                $model->type = $file->type;
+                $model->mimetype = $mimetype;
+                $model->size = $file->size;
+                $model->date = $file->timestamp;
+                $model->ico = $ico;
+                $model->src = "fm/getThumb/?name=" . $file->id;
+                $model->ext = $extension;
+
+                echo json_encode($model);
+            } else {
+                $model = new File();
+
+                $model->id = $file->id;
+                $model->name = urlencode($filename);
+                $model->shortname = urlencode($shortname);
+                $model->obj = "file";
+                $model->type = $file->type;
+                $model->mimetype = $mimetype;
+                $model->size = $file->size;
+                $model->date = $file->timestamp;
+                $model->ico = $ico;
+                $model->src = "fm/getThumb/?name=" . $file->id;
+                $model->ext = $ico;
+
+                echo json_encode($model);
             }
         } else {
             print_r($file->getErrors());
@@ -265,13 +311,19 @@ class FmController extends Controller
             $shortname = $file->name;
         }
 
-        if (Yii::app()->params["mediaTypes"][$file->type]) {
+        if (isset(Yii::app()->params["mediaTypes"][$file->type])) {
             $ico = Yii::app()->params["mediaTypes"][$file->type];
         } else {
             $ico = Yii::app()->params["mediaTypes"]["any"];
         };
 
         $extension = strtolower(mb_substr($file->name, mb_strrpos($file->name, ".")+1));
+
+        if (isset(Yii::app()->params["mimetypes"][$extension])) {
+            $mimetype = Yii::app()->params["mimetypes"][$extension];
+        } else {
+            $mimetype = $file->type . "/" . $extension;
+        };
 
         if ( ($file->type != "image") && ($file->type != "audio") && ($file->type != "video") ) {
             $type = "all";
@@ -285,6 +337,7 @@ class FmController extends Controller
         $model->shortname = urlencode($shortname);
         $model->obj = "file";
         $model->type = $type;
+        $model->mimetype = $mimetype;
         $model->size = $file->size;
         $model->date = $file->timestamp;
         $model->ico = $ico;
@@ -316,21 +369,20 @@ class FmController extends Controller
 
     public function actionRestore() {
         if (isset($_POST["file"])) {
-            $id = $_POST["file"];
-            $model = Files::model()->findByPk($id);
+            foreach($_POST["file"] as $part) {
+                $model = Files::model()->findByPk($part);
+                $model->trash = 0;
+
+                $model->save();
+            }
         }
         if (isset($_POST["folder"])) {
-            $id = $_POST["folder"];
-            $model = Fs::model()->findByPk($id);
-        }
+            foreach($_POST["folder"] as $part) {
+                $model = Fs::model()->findByPk($part);
+                $model->trash = 0;
 
-
-        $model->trash = 0;
-
-        if ($model->validate()) {
-            $model->save();
-        } else {
-            print_r($model->getErrors());
+                $model->save();
+            }
         }
     }
 
@@ -377,7 +429,16 @@ class FmController extends Controller
             $type["all"]++;
         }
 
-        echo '{"all": "' . $type["all"] . '", "image": "' . $type["image"] . '", "video": "' . $type["video"] . '", "audio": "' . $type["audio"] . '", "other": "' . $type["other"] . '", "path": "' . $type["path"] . '"}';
+        echo json_encode(
+            array(
+                "all" => $type["all"],
+                "image" => $type["image"],
+                "video" => $type["video"],
+                "audio" => $type["audio"],
+                "other" => $type["other"],
+                "path" => $type["path"]
+            )
+        );
     }
 
     public function actionCreate() {
@@ -511,7 +572,15 @@ class FmController extends Controller
     }
 
     public function actionRemove() {
-        Files::model()->deleteByPk($_GET["id"]);
+        $file = Files::model()->findByPk($_GET["id"]);
+
+        if ($file->type = "image") {
+            ImagesCrops::model()->deleteAll("file_id = :file_id", array(":file_id"=>$file->id));
+            ImagesTags::model()->deleteAll("file_id = :file_id", array(":file_id"=>$file->id));
+            ImagesComments::model()->deleteAll("file_id = :file_id", array(":file_id"=>$file->id));
+        }
+
+        $file->delete();
     }
 
     public function actionRmFolder() {
