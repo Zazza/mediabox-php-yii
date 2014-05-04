@@ -10,5 +10,4 @@ var
 .idea
 *.ipr
 *.iml
-
 /vendor/

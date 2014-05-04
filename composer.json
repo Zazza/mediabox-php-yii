@@ -1,0 +1,7 @@
+{
+    "name": "zazza/mediabox",
+    "require": {
+        "yiisoft/yii": "1.1.14"
+    },
+    "license": "GPL-3.0"
+}
