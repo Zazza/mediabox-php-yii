@@ -1,7 +1,11 @@
 {
     "name": "zazza/mediabox",
     "require": {
-        "yiisoft/yii": "1.1.14"
+        "yiisoft/yii": "1.1.14",
+        "twig/twig": "~1.15.1"
     },
-    "license": "GPL-3.0"
+    "license": "GPL-3.0",
+    "config": {
+        "optimize-autoloader": true
+    }
 }
