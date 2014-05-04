@@ -8,3 +8,7 @@ app/runtime/*
 framework
 var
 .idea
+*.ipr
+*.iml
+
+/vendor/
