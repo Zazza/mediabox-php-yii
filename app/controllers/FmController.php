@@ -348,7 +348,11 @@ class FmController extends Controller
     }
 
     public function actionCopy() {
-        $result = Buffer::getBuffer();
+        if (Buffer::getBuffer() != "") {
+            $result = Buffer::getBuffer();
+        } else {
+            $result = array();
+        }
 
         if (isset($_POST["file"])) {
             foreach($_POST["file"] as $part) {

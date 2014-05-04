@@ -105,4 +105,9 @@ class Fs extends CActiveRecord
 	{
 		return parent::model($className);
 	}
+
+    protected function beforeSave(){
+
+        return parent::beforeSave();
+    }
 }
