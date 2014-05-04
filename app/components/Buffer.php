@@ -33,6 +33,7 @@ class Buffer {
         }
 
         Buffer::setBuffer(array());
+
         return true;
     }
 }

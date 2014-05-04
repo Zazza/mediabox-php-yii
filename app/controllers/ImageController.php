@@ -172,7 +172,7 @@ class ImageController extends Controller
         return $ids;
     }
 
-    public function _setTagsAndCrops($selected_tags, $selected_crops) {
+    private function _setTagsAndCrops($selected_tags, $selected_crops) {
         $crops_and_tags = array();
 
         $selTags = $this->_setTags($selected_tags);
@@ -320,6 +320,13 @@ class ImageController extends Controller
 
                     $extension = mb_substr($file->name, mb_strrpos($file->name, ".")+1);
 
+                    if (isset(Yii::app()->params["mimetypes"][$extension])) {
+                        $mimetype = Yii::app()->params["mimetypes"][$extension];
+                    } else {
+                        $mimetype = $file->type . "/" . $extension;
+                    };
+
+
                     $model = new File();
 
                     $model->id = $file->id;
@@ -327,6 +334,7 @@ class ImageController extends Controller
                     $model->shortname = $shortname;
                     $model->obj = "file";
                     $model->type = $file->type;
+                    $model->mimetype = $mimetype;
                     $model->size = $file->size;
                     $model->ico = $ico;
                     $model->data = $ico;

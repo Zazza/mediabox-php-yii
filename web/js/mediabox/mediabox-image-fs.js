@@ -42,6 +42,7 @@ define(function (require) {
                                 name:       value["name"],
                                 shortname:  value["shortname"],
                                 date:       time,
+                                mimetype:   value["mimetype"],
                                 size:       size,
                                 ico:        value["ico"],
                                 ext:        value["ext"],
@@ -52,11 +53,13 @@ define(function (require) {
                         var result = kendo.render(template, data);
 
                         $("#fm_files").append(result);
-
                     })
 
                     $(".fm_ajax-loader").hide();
                     $(".swipebox").swipebox();
+                })
+                .fail(function(){
+                    $("#fm_files").html("Tags or marks isn't chosen");
                 })
         }
 

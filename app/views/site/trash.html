@@ -2,7 +2,7 @@
         <div class="container">
             <h1 class="xvidMediaBox_25px h1logo">Xvid MediaBox</h1>
 
-            <ul class="nav nav-pills" id="trash-topmenu" style="display: none;">
+            <ul class="nav nav-pills" id="trash-topmenu">
                 <li id="trash-restore-all">
                     <a href="#"><i class="icon-undo"></i> Restore All</a>
                 </li>
@@ -22,11 +22,7 @@
         {% include "/views/site/advanced.html" %}
 
         <div id="splitter" class="row">
-            <div class="span3" id="left-vertical">
-                {% include "/views/site/left.html" %}
-            </div>
-
-            <div class="span9" id="vertical">
+            <div class="span12" id="vertical">
                 <div id="fs-container">
                     <div id="fs" class="fs-container-div">
                         {% include "/views/site/files.html" %}
@@ -69,6 +65,13 @@
     <input type="hidden" id="y1" />
     <input type="hidden" id="y2" />
 
+    {# tempory #}
+    <div style="display: none;">
+        <input type="checkbox" class="check-type" name="check-type-other" value="other" checked="true" />
+        <input type="checkbox" class="check-type" name="check-type-image" value="image" checked="true" />
+        <input type="checkbox" class="check-type" name="check-type-video" value="video" checked="true" />
+        <input type="checkbox" class="check-type" name="check-type-music" value="music" checked="true" />
+    </div>
 
 
     <script data-main="/js/common" data-slug="mediabox-trash" src="/js/require.js"></script>

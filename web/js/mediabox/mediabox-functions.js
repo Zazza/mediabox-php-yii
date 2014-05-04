@@ -216,9 +216,6 @@ define(function (require) {
         this.chdir = function(start_id) {
             $("#fm_folders").html("");
             $("#fm_files").html("");
-            $("#fm_images").html("");
-            $("#fm_video").html("");
-            $("#fm_audio").html("");
 
             $(".fm_ajax-loader").show();
 
@@ -285,35 +282,12 @@ define(function (require) {
         this.trash = function(start_id) {
             $("#fm_folders").html("");
             $("#fm_files").html("");
-            $("#fm_images").html("");
-            $("#fm_video").html("");
-            $("#fm_audio").html("");
 
             $(".fm_ajax-loader").show();
 
-            $("#start_dir").val(start_id);
+            //$("#start_dir").val(start_id);
 
-            $.ajax({ type: "GET", url: '/fm/getTypesNum/', dataType: "JSON", data: "id=" + start_id })
-                .done(function(res) {
-                    $.each(res, function(key, value) {
-                        if(key == "all") {
-                            $("#typeAll").html(value);
-                        }
-                        if(key == "image") {
-                            $("#typeImage").html(value);
-                        }
-                        if(key == "video") {
-                            $("#typeVideo").html(value);
-                        }
-                        if(key == "audio") {
-                            $("#typeAudio").html(value);
-                        }
 
-                        if(key == "path") {
-                            $("#current_path").html("<b>trash</b>");
-                        }
-                    });
-                })
 
             var fs;
             $.ajax({ type: "GET", url: '/fm/getTrash/', dataType: "JSON", data: "id=" + start_id, cache: false })
@@ -332,19 +306,8 @@ define(function (require) {
                     $(".sizeFiles").text(formatSize(size));
 
                     $(".fm_file_li:odd").addClass("f-list-alt");
-                    $(".dfile").kendoDraggable({
-                        hint: function(e) {
-                            return e.clone();
-                            //return $(".dfile").clone();
-                        }
-                    });
-
-                    // Swipebox bind
-                    $(".slideshow").unbind('click');
-                    $("#fullscreen").unbind('click');
 
                     $(".fm_ajax-loader").hide();
-                    $(".swipebox").swipebox();
 
                     shiftyAdd();
                 })

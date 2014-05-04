@@ -501,9 +501,10 @@ img.jcrop-preview {
   right: 0;
 }
 .advanced-height {
+  height: 320px;
   overflow-x: hidden;
   overflow-y: auto;
-  height: 170px;
+  padding: 10px;
 }
 #fs-menu {
   border: 0;

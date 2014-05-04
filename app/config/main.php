@@ -103,7 +103,8 @@ return array(
         ),
 
         'mimetypes' => array(
-            'ogv' => 'video/ogg'
+            'ogv' => 'video/ogg',
+            '3gp' => 'video/3gpp'
         )
 	),
 );

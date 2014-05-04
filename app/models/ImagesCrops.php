@@ -43,6 +43,10 @@ class ImagesCrops extends CActiveRecord
     public function beforeValidate()
     {
         $this->ws = number_format($this->ws, 4);
+        $this->x1 = number_format($this->x1, 4);
+        $this->x2 = number_format($this->x2, 4);
+        $this->y1 = number_format($this->y1, 4);
+        $this->y2 = number_format($this->y2, 4);
 
         return true;
     }

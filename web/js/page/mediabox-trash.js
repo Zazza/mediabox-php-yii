@@ -23,11 +23,7 @@ define(function (require) {
 
 
     $(document).ready(function() {
-
-        $("#trash-topmenu").show();
-
         MediaboxFunctions.trash($("#start_dir").val());
-
 
         /**
          * Context Menu

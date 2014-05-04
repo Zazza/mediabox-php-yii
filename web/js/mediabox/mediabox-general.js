@@ -10,52 +10,6 @@ define(function (require) {
     var imageFs = require('/js/mediabox/mediabox-image-fs.js');
     var MediaboxImageFs = new imageFs();
 
-    $("#menu").kendoMenu();
-    $("#advActions").kendoMenu();
-
-    MediaboxImageFs.getTagsAndCrops();
-
-    $("#fileRes").kendoWindow({title: "URL:", resizable: false });
-
-     var fs = new kendo.data.HierarchicalDataSource({
-        transport: {
-            read: {
-                url: "/fm/fs/" + "?noCache=" + (new Date().getTime()) + Math.random(),
-                dataType: "json"
-            }
-        },
-        schema: {}
-    });
-
-    $("#treeview").kendoTreeView({
-        dataSource: fs,
-        select: function(e) {
-            if (window.location.pathname != "/") {
-                document.location.href = "/";
-            } else {
-                var data = $('#treeview').data('kendoTreeView').dataItem(e.node);
-                MediaboxFunctions.chdir(data.id);
-            }
-        },
-        animation: {
-            expand: {
-                duration: 0,
-                hide: false,
-                show: false
-            },
-            collapse: {
-                duration: 0,
-                show: false
-            }
-        },
-        expand: function(e) {
-            var dataItem = this.dataItem(e.node);
-            dataItem.loaded(false);
-        }
-    });
-
-
-
     $(document).ready(function() {
         $("#splitter").on("click", ".fm_sel", function() {
             $(this).removeClass("fm_sel").addClass("fm_unsel");

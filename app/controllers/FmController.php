@@ -348,17 +348,31 @@ class FmController extends Controller
     }
 
     public function actionCopy() {
-        $result = array();
+        $result = Buffer::getBuffer();
 
         if (isset($_POST["file"])) {
             foreach($_POST["file"] as $part) {
-                $result[] = $this->getFile($part);
+                $flag = true;
+                foreach($result as $buffer_file) {
+                    if ( ($buffer_file->id == $part) and ($buffer_file->obj == "file") ) {
+                        $flag = false;
+                    }
+                }
+                if ($flag)
+                    $result[] = $this->getFile($part);
             }
         }
 
         if (isset($_POST["folder"])) {
             foreach($_POST["folder"] as $part) {
-                $result[] = $this->getFolder($part);
+                $flag = true;
+                foreach($result as $buffer_file) {
+                    if ( ($buffer_file->id == $part) and ($buffer_file->obj == "folder") ) {
+                        $flag = false;
+                    }
+                }
+                if ($flag)
+                    $result[] = $this->getFolder($part);
             }
         }
 
