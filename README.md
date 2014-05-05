@@ -27,6 +27,10 @@ mediabox-php
 ),
 </pre>
 
+<pre>
+'storage' => 'http://storage'
+</pre>
+
 8) /etc/init.d/apache2 restart or /etc/init.d/nginx restart
 
 -----
