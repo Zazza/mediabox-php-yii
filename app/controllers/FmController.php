@@ -17,7 +17,7 @@ class FmController extends Controller
         );
     }
 
-    public function beforeAction() {
+    public function beforeAction($action) {
         if ( (!isset(Yii::app()->session['sort'])) or (Yii::app()->session['sort'] == "") ) {
             $this->_sort = "name";
         } else {
@@ -26,7 +26,7 @@ class FmController extends Controller
 
         Init::vars();
 
-        return true;
+        return parent::beforeAction($action);
     }
 
     public function actionFs()

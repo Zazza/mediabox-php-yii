@@ -19,10 +19,10 @@ class SiteController extends Controller
         );
     }
 
-    public function beforeAction() {
+    public function beforeAction($action) {
         Init::vars();
 
-        return true;
+    	return parent::beforeAction($action);
     }
 
 	public function actionIndex()
