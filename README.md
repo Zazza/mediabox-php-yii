@@ -1,5 +1,9 @@
 mediabox-php
 ============
+## Demo Site:
+http://mediabox.8x86.ru/
+
+Login/password: test/test
 
 ## Install:
 
