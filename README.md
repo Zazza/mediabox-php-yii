@@ -36,3 +36,6 @@ mediabox-data.sql
 </pre>
 
 9) /etc/init.d/apache2 restart or /etc/init.d/nginx restart
+
+10) Default login/password: admin:admin
+
