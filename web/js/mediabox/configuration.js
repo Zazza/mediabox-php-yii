@@ -11,8 +11,9 @@ define(function (require) {
         require('/config/mimetypes.js');
         this.mediaTypes = mediaTypes;
 
+        require('/config/storage.js');
         var func = require('/storage/simple.js');
-        this.storage = new func('http://storage');
+        this.storage = new func(url);
     };
 
     return MediaboxConfiguration;
