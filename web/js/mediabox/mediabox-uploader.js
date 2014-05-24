@@ -1,13 +1,10 @@
-//define("mediaboxUploader", ["jquery", "kendo", "loadImage"], function($){
 define(function (require) {
-   // require('kendo/kendo.slider.min');
-   // require('kendo/kendo.menu.min');
-  //  require('kendo/kendo.upload.min');
- //   require('kendo/kendo.dropdownlist.min');
-    
     var loadImage = require('loadImage');
     var mxFunctions = require('/js/mediabox/mediabox-functions.js');
     var MediaboxFunctions = new mxFunctions()
+
+    var MediaboxConfiguration = require('/js/mediabox/configuration.js');
+    var config = new MediaboxConfiguration();
 
     $(document).ready(function() {
 
@@ -67,9 +64,8 @@ define(function (require) {
         }
 
         function sendFile(id, file) {
-            //need to have a common api to upload ---getFileUri(value["id"]) 
-            var uri = $("#storage").val();
-            uri = uri + "/save/";
+            //need to have a common api to upload ---getFileUri(value["id"])
+            uri = config.storage.sendFile();
 
 	        var xhr = new XMLHttpRequest();
             xhr.open("POST", uri, true);
@@ -101,7 +97,7 @@ define(function (require) {
                     $(".upload-status-progress", ".u_" + id).css("width", pc);
                 }, false);
 
-                
+
                 xhr.onreadystatechange = function(e) {
                     if (xhr.readyState == 4) {
                         $(".upload-status-progress", ".u_" + id).css("width", "100%");
@@ -113,7 +109,7 @@ define(function (require) {
                 $(".perc").on("click", ".uploaderRemove", function() {
                     xhr.abort();
                 });
-                
+
 
                 fd.append('files', file);
                 fd.append('id', id);
@@ -141,19 +137,20 @@ define(function (require) {
         }
 
         function upload(file) {
-            var type;
             var file;
 
-            $.ajax({ type: "GET", url: '/fm/upload/', dataType: "JSON", data: "file=" + file.name + "&size=" + file.size + "&extension=" + file.extension.substr(1)})
+            var extension = MediaboxFunctions.getExtension(file.name);
+            var type = MediaboxFunctions.getType(extension);
+
+            $.ajax({ type: "GET", url: '/fm/upload/', dataType: "JSON", data: "file=" + file.name + "&size=" + file.size})
                 .done(function(res) {
-                    if (res.type == "image")
+                    if (type == "image")
                         addThumb(file, res);
 
-                    //sendFile(res.id, file.rawFile);
                     if (!sendFile(res.id, file.rawFile)) {
                         //removeFile(file.name);
                     } else {
-                        if (res.type != "image") {
+                        if (type != "image") {
                             MediaboxFunctions.addFileToFS(res);
                         }
                     }

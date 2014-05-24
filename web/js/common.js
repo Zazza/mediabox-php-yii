@@ -16,10 +16,14 @@ require.config({
         shifty: '/js/libs/shift.jquery',
         webtoolkit: '/js/libs/webtoolkit.url',
 
-        mediaboxImage: '/js/mediabox/mediabox-image',
-        mediaboxPlayer: '/js/mediabox/mediabox-player',
         mediaboxUploader: '/js/mediabox/mediabox-uploader',
-        mediaboxVideo: '/js/mediabox/mediabox-video'
+
+        /*
+        * Plugins
+         */
+        mediaboxImage: '/addons/images/mediabox-image',
+        mediaboxPlayer: '/addons/audio/mediabox-player',
+        mediaboxVideo: '/addons/video/mediabox-video'
     },
 
     shim:{

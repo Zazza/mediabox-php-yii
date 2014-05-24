@@ -5,6 +5,9 @@ define(function (require) {
     var MediaboxFunctions = require('/js/mediabox/mediabox-functions.js');
     var mediaboxFunctions = new MediaboxFunctions();
 
+    var MediaboxConfiguration = require('/js/mediabox/configuration.js');
+    var config = new MediaboxConfiguration();
+
     var MediaboxImageFs = function() {
 
         this.loadImgFs = function() {
@@ -46,7 +49,7 @@ define(function (require) {
                                 size:       size,
                                 ico:        value["ico"],
                                 ext:        value["ext"],
-                                href:       mediaboxFunctions.getFileUri(value["id"]) //$("#storage").val()+"/get/?id=" + value["id"]
+                                href:       config.storage.getFileUri(value["id"])
                             }
                         ];
 

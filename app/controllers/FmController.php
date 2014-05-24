@@ -103,24 +103,14 @@ class FmController extends Controller
         $nodes = Fs::model()->findAll($criteria);
 
         foreach($nodes as $node) {
-            if (mb_strlen($node["name"]) > 20) {
-                $shortname = mb_substr($node["name"], 0, 10) . ".." . mb_substr($node["name"], mb_strlen($node["name"]) - 3);
-            } else {
-                $shortname = $node["name"];
-            }
-
             $folder = new Folder();
 
-            $folder->obj = "folder";
             $folder->name = urlencode($node->name);
-            $folder->shortname = urlencode($shortname);
             $folder->id = $node->id;
             $folder->date = $node->timestamp;
 
             $files[] = $folder;
         };
-
-
 
         // Get Files
         $criteria = new CDbCriteria;
@@ -130,40 +120,12 @@ class FmController extends Controller
         $nodes = Files::model()->findAll($criteria);
 
         foreach($nodes as $node) {
-            if (isset(Yii::app()->params["mediaTypes"][$node->type])) {
-                $ico = Yii::app()->params["mediaTypes"][$node->type];
-            } else {
-                $ico = Yii::app()->params["mediaTypes"]["any"];
-            };
-
-            if (mb_strlen($node["name"]) > 20) {
-                $shortname = mb_substr($node["name"], 0, 10) . ".." . mb_substr($node["name"], mb_strrpos($node["name"], ".") - 1);
-            } else {
-                $shortname = $node["name"];
-            };
-
-            $extension = strtolower(mb_substr($node["name"], mb_strrpos($node["name"], ".") + 1));
-
-            if (isset(Yii::app()->params["mimetypes"][$extension])) {
-                $mimetype = Yii::app()->params["mimetypes"][$extension];
-            } else {
-                $mimetype = $node["type"] . "/" . $extension;
-            };
-
-
             $file = new File();
 
             $file->id = $node["id"];
             $file->name = urlencode($node["name"]);
-            $file->shortname = urlencode($shortname);
-            $file->obj = "file";
-            $file->type = $node["type"];
-            $file->mimetype = $mimetype;
             $file->size = $node["size"];
             $file->date = $node["timestamp"];
-            $file->ico = $ico;
-            $file->src = $ico;
-            $file->ext = $extension;
 
             $files[] = $file;
         }
@@ -175,86 +137,24 @@ class FmController extends Controller
         }
     }
 
-    private function get_type($extension) {
-        $config = Yii::app()->params["extension"];
-        foreach($config as $key) {
-            if (in_array($extension, $key)) {
-                return $key[0];
-        }
-    }
-
-    return 'unknown';
-}
-
     public function actionUpload() {
         $file = new Files();
         $file->parent = Yii::app()->session['current_directory'];
         $file->name = $_GET["file"];
         $file->user_id = Yii::app()->user->id;
         $file->size = $_GET["size"];
-        $type = $this->get_type(strtolower($_GET["extension"]));
-        $file->type = $type;
 
         if ($file->validate()) {
             $file->save();
 
-            if (isset(Yii::app()->params["mediaTypes"][$file->type])) {
-                $ico = Yii::app()->params["mediaTypes"][$file->type];
-            } else {
-                $ico = Yii::app()->params["mediaTypes"]["any"];
-            };
+            $model = new File();
 
-            $filename = urldecode($file->name);
+            $model->id = $file->id;
+            $model->name = $file->name;
+            $model->size = $file->size;
+            $model->date = $file->timestamp;
 
-            if (mb_strlen($filename) > 20) {
-                $shortname = mb_substr($filename, 0, 10) . ".." . mb_substr($filename, mb_strlen($filename) - 1);
-            } else {
-                $shortname = $filename;
-            }
-
-            $extension = strtolower(mb_substr($filename, mb_strrpos($filename, ".") + 1));
-
-            if (isset(Yii::app()->params["mimetypes"][$extension])) {
-                $mimetype = Yii::app()->params["mimetypes"][$extension];
-            } else {
-                $mimetype = $file->type . "/" . $extension;
-            };
-
-            if ($file->type == "image") {
-                $model = new File();
-
-                $model->id = $file->id;
-                $model->name = urlencode($filename);
-                $model->shortname = urlencode($shortname);
-                $model->obj = "file";
-                $model->type = $file->type;
-                $model->mimetype = $mimetype;
-                $model->size = $file->size;
-                $model->date = $file->timestamp;
-                $model->ico = $ico;
-                $model->src = "fm/getThumb/?name=" . $file->id;
-                $model->ext = $extension;
-
-                echo json_encode($model);
-            } else {
-                $model = new File();
-
-                $model->id = $file->id;
-                $model->name = urlencode($filename);
-                $model->shortname = urlencode($shortname);
-                $model->obj = "file";
-                $model->type = $file->type;
-                $model->mimetype = $mimetype;
-                $model->size = $file->size;
-                $model->date = $file->timestamp;
-                $model->ico = $ico;
-                $model->src = "fm/getThumb/?name=" . $file->id;
-                $model->ext = $ico;
-
-                echo json_encode($model);
-            }
-        } else {
-            print_r($file->getErrors());
+            echo json_encode($model);
         }
     }
 
@@ -264,8 +164,6 @@ class FmController extends Controller
         $image->data = $_POST["data"];
         if ($image->validate()) {
             $image->save();
-        } else {
-            print_r($image->getErrors());
         }
     }
 
@@ -282,21 +180,11 @@ class FmController extends Controller
     private function getFolder($id) {
         $fs = Fs::model()->findByPk($id);
 
-        if (mb_strlen($fs->name) > 20) {
-            $shortname = mb_substr($fs->name, 0, 10) . ".." . mb_substr($fs->name, mb_strlen($fs->name)-2);
-        } else {
-            $shortname = $fs->name;
-        }
-
         $model = new Folder();
 
         $model->id = $fs->id;
         $model->name = urlencode($fs->name);
-        $model->shortname = urlencode($shortname);
-        $model->obj = "folder";
         $model->date = $fs->timestamp;
-        $model->size;
-        $model->ico = Yii::app()->params["mediaTypes"]["folder"];
         $model->parent = $fs->parent;
 
         return $model;
@@ -305,44 +193,11 @@ class FmController extends Controller
     private function getFile($id) {
         $file = Files::model()->findByPk($id);
 
-        if (mb_strlen($file->name) > 20) {
-            $shortname = mb_substr($file->name, 0, 10) . ".." . mb_substr($file->name, mb_strrpos($file->name, ".")-1);
-        } else {
-            $shortname = $file->name;
-        }
-
-        if (isset(Yii::app()->params["mediaTypes"][$file->type])) {
-            $ico = Yii::app()->params["mediaTypes"][$file->type];
-        } else {
-            $ico = Yii::app()->params["mediaTypes"]["any"];
-        };
-
-        $extension = strtolower(mb_substr($file->name, mb_strrpos($file->name, ".")+1));
-
-        if (isset(Yii::app()->params["mimetypes"][$extension])) {
-            $mimetype = Yii::app()->params["mimetypes"][$extension];
-        } else {
-            $mimetype = $file->type . "/" . $extension;
-        };
-
-        if ( ($file->type != "image") && ($file->type != "audio") && ($file->type != "video") ) {
-            $type = "all";
-        } else {
-            $type = $file->type;
-        }
-
         $model = new File();
         $model->id = $file->id;
         $model->name = urlencode($file->name);
-        $model->shortname = urlencode($shortname);
-        $model->obj = "file";
-        $model->type = $type;
-        $model->mimetype = $mimetype;
         $model->size = $file->size;
         $model->date = $file->timestamp;
-        $model->ico = $ico;
-        $model->src = "fm/getThumb/?name=" . $file->id;
-        $model->ext = $extension;
 
         return $model;
     }
@@ -469,8 +324,6 @@ class FmController extends Controller
             $fs->save();
 
             echo json_encode($this->getFolder($fs->id));
-        } else {
-            print_r($fs->getErrors());
         }
     }
 
@@ -504,17 +357,9 @@ class FmController extends Controller
         $nodes = Fs::model()->findAll($criteria);
 
         foreach($nodes as $node) {
-            if (mb_strlen($node["name"]) > 20) {
-                $shortname = mb_substr($node["name"], 0, 10) . ".." . mb_substr($node["name"], mb_strlen($node["name"]) - 3);
-            } else {
-                $shortname = $node["name"];
-            }
-
             $folder = new Folder();
 
-            $folder->obj = "folder";
             $folder->name = urlencode($node->name);
-            $folder->shortname = urlencode($shortname);
             $folder->id = $node->id;
             $folder->date = $node->timestamp;
 
@@ -531,32 +376,12 @@ class FmController extends Controller
         $nodes = Files::model()->findAll($criteria);
 
         foreach($nodes as $node) {
-            if (isset(Yii::app()->params["mediaTypes"][$node->type])) {
-                $ico = Yii::app()->params["mediaTypes"][$node->type];
-            } else {
-                $ico = Yii::app()->params["mediaTypes"]["any"];
-            };
-
-            if (mb_strlen($node["name"]) > 20) {
-                $shortname = mb_substr($node["name"], 0, 10) . ".." . mb_substr($node["name"], mb_strrpos($node["name"], ".") - 1);
-            } else {
-                $shortname = $node["name"];
-            };
-
-            $extension = strtolower(mb_substr($node["name"], mb_strrpos($node["name"], ".") + 1));
-
             $file = new File();
 
             $file->id = $node["id"];
             $file->name = urlencode($node["name"]);
-            $file->shortname = urlencode($shortname);
-            $file->obj = "file";
-            $file->type = $node["type"];
             $file->size = $node["size"];
             $file->date = $node["timestamp"];
-            $file->ico = $ico;
-            $file->src = $ico;
-            $file->ext = $extension;
 
             $files[] = $file;
         }
@@ -574,8 +399,6 @@ class FmController extends Controller
 
         if ($file->validate()) {
             $file->save();
-        } else {
-            print_r($file->getErrors());
         }
     }
 
@@ -584,8 +407,6 @@ class FmController extends Controller
         $fs->trash = 1;
         if ($fs->validate()) {
             $fs->save();
-        } else {
-            print_r($fs->getErrors());
         }
     }
 

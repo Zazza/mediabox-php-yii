@@ -10,6 +10,9 @@ define(function (require) {
     var mxFunctions = require('/js/mediabox/mediabox-functions.js');
     var MediaboxFunctions = new mxFunctions();
 
+    var MediaboxConfiguration = require('/js/mediabox/configuration.js');
+    var config = new MediaboxConfiguration();
+
     var slider = $(".mx-pos-slider").kendoSlider({
         showButtons: false,
         tickPlacement: "none",
@@ -57,7 +60,7 @@ define(function (require) {
         init: function( options ) {
             var track = this;
             var data_id = $(track).attr('data-id');
-            var uri = MediaboxFunctions.getFileUri(data_id);
+            var uri = config.storage.getFileUri(data_id);
 
 
             $("#" + mediaElement).attr("src", uri);

@@ -11,6 +11,10 @@ define(function (require) {
     var mediaboxUploader = require('mediaboxUploader');
     var mxFunctions = require('/js/mediabox/mediabox-functions.js');
     var MediaboxFunctions = new mxFunctions();
+
+    var MediaboxConfiguration = require('/js/mediabox/configuration.js');
+    var config = new MediaboxConfiguration();
+
     var imageFs = require('/js/mediabox/mediabox-image-fs.js');
     var MediaboxImageFs = new imageFs();
     require('kendo/kendo.slider.min');
@@ -20,7 +24,6 @@ define(function (require) {
     require('mediaboxPlayer');
     require('mediaboxVideo');
     require('mediaelement');
-
 
     $(document).ready(function() {
         MediaboxImageFs.getTagsAndCrops();
@@ -172,7 +175,7 @@ define(function (require) {
                     break
                 };
                 case 'download': {
-                    window.location.href = $("#storage").val()+"/get/?id=" + file_id
+                    window.location.href = config.storage.getFileUri(file_id)
                     break
                 };
                 case 'copy': {
@@ -349,13 +352,19 @@ define(function (require) {
         var templateContent = $("#bufferFileTemplate").html();
         var template = kendo.template(templateContent);
 
+        var filename = decodeURIComponent(value["name"]);
+        var shortname =  filename.substr(0, 10) + ".." + filename.substr(filename.length - 2);
+        var extension = MediaboxFunctions.getExtension(filename);
+        var type = MediaboxFunctions.getType(extension);
+        var ico = MediaboxFunctions.getIco(type);
+
         var data = [
             {
                 id:         value["id"],
-                shortname:  decodeURIComponent(value["shortname"]),
+                shortname:  shortname,
                 date:       MediaboxFunctions.formatDate(value["date"]),
                 size:       MediaboxFunctions.formatSize(value["size"]),
-                ico:        value["ico"],
+                ico:        ico,
                 obj:        value["obj"]
             } ];
 

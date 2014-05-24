@@ -31,12 +31,12 @@ class Files extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('user_id, name, parent, size, type', 'required'),
+			array('user_id, name, parent, size', 'required'),
 			array('trash', 'numerical', 'integerOnly'=>true),
 			array('user_id, parent', 'length', 'max'=>10),
 			array('name', 'length', 'max'=>128),
 			array('size', 'length', 'max'=>20),
-			array('type', 'length', 'max'=>32),
+			//array('type', 'length', 'max'=>32),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
 			array('id, user_id, name, parent, trash, size, type, timestamp', 'safe', 'on'=>'search'),

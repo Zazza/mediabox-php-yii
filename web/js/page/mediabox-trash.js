@@ -10,6 +10,10 @@ define(function (require) {
     var swipebox = require('swipebox');
     var mediaboxUploader = require('mediaboxUploader');
     var mxFunctions = require('/js/mediabox/mediabox-functions.js');
+
+    var MediaboxConfiguration = require('/js/mediabox/configuration.js');
+    var config = new MediaboxConfiguration();
+
     var MediaboxFunctions = new mxFunctions();
     var imageFs = require('/js/mediabox/mediabox-image-fs.js');
     var MediaboxImageFs = new imageFs();
@@ -52,7 +56,7 @@ define(function (require) {
                     break
                 };
                 case 'download': {
-                    window.location.href =  MediaboxFunctions.getFileUri(value["id"]) //$("#storage").val()+"/get/?id=" + file_id
+                    window.location.href =  config.storage.getFileUri(file_id)
                     break
                 };
                 case 'restore': {

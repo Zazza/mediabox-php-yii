@@ -9,12 +9,15 @@ define(function (require) {
     var mxFunctions = require('/js/mediabox/mediabox-functions.js');
     var MediaboxFunctions = new mxFunctions();
 
+    var MediaboxConfiguration = require('/js/mediabox/configuration.js');
+    var config = new MediaboxConfiguration();
+
     var methods = {
         init: function( options ) {
             var track = this;
             var data_id = $(track).attr('data-id');
             var mimetype = $(track).attr('data-mimetype');
-            var uri = MediaboxFunctions.getFileUri($(track).attr('data-id'));
+            var uri = config.storage.getFileUri($(track).attr('data-id'));
 
             $(this).addClass("current");
 

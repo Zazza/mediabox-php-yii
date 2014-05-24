@@ -9,6 +9,9 @@ define(function (require) {
     var imageFs = require('/js/mediabox/mediabox-image-fs.js');
     var MediaboxImageFs = new imageFs();
 
+    var MediaboxConfiguration = require('/js/mediabox/configuration.js');
+    var config = new MediaboxConfiguration();
+
     var jcrop_api;
     var _id;
     var original_width;
@@ -105,7 +108,7 @@ define(function (require) {
 
             var _id = $(src).attr("data-id");
             $("#preview-div-img").attr("data-id", _id);
-            var uri = MediaboxFunctions.getFileUri(_id)
+            var uri = config.storage.getFileUri(_id)
 
             $.loadImage(uri)
                 .fail(function(image) {

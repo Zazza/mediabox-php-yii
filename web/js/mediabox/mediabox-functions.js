@@ -1,30 +1,13 @@
 define(function (require) {
     "use strict";
 
-    var $ = require('jquery');
     require('shifty');
     require('webtoolkit');
 
+    var MediaboxConfiguration = require('/js/mediabox/configuration.js');
+    var config = new MediaboxConfiguration();
+
     var MediaboxFunctions = function() {
-    	this.getFileUri = function(id) {
-    		return getFileUri(id)
-        }
-        function getFileUri(id) {
-            var uri = $("#storage").val();
-            var is_nimbus_client = $("#is_nimbus_client").val();
-            if (is_nimbus_client == "True") {
-            	var session = JSON.parse($.cookie('xvid.session'));
-            	var token = session ? encodeURIComponent(session.key) : '';
-                var mbclientUrlData = "?access_token=" + token  + "&master_key=" + window.name;
-                uri += "/files/" + id + mbclientUrlData;
-            }
-            else {
-                uri += '/get/?id=' + id;
-            }
-            return uri;
-        };
-
-
         this.openFile = function(file) {
             openFile(file);
         }
@@ -46,8 +29,7 @@ define(function (require) {
             } else if (type == "all") {
                 //stop the browser from following
                 //e.preventDefault();
-                window.location.href = getFileUri($(file).attr("data-id"));
-                //window.location.href = $("#storage").val()+"/get/?id=" + $(file).attr("data-id");
+                window.location.href = config.storage.getFileUri($(file).attr("data-id"));
             }
         };
 
@@ -112,11 +94,18 @@ define(function (require) {
             }
             var template = kendo.template(templateContent);
 
+            var foldername = Url.decode(value["name"]);
+            if (foldername.length > 20) {
+                var shortname = foldername.substr(0, 10) + ".." + foldername.substr(foldername.length - 2);
+            } else {
+                var shortname = foldername;
+            }
+
             var data = [
                 {
-                    name: Url.decode((value["name"])),
-                    shortname: Url.decode((value["shortname"])),
                     id: value["id"],
+                    name: foldername,
+                    shortname: shortname,
                     date: formatDate(value["date"])
                 }
             ];
@@ -134,7 +123,7 @@ define(function (require) {
 
         function removeByStorage(id) {
             // To do for nimbus client 
-        	$.ajax({ type: "get", url: $("#storage").val() + '/remove/', data: "id=" + id, dataType: "JSONP" });
+        	$.ajax({ type: "get", url: config.storage.remove, data: "id=" + id, dataType: "JSONP" });
         }
 
         this.removeFileByName = function(value) {
@@ -143,7 +132,7 @@ define(function (require) {
         function removeFileByName(name) {
             $.ajax({ type: "GET", url: '/fm/removeFileByName/', data: "name=" + name })
                 .done(function(res) {
-                    var id = res; alert(".dfile[data-id='"+id+"']");
+                    var id = res;
 
                     removeByStorage(id);
 
@@ -152,19 +141,86 @@ define(function (require) {
                 })
         }
 
+        this.getIco = function(type) {
+            return getIco(type)
+        }
+        function getIco(type) {
+            //mediatypes /config/ico.js
+
+            return config.mediaTypes[type];
+        }
+
+        this.getType = function(needle) {
+            return getType(needle)
+        }
+        function getType(needle) {
+            //extension /config/extensions.js
+            var extension = config.extension
+
+            var found = false, part, key;
+            for (part in extension) {
+                for (key in extension[part]) {
+                    if ( (extension[part][key] === needle) || (extension[part][key] == needle) ) {
+                        found = part;
+                        break;
+                    }
+                }
+            }
+
+            return found;
+        }
+
+        this.getExtension = function(filename) {
+            return getExtension(filename)
+        }
+        function getExtension(filename) {
+            return filename.substr(filename.lastIndexOf(".")+1);
+        }
+
+        this.getMimetype = function(extension) {
+            return getMimetype(extension)
+        }
+        function getMimetype(extension, type) {
+            //mimetypes /config/mimetypes.js
+
+            if (config.mimetypes[extension]) {
+                return config.mimetypes[extension];
+            } else {
+                return type + "/" + extension;
+            }
+        }
+
         this.addFileToFS = function(value) {
             addFileToFS(value)
         }
         function addFileToFS(value) {
             var viewList = $("#view-selector").data("kendoDropDownList");
+
+            var filename = Url.decode(value["name"]);
+            if (filename.length > 20) {
+                var shortname = filename.substr(0, 10) + ".." + filename.substr(filename.length - 2);
+            } else {
+                var shortname = filename;
+            }
+            var extension = getExtension(filename);
+            var type = getType(extension);
+
+            if (type == "image") {
+                var ico = "fm/getThumb/?name=" +  value["id"];
+            } else {
+                var ico = getIco(type);
+            }
+
+            var mimetype = getMimetype(extension, type);
+
             if ($("#mediabox-view").val() == "list") {
-                if (value["type"] == "image") {
+                if (type == "image") {
                     var templateContent = $("#imageListTemplate").html();
                 } else {
                     var templateContent = $("#fileListTemplate").html();
                 }
             } else if ($("#mediabox-view").val() == "grid") {
-                if (value["type"] == "image") {
+                if (type == "image") {
                     var templateContent = $("#imageGridTemplate").html();
                 } else {
                     var templateContent = $("#fileGridTemplate").html();
@@ -175,15 +231,15 @@ define(function (require) {
             var data = [
                 {
                     id:         value["id"],
-                    name:       Url.decode(value["name"]),
-                    shortname:  Url.decode(value["shortname"]),
+                    name:       filename,
+                    shortname:  shortname,
                     date:       formatDate(value["date"]),
                     size:       formatSize(value["size"]),
-                    ico:        value["ico"],
-                    ext:        value["ext"],
-                    mimetype:   value["mimetype"],
-                    type:       value["type"],
-                    href:       getFileUri(value["id"]) //$("#storage").val()+"/get/?id=" + value["id"]
+                    ico:        ico,
+                    ext:        extension,
+                    mimetype:   mimetype,
+                    type:       type,
+                    href:       config.storage.getFileUri(value["id"])
                 }
             ];
 
