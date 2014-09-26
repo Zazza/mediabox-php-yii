@@ -14,12 +14,12 @@ define(function (require) {
                 $(".upload-isset").show();
             }
 
-            $(".uploadCount").text(count);
+            $(".uploadCount").html(count);
         }
 
         function uploadDropdownHide() {
-            var count = $(".uploadCount").text()-1;
-            $(".uploadCount").text(count);
+            var count = parseInt($(".uploadCount").html()) - 1;
+            $(".uploadCount").html(count);
 
             if (count == 0) {
                 $(".upload-empty").show();
@@ -63,70 +63,11 @@ define(function (require) {
             }
         }
 
-        function sendFile(id, file) {
-            //need to have a common api to upload ---getFileUri(value["id"])
-            uri = config.storage.sendFile();
-
-	        var xhr = new XMLHttpRequest();
-            xhr.open("POST", uri, true);
-            var fd = new FormData();
-
-            if (xhr.upload) {
-                // Overlay uploader
-                var templateContent = $("#fileUploadTemplate").html();
-                var template = kendo.template(templateContent);
-                var data = [
-                    { name: file.name, id: id }
-                ];
-                var result = kendo.render(template, data);
-                $(".perc").append(result);
-
-
-                // Dropdown uploader
-                var templateContent = $("#fileUploadDropdownTemplate").html();
-                var template = kendo.template(templateContent);
-                var data = [
-                    { name: file.name, id: id }
-                ];
-                var result = kendo.render(template, data);
-                $(".percDropdown").append(result);
-
-
-                xhr.upload.addEventListener("progress", function(e) {
-                    var pc = parseInt(e.loaded / e.total * 100);
-                    $(".upload-status-progress", ".u_" + id).css("width", pc);
-                }, false);
-
-
-                xhr.onreadystatechange = function(e) {
-                    if (xhr.readyState == 4) {
-                        $(".upload-status-progress", ".u_" + id).css("width", "100%");
-
-                        uploadDropdownHide();
-                    }
-                };
-
-                $(".perc").on("click", ".uploaderRemove", function() {
-                    xhr.abort();
-                });
-
-
-                fd.append('files', file);
-                fd.append('id', id);
-                fd.append('name', file.name);
-                fd.append('filename', file);
-                xhr.send(fd);
-            }
-
-            // if remote save success
-            return true;
-        }
-
         function addThumb(file, res) {
             loadImage(
                 file.rawFile,
                 function (img) {
-                    $.ajax({ type: "POST", url: '/fm/thumb/' + res.id + '/', data: {data: img.toDataURL().replace(/data:image\/png;base64,/, '')} })
+                    $.ajax({ type: "POST", url: '/fm/thumb/', data: {id: res.id, data: img.toDataURL().replace(/data:image\/png;base64,/, '')} })
                         .done(function(){ MediaboxFunctions.addFileToFS(res); })
                 },
                 {
@@ -136,29 +77,77 @@ define(function (require) {
             )
         }
 
+        function toHex(str) {
+            var hex = '';
+            for(var i=0;i<str.length;i++) {
+                hex += ''+str.charCodeAt(i).toString(16);
+            }
+            return hex;
+        }
+
         function upload(file) {
             var file;
+            var hex = toHex($("#current_path_string").val() + file.name);
 
-            var extension = MediaboxFunctions.getExtension(file.name);
-            var type = MediaboxFunctions.getType(extension);
+            // Overlay uploader
+            var templateContent = $("#fileUploadTemplate").html();
+            var template = kendo.template(templateContent);
+            var data = [
+                { name: file.name, id: hex }
+            ];
+            var result = kendo.render(template, data);
+            $(".perc").append(result);
 
-            $.ajax({ type: "GET", url: '/fm/upload/', dataType: "JSON", data: "file=" + file.name + "&size=" + file.size})
-                .done(function(res) {
-                    if (type == "image")
-                        addThumb(file, res);
 
-                    if (!sendFile(res.id, file.rawFile)) {
-                        //removeFile(file.name);
-                    } else {
-                        if (type != "image") {
-                            MediaboxFunctions.addFileToFS(res);
-                        }
+            // Dropdown uploader
+            var templateContent = $("#fileUploadDropdownTemplate").html();
+            var template = kendo.template(templateContent);
+            var data = [
+                { name: file.name, id: hex }
+            ];
+            var result = kendo.render(template, data);
+            $(".percDropdown").append(result);
+
+            //Storage save file
+            config.storage.sendFile($("#current_path_string").val(), file.rawFile, function(response){
+
+                var pc = parseInt(response.loaded / response.total * 100);
+                if (!isNaN(pc)) {
+                    $(".upload-status-progress", ".u_" + hex).css("width", pc);
+                }
+
+                if (response.result) {
+
+                    $(".upload-status-progress", ".u_" + hex).css("width", "100%");
+                    uploadDropdownHide();
+
+                    var extension = MediaboxFunctions.getExtension(file.name);
+                    var type = MediaboxFunctions.getType(extension);
+
+                    var data = {
+                        file: file.name,
+                        size: file.size,
+                        type: type
                     }
-                });
+
+                    $.ajax({ type: "GET", url: '/fm/upload/', dataType: "JSON", data: data})
+                        .done(function(res) {
+
+                            if (type == "image") {
+                                addThumb(file, res);
+                            }
+
+                            if (type != "image") {
+                                MediaboxFunctions.addFileToFS(res);
+                            }
+                        });
+
+                    return true;
+                }
+            });
         }
 
         $(".perc").on("click", ".uploaderRemove", function(){
-            MediaboxFunctions.removeFileByName($(this).attr("data-id"));
             $(this).closest(".k-upload-files").remove();
 
             uploadDropdownHide();

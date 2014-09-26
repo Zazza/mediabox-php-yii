@@ -14,9 +14,13 @@ require.config({
         timer: '/js/libs/jquery.timer',
         loadImage: '/js/libs/load-image',
         shifty: '/js/libs/shift.jquery',
-        webtoolkit: '/js/libs/webtoolkit.url',
+
+        mousewheel: '/js/libs/jquery.mousewheel',
+        jscrollpane: '/js/libs/jquery.jscrollpane.min',
+        up: '/js/libs/jquery.up',
 
         mediaboxUploader: '/js/mediabox/mediabox-uploader',
+        mediaboxTrash: '/js/mediabox/mediabox-trash',
 
         /*
         * Plugins
@@ -34,10 +38,6 @@ require.config({
         mediaboxImage: {
             deps: ['jquery'],
             exports: 'mediaboxImage'
-        },
-        mediaboxImageFs: {
-          deps: ['jquery'],
-          exports: 'mediaboxImageFs'
         },
         mediaboxPlayer: {
           deps: ['jquery'],
@@ -75,8 +75,6 @@ require(
             if($('script[data-main][data-slug]').data('slug').length > 1) {
                 mainModule = $('script[data-main][data-slug]').data('slug');
             }
-
-            console.log('DOM ready', mainModule);
 
             if (typeof mainModule !== 'undefined' && mainModule !== null) {
                 require(["/js/page/" + mainModule + ".js"], function (mainModule) {});

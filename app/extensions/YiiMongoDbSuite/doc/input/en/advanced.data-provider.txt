@@ -1,0 +1,27 @@
+Title: Data Provider Object
+ShortTitle: Data Provider
+Author: Dariusz Górecki <darek.krk@gmail.com>
+
+---
+
+~~~
+[php]
+// basic dataprovider returns whole collection (with efficient pagination support out-of-box)
+$dp = new EMongoDocumentDataProvider('modelClassNameOrInstance');
+
+// data provider with query
+$dp = new EMongoDocumentDataProvider('modelClassNameOrInstance', array(
+	'conditions'=>/* query array goes here */
+));
+
+// data provider, enable sorting (needs to be set explicit)
+$dp = new EMongoDocumentDataProvider('modelClassNameOrInstance', array(
+	/* standard config array */
+	'conditions'=>array(/* query array goes here */)
+	'sort'=>array(
+		'attributes'=>array(
+			// list of sortable attributes
+		)
+	),
+));
+~~~

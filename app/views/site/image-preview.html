@@ -1,123 +1,127 @@
-<div class="parent_popup" id="image-preview">
+<nav id="mainnav">
+    <div class="container">
+        <h1 class="xvidMediaBox_25px h1logo">Xvid MediaBox</h1>
 
-<div style="position: fixed; top: 0; margin: 0 auto; width: 100%;">
-
-    <div id="image-second-panel" style="height: 20px; margin: 10px 10px 0;">
-        <div id="image-meta">
-            <div><b>Order:</b> <span class="order"></span></div>
-            <div><a class="download" href="#"><span class="name"></span></a></div>
-            <div><span class="resolution"></span></div>
-            <div><span class="size"></span></div>
-        </div>
-
-        <div id="image-cloud" style="float: left;">
-            <div class="dropdown">
-                <a class="dropdown-toggle" data-toggle="dropdown">
-                    Selected
-                    <b class="caret"></b>
+        <ul class="nav nav-pills">
+            <li id="saveCrop">
+                <a>
+                    <i class="icon-crop"></i>&nbsp;<span>Save crop</span>
                 </a>
-
-                <ul class="dropdown-menu">
-                    <li>
-                        <div id="image-crops"></div>
-                    </li>
-                </ul>
-            </div>
-
-            <div class="dropdown">
-                <a class="dropdown-toggle" data-toggle="dropdown">
-                    Tags
-                    <b class="caret"></b>
+            </li>
+            <li id="clearCrop">
+                <a>
+                    <i class="icon-crop"></i>&nbsp;<span>Clear crop</span>
                 </a>
-
-                <ul class="dropdown-menu">
-                    <li>
-                        <div id="image-tags"></div>
-                    </li>
-                </ul>
-            </div>
-
-            <div class="dropdown">
-                <a class="dropdown-toggle" data-toggle="dropdown">
-                    Comments
-                    <b class="caret"></b>
+            </li>
+            <li id="addTag">
+                <a>
+                    <i class="icon-tag"></i>&nbsp;<span>Add tag</span>
                 </a>
-
-                <ul class="dropdown-menu">
-                    <div style="text-align: center;">
-                        <a href="#" id="show-comment-window">Add comment</a>
-                    </div>
-
-                    <li>
-                        <div id="image-comments"></div>
-                    </li>
-                </ul>
-            </div>
-        </div>
-
-        <ul id="image-actions" class="nav nav-pills pull-right">
-            <li id="back"><i style="margin-left: 50px; font-size: 12px;" class="icon-remove"></i>&nbsp;<span>Close</span></li>
+            </li>
+            <li id="back">
+                <a>
+                    <i class="icon-remove"></i>&nbsp;<span>Back</span>
+                </a>
+            </li>
         </ul>
     </div>
+</nav>
 
-    <div id="preview-scroll" style="overflow: auto;">
+<section class="container">
+
+    <div id="image-meta">
+        <div class="navbar-inner">
+
+            <ul class="nav nav-pills pull-left">
+                <li>
+                    <a>
+                        <b>Order:</b> <span class="order"></span>
+                    </a>
+                </li>
+                <li>
+                    <a class="download" href="#">
+                        <span class="name"></span>
+                    </a>
+                </li>
+                <li>
+                    <a>
+                        <span class="resolution"></span>
+                    </a>
+                </li>
+                <li>
+                    <a>
+                        <span class="size"></span>
+                    </a>
+                </li>
+            </ul>
+            <ul class="nav nav-pills pull-right">
+                <li id="fullscreen">
+                    <a>
+                        <i style="font-size: 12px;" class="icon-fullscreen"></i>&nbsp;<span>Fullscreen</span>
+                    </a>
+                </li>
+                <li id="prev">
+                    <a>
+                        <i style="font-size: 12px;" class="icon-chevron-left"></i>&nbsp;<span>Previous</span>
+                    </a>
+                </li>
+                <li id="next">
+                    <a>
+                        <i style="font-size: 12px;" class="icon-chevron-right"></i>&nbsp;<span>Next</span>
+                    </a>
+                </li>
+            </ul>
+
+        </div>
+    </div>
+
+    <div id="splitter">
+        <div id="preview-div-img"></div>
+    </div>
+
+    <div id="image-cloud">
+        <h3>Selected</h3>
+        <div id="image-crops"></div>
+
+        <h3>Tags</h3>
+        <div id="image-tags"></div>
+
+        <h3>Comments</h3>
+
+        <div id="image-comment-form">
+            <textarea id="image-comment-editor" class="k-content span12"></textarea>
+        </div>
         <div>
-            <div>
-                <div id="preview-div-img" class="k-widget" style="padding: 20px; margin: 5px auto;"></div>
-            </div>
-
-            <div id="crop-object" style="display: none;">
-                <div class="control-group" id="div-crop-object-text">
-                    <input type="text" id="crop-object-text" style="margin-top: 20px; width: 270px;">
-                </div>
-                <hr />
-                <div style="text-align: right;">
-                    <button id="crop-object-close" class="k-button">Cancel</button>
-                    <button id="crop-object-save" class="k-button">Save</button>
-                </div>
-            </div>
-
-            <div id="image-tag" style="display: none;">
-                <div class="control-group" id="div-image-tag-text">
-                    <input type="text" id="image-tag-text" style="margin-top: 20px; width: 270px;">
-                </div>
-                <hr />
-                <div style="text-align: right;">
-                    <button id="image-tag-close" class="k-button">Cancel</button>
-                    <button id="image-tag-save" class="k-button">Save</button>
-                </div>
-            </div>
-
-            <div id="new-comment-window" style="display: none;">
-                <div id="image-comment-form">
-                    <textarea id="image-comment-editor" class="k-content"></textarea>
-                </div>
-                <hr />
-                <div style="text-align: right;">
-                    <button id="image-comment-save" class="k-button">Save</button>
-                    <button id="image-comment-close" class="k-button">Cancel</button>
-                </div>
-            </div>
+            <button id="image-comment-save" class="k-button">Save</button>
         </div>
+
+        <div id="image-comments"></div>
     </div>
+</section>
 
-    <div style="height: 28px; position: fixed; width: 100%; bottom: 0;">
-        <ul class="nav nav-pills pull-left" style="margin-left: 20px;">
-            <li id="saveCrop"><i style="font-size: 12px;" class="icon-crop"></i>&nbsp;<span>Save crop</span></li>
-            <li id="clearCrop"><i style="font-size: 12px;" class="icon-crop"></i>&nbsp;<span>Clear crop</span></li>
-            <li id="addTag"><i style="font-size: 12px;" class="icon-tag"></i>&nbsp;<span>Add tag</span></li>
-        </ul>
 
-        <ul id="image-actions" class="nav nav-pills pull-right" style="margin-right: 20px;">
 
-            <li id="fullscreen"><i style="font-size: 12px;" class="icon-fullscreen"></i>&nbsp;<span>Fullscreen</span></li>
-            <li id="prev"><i style="font-size: 12px;" class="icon-chevron-left"></i>&nbsp;<span>Previous</span></li>
-            <li id="next"><i style="font-size: 12px;" class="icon-chevron-right"></i>&nbsp;<span>Next</span></li>
-        </ul>
+
+<div id="crop-object" style="display: none;">
+    <div class="control-group" id="div-crop-object-text">
+        <input type="text" id="crop-object-text" style="margin-top: 20px; width: 270px;">
     </div>
-
+    <hr />
+    <div style="text-align: right;">
+        <button id="crop-object-close" class="k-button">Cancel</button>
+        <button id="crop-object-save" class="k-button">Save</button>
+    </div>
 </div>
 
+<div id="image-tag" style="display: none;">
+    <div class="control-group" id="div-image-tag-text">
+        <input type="text" id="image-tag-text" style="margin-top: 20px; width: 270px;">
+    </div>
+    <hr />
+    <div style="text-align: right;">
+        <button id="image-tag-close" class="k-button">Cancel</button>
+        <button id="image-tag-save" class="k-button">Save</button>
+    </div>
 </div>
 
 <script type="text/x-kendo-template" id="imageCommentsTemplate">
@@ -126,6 +130,6 @@
             <span style="font-weight: bold;">#: user #</span>
             <span style="font-size: 11px;">#: time #</span>
         </div>
-        <div class="imageCommentText">#: text #</div>
+        <div class="imageCommentText">#= text #</div>
     </div>
 </script>

@@ -2,15 +2,22 @@
 
 class SiteController extends Controller
 {
+    public function filters()
+    {
+        return array(
+            'accessControl',
+        );
+    }
+
     public function accessRules()
     {
         return array(
             array('allow',
-                'actions'=>array('index', 'login', 'error', ),
+                'actions'=>array('index', 'login', 'error'),
                 'users'=>array('*'),
             ),
             array('allow',
-                'actions'=>array('logout'),
+                'actions'=>array('logout', 'set', 'get'),
                 'users'=>array('@'),
             ),
             array('deny',
@@ -30,7 +37,7 @@ class SiteController extends Controller
         if (Yii::app()->user->id) {
             $this->render('index');
         } else {
-            $this->actionLogin();
+            $this->render('login');
         }
 	}
 
@@ -53,22 +60,20 @@ class SiteController extends Controller
      */
     public function actionLogin()
     {
-        $model=new LoginForm;
+        if (count($_POST) > 0) {
+            $model=new LoginForm;
 
-        $error = false;
+            $model->username = $_POST['login'];
+            $model->password = $_POST['password'];
 
-        if(isset($_POST['LoginForm']))
-        {
-            $model->attributes=$_POST['LoginForm'];
-            // validate user input and redirect to the previous page if valid
-            if($model->validate() && $model->login()) {
-                $this->redirect("/");
+            if($model->validate() && $model->login($_POST['session'])) {
+                echo json_encode(array("error"=>false));
             } else {
-                $error = true;
+                echo json_encode(array("error"=>true));
             }
+        } else {
+            $this->render('login');
         }
-        // display the login form
-        $this->render('login', array('model'=>$model, 'error'=>$error));
     }
 
     /**
@@ -77,7 +82,24 @@ class SiteController extends Controller
     public function actionLogout()
     {
         Yii::app()->user->logout();
+        unset(Yii::app()->session["access_token"]);
 
         $this->redirect(Yii::app()->homeUrl);
+    }
+
+    public function actionSet()
+    {
+        if ( (isset($_POST["param"])) and (isset($_POST["value"])) ) {
+            Yii::app()->session[$_POST["param"]] = $_POST["value"];
+
+            echo "";
+        }
+    }
+
+    public function actionGet()
+    {
+        if (isset($_POST["param"])) {
+            echo Yii::app()->session[$_POST["param"]];
+        }
     }
 }

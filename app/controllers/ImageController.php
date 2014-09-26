@@ -18,7 +18,7 @@ class ImageController extends Controller
     public function actionSetCrop() {
         $crop = new ImagesCrops();
         $crop->user_id = Yii::app()->user->id;
-        $crop->file_id = $_GET["_id"];
+        $crop->file_id = new MongoId($_GET["_id"]);
         $crop->description = $_GET["desc"];
         $crop->ws = $_GET["ws"];
         $crop->x1 = $_GET["x1"];
@@ -35,7 +35,7 @@ class ImageController extends Controller
     public function actionAddTag() {
         $tag = new ImagesTags();
         $tag->user_id = Yii::app()->user->id;
-        $tag->file_id = $_GET["_id"];
+        $tag->file_id = new MongoId($_GET["_id"]);
         $tag->tag = $_GET["tag"];
         if ($tag->validate()) {
             $tag->save(false);
@@ -47,7 +47,9 @@ class ImageController extends Controller
     public function actionGetCrops() {
         $result = array();
 
-        $crops = ImagesCrops::model()->findAll("file_id = :file_id", array(":file_id"=>$_GET["id"]));
+        $criteria = new EMongoCriteria();
+        $criteria->file_id = new MongoId($_GET["id"]);
+        $crops = ImagesCrops::model()->findAll($criteria);
         foreach($crops as $crop) {
             $array = array();
 
@@ -67,7 +69,9 @@ class ImageController extends Controller
     public function actionGetTags() {
         $result = array();
 
-        $tags = ImagesTags::model()->findAll("file_id = :file_id", array(":file_id"=>$_GET["id"]));
+        $criteria = new EMongoCriteria();
+        $criteria->file_id = new MongoId($_GET["id"]);
+        $tags = ImagesTags::model()->findAll($criteria);
         foreach($tags as $tag) {
             $result[]["tag"] = $tag->tag;
         }
@@ -79,25 +83,39 @@ class ImageController extends Controller
         $comment = new ImagesComments();
 
         $comment->user_id = Yii::app()->user->id;
-        $comment->file_id = $_GET["id"];
+        $comment->file_id = new MongoId($_GET["id"]);
         $comment->comment = urldecode($_GET["text"]);
+        $comment->timestamp = date("Y-m-d H:i:s");
 
         if ($comment->validate()) {
             $comment->save(false);
-        } else {
-            print_r($comment->getErrors());
+
+            // for timestamp
+            $comment = ImagesComments::model()->findByPk($comment->_id);
+
+            $array = array();
+
+            $array["text"] = nl2br($comment->comment);
+            $user = User::model()->findByPk($comment->user_id);
+            $array["user"] = $user->username;
+            $array["timestamp"] = $comment->timestamp;
+
+            echo json_encode($array);
         }
     }
 
     public function actionGetComments() {
         $result = array();
 
-        $comments = ImagesComments::model()->findAll("file_id = :file_id", array(":file_id"=>$_GET["id"]));
+        $criteria = new EMongoCriteria();
+        $criteria->file_id = new MongoId($_GET["id"]);
+        $comments = ImagesComments::model()->findAll($criteria);
         foreach($comments as $comment) {
             $array = array();
 
-            $array["text"] = $comment->comment;
-            $array["user"] = $comment->user->username;
+            $array["text"] = nl2br($comment->comment);
+            $user = User::model()->findByPk($comment->user_id);
+            $array["user"] = $user->username;
             $array["timestamp"] = $comment->timestamp;
 
             $result[] = $array;
@@ -119,18 +137,15 @@ class ImageController extends Controller
         if (isset($selected_cropsArray)) {
             foreach ($selected_cropsArray as $crop) {
                 if (count($ids) > 0) {
-                    $criteria = new CDbCriteria();
-                    $criteria->condition = "description = :description";
-                    $criteria->params = array(
-                        ":description"=>urldecode($crop)
-                    );
-                    $criteria->addInCondition("file_id", $ids);
+                    $criteria = new EMongoCriteria();
+                    $criteria->description = urldecode($crop);
+                    $criteria->file_id = $ids; // $ids = array() ?
 
                     $db = ImagesCrops::model()->findAll($criteria);
                 } else {
-                    $db = ImagesCrops::model()->findAll("description = :description", array(
-                        ":description"=>urldecode($crop)
-                    ));
+                    $criteria = new EMongoCriteria();
+                    $criteria->description = urldecode($crop);
+                    $db = ImagesCrops::model()->findAll($criteria);
                 };
 
                 foreach($db as $part) {
@@ -149,18 +164,15 @@ class ImageController extends Controller
         if (isset($selected_tagsArray)) {
             foreach ($selected_tagsArray as $tag) {
                 if (count($ids) > 0) {
-                    $criteria = new CDbCriteria();
-                    $criteria->condition = "tag = :tag";
-                    $criteria->params = array(
-                        ":tag"=>urldecode($tag)
-                    );
-                    $criteria->addInCondition("file_id", $ids);
+                    $criteria = new EMongoCriteria();
+                    $criteria->tag = urldecode($tag);
+                    $criteria->file_id = $ids; // $ids = array() ?
 
                     $db = ImagesTags::model()->findAll($criteria);
                 } else {
-                    $db = ImagesTags::model()->findAll("tag = :tag", array(
-                        ":tag"=>urldecode($tag)
-                    ));
+                    $criteria = new EMongoCriteria();
+                    $criteria->tag = urldecode($tag);
+                    $db = ImagesTags::model()->findAll($criteria);
                 };
 
                 foreach($db as $part) {
@@ -204,8 +216,8 @@ class ImageController extends Controller
         $crops_and_tags = $this->_setTagsAndCrops($selected_tags, $selected_crops);
 
         if (count($crops_and_tags) > 0) {
-            $criteria = new CDbCriteria();
-            $criteria->addInCondition("file_id", $crops_and_tags);
+            $criteria = new EMongoCriteria();
+            $criteria->file_id = $crops_and_tags; // $crops_and_tags = array() ?
             $tags = ImagesTags::model()->findAll($criteria);
         } else {
             $tags = ImagesTags::model()->findAll();
@@ -227,8 +239,8 @@ class ImageController extends Controller
         $crops_and_tags = $this->_setTagsAndCrops($selected_tags, $selected_crops);
 
         if (count($crops_and_tags) > 0) {
-            $criteria = new CDbCriteria();
-            $criteria->addInCondition("file_id", $crops_and_tags);
+            $criteria = new EMongoCriteria();
+            $criteria->file_id = $crops_and_tags; // $crops_and_tags = array() ?
             $crops = ImagesCrops::model()->findAll($criteria);
         } else {
             $crops = ImagesCrops::model()->findAll();

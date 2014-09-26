@@ -1,0 +1,57 @@
+Title: Embedded Documents
+Author: Dariusz Górecki <darek.krk@gmail.com>
+
+---
+
+# Basic informations about embedded documents
+
+## Must know: {#mustknow}
+
+- For performance reasons all models of embedded documents should extend from `EMongoEmbeddedDocument` class
+- But the above is not a must, things will still work if you define as embedded child classes of regular `EMongoDocument`
+- You can define as many embedded documents as you wish
+- Every embedded document **can contain** embedded documents!
+- The only limit for this mechanism is that serialized version (in raw array format) of whole document, must not extend the 4 MB size
+- For documents bigger than 4 MB see the [GridFS Section][advanced.gridfs]
+- Main difference between `EMongoDocument` and EMongoEmbeddedDocument` is that:
+    - EMongoDocument extends from EMongoEmbeddedDocument
+    - EMongoDocument is equipped with all methods needed to save its contents into a MongoDB collection
+    - You cannot call ie `save()` method on a EMongoEmbeddedDocument
+
+## Defining embedded documents within document {#defining}
+
+**This applies to EMongoDocument and EMongoEmbeddedDocument**
+
+Just define the `embeddedDocuments()` method in yours model class, it should return array of
+simple key => value pairs.
+
+- Array values are class names that will be used to instantinate embedded documents
+- Array keys are treated as property names of given embedded document class 
+
+example:
+
+~~~
+[php]
+// ...
+// within model class
+public function embeddedDocuments()
+{
+	return array(
+		'address' => 'UserAddress',
+		'some_other_field_name' => 'AnyEMongoEmbeddedDocumentChildClass',
+	);
+}
+
+// this will give you access to propeties of model:
+$model->address->embeddedExampleField;
+$model->some_other_field_name->embeddedExampleField;
+~~~
+
+## How to force save of embedded document into collection {#forcesave}
+
+- First we need to get the mongo collection object ie:
+    - `$collection = SomeModelClass::model()->getCollection();`
+    - `$collection = SomeModelClass::model()->getDb()->collectionName;`
+    - `$collection = Yii::app()->getComponent('mongodb')->getConnection()->collectionName;`
+- When we have our collection model, we now can force save of embedded document as a regular root document:
+    - `$collection->save($ourEmbeddedModel->toArray());`

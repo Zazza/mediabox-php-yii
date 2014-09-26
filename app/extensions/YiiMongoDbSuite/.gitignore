@@ -1,0 +1,5 @@
+
+# Ignore eclipse crap
+.buildpath
+.settings
+.project

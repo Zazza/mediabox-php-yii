@@ -1,0 +1,47 @@
+Title: Special Topics
+Author: Dariusz Górecki <darek.krk@gmail.com>
+
+---
+
+This section covers some special topics, that need to bye mentioned
+
+# Behaviors {#behaviors}
+
+- You can use existing CActiveRecordBehaviors as long as they do not mess up with CActiveRecord explicit stuff (ie. behaviors that add relation handling will fail to work with EMongoDocuments)
+- Behaviors may extend from EMongoDocumentBehavior class, standard AR behavior class can't use extra events witch are available here (beforeEmbeddedDocsInit, afterEmbeddedDocsInit, beforeToArray and afterToArray)
+
+# Performance {#performance}
+
+- By default all save/update/delete operations performed by internal command sets the FSYNC flag to TRUE, this means, all operations will have to wait for a disk sync!
+- FSYNC in most cases is a good way and do not have massive impact on performance
+- You may want to disable FSYNC flag when doing massive imports/updates/models, because it will be **horrible** slow!
+- Fsync can be disabled by setting up fsyncField in EMongoDB class
+
+# Use Cursor Flag {#usecursorflag}
+
+Now we can set that all records returned by findAll* methods will return EMongoCursor instead of raw array,
+EMongoCursor implements Iterator interface and can be used with ie. foreach loop.
+
+EMongoCursor will instantiate objects in lazy-loading way, only on first use.
+
+By default useCursor flag is set to FALSE to keep backwards compatibility, note:
+- **Cursor does not implement ArrayAccess interface, because offset access to cursor is very ineffective, and pointless** 
+- You can set useCursor flag in different scopes
+    - globally in EMongoDB class, by setting $useCursor variable
+    - Per model: ModelClass::model()->setUseCursor(true);
+    - And per model instance: $modelInstance->setUseCursor(true);
+    
+# Massive hand operations {#masshand}
+
+
+~~~
+[php]
+// Example mass insert (you will want to disable fsyncField for this:
+for($i=0; $i<1000; $i++)
+{
+	$c = new Client;
+	$c->personal_number = $i;
+    $c->validate(); // You can omit this if you want
+	$c->getCollection()->insert($c->toArray());
+}
+~~~

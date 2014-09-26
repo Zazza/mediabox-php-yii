@@ -1,0 +1,63 @@
+Title: Soft Documents Models
+Author: Dariusz Górecki <darek.krk@gmail.com>
+
+---
+
+Since the 1.3.4 version you can have models, that do not have fixed attribute list.
+
+The only thing to get started is to define model that extends from `EMongoSoftDocument`
+
+Example:
+
+~~~
+[php]
+class MixedModel extends EMongoSoftDocument
+{
+	// You still can define a field(s), that always will be defined
+	// like in normal EMongoDocument, but this is optional
+	public $field;
+	
+	// As always define the getCollectionName() and model() methods !
+	
+	public function getCollectionName()
+	{
+		return 'mixed_collection';
+	}
+	
+	public static function model($className=__CLASS__)
+	{
+		return parent::model($className);
+	}
+}
+~~~
+
+And thats it! Now you have model class that will handle of any field lists!
+
+> [information]
+> You still can use all features that are present in `EMongoDocument` because 'EMongoSoftDocument` extends from it.
+
+## Usage: {#usage}
+
+> [important]
+> You need to init every soft attribute that you want to add to model, by using `$model->initSoftAttribute($attributeName)`.
+
+~~~
+[php]
+$model = new MixedModel();
+
+$model->initSoftAttribute('field1');
+$model->initSoftAttributes(array('field2', 'field3'));
+
+$model->field = 'regularField';
+$model->field1 = 'value';	//	}
+$model->field2 = 'value2';	//	} soft attributes, only in this model instance
+$model->field3 = 'value3';	//	}
+
+$model->save();
+
+// Finder will init and populate all soft attributes with values found in particular document automatically
+$newModel = MixedModel::model()->find();
+
+echo $newModel->field3; // will print 'value3'
+~~~
+

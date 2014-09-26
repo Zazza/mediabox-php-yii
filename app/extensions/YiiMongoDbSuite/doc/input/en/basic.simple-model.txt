@@ -1,0 +1,66 @@
+Title: Simple Model (Document in collection)
+ShortTitle: Simple Model
+Author: Dariusz Górecki <darek.krk@gmail.com>
+
+---
+
+For basic use, just declare simple model, under yours application models directory,
+we will show simple User model that will represent documents stored in `users` MongoDB collection.
+
+~~~
+[php]
+class User extends EMongoDocument // Notice: We extend EMongoDocument class instead of CActiveRecord
+{
+	public $personal_no;
+	public $login;
+	public $first_name;
+	public $last_name;
+	public $email;
+	
+	/**
+	 * This method have to be defined in every Model
+	 * @return string MongoDB collection name, witch will be used to store documents of this model
+	 */
+	public function getCollectionName()
+	{
+		return 'users';
+	}
+	
+	// We can define rules for fields, just like in normal CModel/CActiveRecord classes
+	public function rules()
+	{
+		return array(
+			array('login, email, personal_no', 'required'),
+			array('personal_no', 'numerical', 'integerOnly' => true),
+			array('email', 'email'),
+		);
+	}
+	
+	// the same with attribute names
+	public function attributeNames()
+	{
+		return array(
+			'email' => 'E-Mail Address',
+		);
+	}
+	
+	/**
+	 * This method have to be defined in every model, like with normal CActiveRecord
+	 */
+	public static function model($className=__CLASS__)
+	{
+		return parent::model($className);
+	}
+}
+~~~
+
+Now we can star using our model, just as normal Yii ActiveRecord!
+
+~~~
+[php]
+$user = new User();
+$user->personal_no = 1234;
+$user->login = 'somelogin';
+$user->email = 'email@example.com';
+$user->save(); // This will store document with user data into MongoDB collection
+~~~

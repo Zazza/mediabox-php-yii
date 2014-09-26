@@ -5,7 +5,6 @@ class Buffer {
     }
 
     public static function getBuffer() {
-        //return implode(",", Yii::app()->session['buffer']);
         return unserialize(Yii::app()->session['buffer']);
     }
 

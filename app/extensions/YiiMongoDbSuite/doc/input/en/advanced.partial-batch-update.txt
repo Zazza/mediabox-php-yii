@@ -1,0 +1,91 @@
+Title:  Massive Partial Updates
+Author: Philippe Gaultier <pgaultier@gmail.com>
+
+---
+
+Since the `v1.3.6` You can perform *partial updates* of multiple documents.
+
+~~~
+[php]
+// prepare modifiers
+$modifier = new EMongoModifier();
+// replace field1 value with 'new value'
+$modifier->addModifier('field1', 'set', 'new value');
+// increment field2 value by 1
+$modifier->addModifier('field2', 'inc', 1);
+
+// prepare search to find documents
+$criteria = new EMongoCriteria();
+$criteria->addCond('field3','==', 'filtered value');
+
+// update all matched documents using the modifiers
+$status = ModelClass::model()->updateAll($modifier, $criteria); 
+
+~~~
+
+And thats it, this will only update those 2 fields (force value of `field1` and increment value of `field2`) 
+for all the documents having `field3 == 'filtered value'`, everything else in the db will remain untouched.
+
+---
+
+Available modifiers are : 
+
+ * inc
+ * set
+ * unset
+ * push
+ * pushAll
+ * addToSet
+ * pop
+ * pull
+ * pullAll
+ * rename
+
+You can find detailed explanation about usage of those modifiers 
+on the original [MongoDb documentation](http://www.mongodb.org/display/DOCS/Updating "MongoDB.org").
+
+---
+
+EMongoModifier can be defined during creation :
+
+~~~
+[php]
+// prepare modifiers
+$modifier = new EMongoModifier(
+	array(
+		'fieldName1'=>array('inc' => $incValue),
+		'fieldName2'=>array('set' => $targetValue),
+		'fieldName3'=>array('unset' => 1),
+		'fieldName4'=>array('push' => $pushedValue),
+		'fieldName5'=>array('pushAll' => array($pushedValue1, $pushedValue2)),
+		'fieldName6'=>array('addToSet' => $addedValue),
+		'fieldName7'=>array('pop' => 1),
+		'fieldName8'=>array('pop' => -1),
+		'fieldName9'=>array('pull' => $removedValue),
+		'fieldName10'=>array('pullAll' => array($removedValue1, $removedValue2)),
+		'fieldName11'=>array('rename' => $newFieldName),
+	)
+);
+
+~~~
+
+, during execution
+
+~~~
+[php]
+$modifier = new EMongoModifier();
+$modifier->addCond($fieldName1, 'inc', $incValue),
+$modifier->addCond($fieldName2, 'set', $targetValue),
+$modifier->addCond($fieldName3, 'unset', 1),
+$modifier->addCond($fieldName4, 'push', $pushedValue),
+$modifier->addCond($fieldName5, 'pushAll', array($pushedValue1, $pushedValue2)),
+$modifier->addCond($fieldName6, 'addToSet', $addedValue),
+$modifier->addCond($fieldName7, 'pop', 1),
+$modifier->addCond($fieldName8, 'pop', -1),
+$modifier->addCond($fieldName9, 'pull', $removedValue),
+$modifier->addCond($fieldName10, 'pullAll', array($removedValue1, $removedValue2)),
+$modifier->addCond($fieldName11, 'rename', $newFieldName),
+
+~~~
+
+or using the two methods

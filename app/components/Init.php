@@ -2,6 +2,7 @@
 class Init {
     public static function vars() {
         $current_directory = Yii::app()->session["current_directory"];
+        $current_path = Yii::app()->session['current_path'];
         $volume = Yii::app()->session["volume"];
 
         if (!isset(Yii::app()->session["types"])) {
@@ -25,12 +26,18 @@ class Init {
         };
         Yii::app()->session['sort'] = $sort;
 
-        if ($current_directory != "")
+        if ($current_directory != "") {
             $startdir = $current_directory;
-        else
+        } else {
             $startdir = 0;
+        }
 
         Yii::app()->session['startdir'] = $startdir;
+
+        if ($current_path == "") {
+            $current_path = "/";
+        }
+        Yii::app()->session['current_path'] = $current_path;
 
         if ($volume)
             $volume_level = $volume;

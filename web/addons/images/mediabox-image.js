@@ -6,34 +6,19 @@ define(function (require) {
     var mxFunctions = require('/js/mediabox/mediabox-functions.js');
     var MediaboxFunctions = new mxFunctions();
 
-    var imageFs = require('/js/mediabox/mediabox-image-fs.js');
-    var MediaboxImageFs = new imageFs();
-
     var MediaboxConfiguration = require('/js/mediabox/configuration.js');
     var config = new MediaboxConfiguration();
 
     var jcrop_api;
     var _id;
-    var original_width;
-    var original_height;
     var current_width;
     var current_height;
 
-    $("#preview-scroll").css("height", $(window).height() - 67);
-    $(window).resize(function() {
-        $("#preview-scroll").css("height", $(window).height() - 67);
-    });
-
-    //scrollbar
-    //$("#preview-scroll").mCustomScrollbar({ scrollInertia:150, advanced:{ updateOnContentResize: true } });
-
     var methods = {
         init: function( options ) {
-            //$("#splitter").fadeOut();
-            $("#image-preview").fadeIn();
-
-            $("#fs-second-panel").hide();
-            $("#image-second-panel").show();
+            $("#mx-main").hide();
+            $("#mx-advanced").show();
+            $("#advanced-image").show();
 
             $(this).addClass("current");
 
@@ -45,20 +30,12 @@ define(function (require) {
         close: function() {
             unbindActive();
 
-            $("#fs-second-panel").show();
-            $("#image-second-panel").hide();
-
-            $("#image-preview").fadeOut();
-            //$("#splitter").fadeIn();
+            $("#advanced-image").hide();
+            $("#mx-advanced").hide();
+            $("#mx-main").show();
         },
 
         one: function() {
-            $("#preview-div-img").height($(window).height() - 165);
-
-            var margintop = ($(window).height() - 165)/2 - 32;
-
-            $("#preview-div-img").html("<img src='/img/loading.gif' style='margin-top: "+margintop+"px;' />");
-
             return this;
         },
 
@@ -68,18 +45,7 @@ define(function (require) {
             // flush comment div
             $("#image-comments").html("");
 
-            //$("#preview-div-img").height($(window).height() - 165);
-
-            var margintop = ($(window).height() - 165)/2 - 32;
-
-            $("#preview-div-img")
-                .fadeOut(200, function(){
-                    $("#preview-div-img").html("<img src='/img/loading.gif' style='margin-top: "+margintop+"px;' />");
-                    $(image).image("loadImg");
-                })
-                .fadeIn(300, function(){
-                    // Callback
-                });
+            $(image).image("loadImg");
         },
 
         prev: function() {
@@ -88,36 +54,27 @@ define(function (require) {
             // flush comment div
             $("#image-comments").html("");
 
-            //$("#preview-div-img").height($(window).height() - 165);
-
-            var margintop = ($(window).height() - 165)/2 - 32;
-
-            $("#preview-div-img")
-                .fadeOut(200, function(){
-                    $("#preview-div-img").html("<img src='/img/loading.gif' style='margin-top: "+margintop+"px;' />");
-                    $(image).image("loadImg");
-                })
-                .fadeIn(300, function(){
-                    // Callback
-                });
+            $(image).image("loadImg");
         },
 
         loadImg : function( options ) {
             var src = this;
             var per;
 
+            $("#preview-div-img").html('<div class="ajax-loader" />');
+
             var _id = $(src).attr("data-id");
             $("#preview-div-img").attr("data-id", _id);
-            var uri = config.storage.getFileUri(_id)
+            var uri = config.storage.getFileUri($("#current_path_string").val(), $(src).attr('data-name'))
 
             $.loadImage(uri)
                 .fail(function(image) {
                     $("#preview-div-img").html("<h3>404: file not found!</h3>");
                 })
                 .done(function(image) {
-                    per = image.height / ($(window).height() - 145);
+                    per = image.height / ($(window).height());
                     if (image.height > $(window).height()) {
-                        current_height = $(window).height() - 145;
+                        current_height = $(window).height();
                     } else {
                         current_height = image.height;
                     }
@@ -126,13 +83,6 @@ define(function (require) {
                     } else {
                         current_width = image.width;
                     }
-
-                    //IE Bug with image width
-                    $(image).width(current_width);
-                    $(image).height(current_height);
-
-                    $("#preview-div-img").width(current_width);
-                    $("#preview-div-img").height(current_height);
 
                     $("#preview-div-img").html(image);
 
@@ -295,7 +245,7 @@ define(function (require) {
                 }
 
                 $.each(res, function(key, value){
-                    $("#image-crops").append('<div class="image-crop" data-x1="'+value.x1+'" data-x2="'+value.x2+'" data-y1="'+value.y1+'" data-y2="'+value.y2+'" data-ws="'+value.ws+'">'+value.description+'</div>');
+                    $("#image-crops").append('<span class="label label-info image-crop" data-x1="'+value.x1+'" data-x2="'+value.x2+'" data-y1="'+value.y1+'" data-y2="'+value.y2+'" data-ws="'+value.ws+'">'+value.description+'</span>');
                 })
 
                 $("#image-crops").on("mouseover", ".image-crop", function(){
@@ -318,7 +268,7 @@ define(function (require) {
                 }
 
                 $.each(res, function(key, value){
-                    $("#image-tags").append('<div class="image-tag">'+value.tag+'</div>');
+                    $("#image-tags").append('<span class="label label-success image-tag">'+value.tag+'</span>');
                 })
             })
     }
@@ -407,19 +357,6 @@ define(function (require) {
     });
     // END Tag
 
-    $("#show-comment-window").click(function(){
-        $("#new-comment-window").kendoWindow({
-            width: "358px",
-            height: "190px",
-            modal: true,
-            title: "Comment"
-        });
-        $("#new-comment-window").data("kendoWindow").center().open();
-    });
-    $("#image-comment-close").click(function(){
-        $("#new-comment-window").data("kendoWindow").close();
-    });
-
     function showCoords(c) {
         $("#x1").val(c.x);
         $("#y1").val(c.y);
@@ -452,19 +389,13 @@ define(function (require) {
 
     $("#image-comment-save").click(function(){
         var _id = $("#preview-div-img").attr("data-id");
-        $.ajax({ type: "GET", url: '/image/addComment/', data: "id=" + _id + "&text=" + encodeURIComponent($("#image-comment-editor").val()) })
+        $.ajax({ type: "GET", dataType: "JSON", url: '/image/addComment/', data: "id=" + _id + "&text=" + encodeURIComponent($("#image-comment-editor").val()) })
             .done(function(res) {
-                var timestamp = new Date();
-                var monthNames = [ "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" ];
-                var time = timestamp.getHours() + ":" + timestamp.getMinutes() + ", " + timestamp.getDate() + "-" + monthNames[timestamp.getMonth()] + "-" + timestamp.getFullYear();
-
-                comment(time, "fff", $("#image-comment-editor").val());
-
-                $("#new-comment-window").data("kendoWindow").close();
+                comment(res.timestamp, res.user, $("#image-comment-editor").val());
             })
     });
 
-    $("#image-preview").on("click", "#back", function(){
+    $("body").on("click", "#back", function(){
         $(this).image("close");
         $("div.current").removeClass("current");
 
@@ -546,18 +477,18 @@ define(function (require) {
         */
     }
 
-    $("#image-preview").on("click", "#next", function(){
+    $("#advanced-image").on("click", "#next", function(){
         imgNext();
     });
-    $("#image-preview").on("click", "#prev", function(){
+    $("#advanced-image").on("click", "#prev", function(){
         imgPrev();
     });
 
     /*
-    $("#image-preview").on("click", "#zoomIn", function(){
+    $("#advanced-image").on("click", "#zoomIn", function(){
 
     });
-    $("#image-preview").on("click", "#zoomOut", function(){
+    $("#advanced-image").on("click", "#zoomOut", function(){
 
     });
     */

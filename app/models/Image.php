@@ -1,22 +1,14 @@
 <?php
 
-/**
- * This is the model class for table "image".
- *
- * The followings are the available columns in table 'image':
- * @property string $id
- * @property string $file_id
- * @property string $data
- */
-class Image extends CActiveRecord
+class Image extends EMongoDocument
 {
-	/**
-	 * @return string the associated database table name
-	 */
-	public function tableName()
-	{
-		return 'image';
-	}
+    public $file_id;
+    public $data;
+
+    public function getCollectionName()
+    {
+        return 'image';
+    }
 
 	/**
 	 * @return array validation rules for model attributes.
@@ -27,7 +19,7 @@ class Image extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('file_id, data', 'required'),
-			array('file_id', 'length', 'max'=>10),
+			//array('file_id', 'length', 'max'=>10),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
 			array('id, file_id, data', 'safe', 'on'=>'search'),
@@ -55,33 +47,6 @@ class Image extends CActiveRecord
 			'file_id' => 'File',
 			'data' => 'Data',
 		);
-	}
-
-	/**
-	 * Retrieves a list of models based on the current search/filter conditions.
-	 *
-	 * Typical usecase:
-	 * - Initialize the model fields with values from filter form.
-	 * - Execute this method to get CActiveDataProvider instance which will filter
-	 * models according to data in model fields.
-	 * - Pass data provider to CGridView, CListView or any similar widget.
-	 *
-	 * @return CActiveDataProvider the data provider that can return the models
-	 * based on the search/filter conditions.
-	 */
-	public function search()
-	{
-		// @todo Please modify the following code to remove attributes that should not be searched.
-
-		$criteria=new CDbCriteria;
-
-		$criteria->compare('id',$this->id,true);
-		$criteria->compare('file_id',$this->file_id,true);
-		$criteria->compare('data',$this->data,true);
-
-		return new CActiveDataProvider($this, array(
-			'criteria'=>$criteria,
-		));
 	}
 
 	/**

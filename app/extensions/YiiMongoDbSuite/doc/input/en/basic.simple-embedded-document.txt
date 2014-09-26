@@ -1,0 +1,93 @@
+Title: Simple Embeded Document Model
+Author: Dariusz Górecki <darek.krk@gmail.com>
+
+---
+
+To fully understand this example please refer to [Embedded Documents Models Section][basic.embedded-documents]
+
+To use embedded documents you need to do two steps:
+
+- First create model for embedded document
+(we will add address as embedded document to User model from previous [example][basic.simple-model] ):
+
+~~~
+[php]
+/**
+ * Note that we extending EMongoEmbeddedDocument, not regular EMongoDocument class
+ * this is for performance reasons, embedded documents do not need to have, all
+ * connection, and collection management stuff, this is explained in [Embedded Documents Models Section][basic.embeddedDocuments]
+ *
+ * NOTE: You may define regular EMongoDocument as an embedded in another one, if you really want to, it will still work
+ */
+class UserAddress extends EMongoEmbeddedDocument
+{
+	public $apartment;
+	public $house;
+	public $street;
+	public $city;
+	public $zip;
+	
+	// We may define rules for embedded document too
+	public function rules()
+	{
+		return array(
+			array('apartment, house, street, city, zip', 'required'),
+			// ...
+		);
+	}
+	
+	// And attribute names too
+	public function attributeNames() { /* ... */ }
+	
+	// NOTE: for embedded documents we do not define static model method!
+	//       we do not define getCollectionName method either.
+}
+~~~
+
+- Next we have to define `embeddedDocuments()` method in model that will contain embedded document
+
+Add `embeddedDocument()` method to previous `User` model example: 
+
+~~~
+[php]
+class User extends EMongoDocument
+{
+	// ...
+	
+	/**
+	 * This method should return simple array that will define field names for embedded
+	 * documents, and class to use for them
+	 */ 
+	public function embeddedDocuments()
+	{
+		return array(
+			// property field name => class name to use for this embedded document
+			'address' => 'UserAddress',
+		);
+	}
+	
+	// ...
+}
+~~~
+
+Now, the fun part starts!
+
+We can now do things like:
+
+~~~
+[php]
+$user = new User();
+$user->address->city = 'New York';
+$user->address->street = 'Some street name';
+
+// This will save user to users collection, with UserAddress embedded document set,
+// and this handle with validation of embedded documents too!
+$user->save();
+
+// After that:
+$user = User::model()->find();
+
+// Models will be automatically populated with embedded documents that they contain,
+// so we can do:
+echo $user->address->city;
+~~~

@@ -4,26 +4,21 @@
     </div>
 </nav>
 
-<div class="form container">
-    <div style="padding: 20px 0 0 20px;">
-        <form method="post" action="/site/login/">
-            {% if error %}
-                <div class="alert alert-error">
-                    Login/password incorrect
-                </div>
-            {% endif %}
+<div class="form container" id="LoginForm" style="padding: 20px 0 0 20px;">
+    <div id="LoginForm_error" class="alert alert-error" style="display: none;">
+        Login/password incorrect
+    </div>
 
-            <div class="row">
-                <input type="text" name="LoginForm[username]" placeholder="login" />
-            </div>
+    <div class="row">
+        <input type="text" id="LoginForm_username" placeholder="login" />
+    </div>
 
-            <div class="row">
-                <input type="text" name="LoginForm[password]" placeholder="password" />
-            </div>
+    <div class="row">
+        <input type="password" id="LoginForm_password" placeholder="password" />
+    </div>
 
-            <div class="row buttons">
-                <input type="submit" name="submit" class="btn btn-primary" value="Login">
-            </div>
-        </form>
+    <div class="row buttons">
+        <input type="button" id="LoginForm_submit" class="btn btn-primary" value="Login">
+        <input type="hidden" id="LoginForm_session" value="" />
     </div>
 </div>

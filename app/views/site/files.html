@@ -1,41 +1,80 @@
 <div id="fs-menu">
 
     <div class="fs-type navbar" id="fs-all">
-        <div class="navbar-inner" id="fs-top-menu" style="padding-right: 5px; margin-bottom: 3px; height: 40px; border-bottom: 1px solid #D6DEDE;">
+        <div class="navbar-inner" id="fs-top-menu">
             <ul id="fs-second-panel" class="nav">
 
-                <li><a href="#"><i class="icon-check fm_sel" style="margin-right: 20px;"></i></a></li>
+                <li><a style="cursor: pointer;"><i class="icon-check fm_sel" style="margin-right: 20px;"></i></a></li>
 
-                <li>
-                    <span id="current_path" style="position: relative; top: 8px;"></span>
-                    <span style="position: relative; top: 8px;">
-                        &nbsp;[<span class="sizeFiles">0</span>]
-                    </span>
+                <li style="max-width: 420px; max-height: 34px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                    <!--<span id="current_path" style="position: relative; top: 8px;"></span>-->
+                    <div id="current_path" class="btn-group btn-breadcrumb" style="padding: 0; margin-right: 10px;"></div>
                 </li>
 
             </ul>
 
             <ul class="nav pull-right">
+                <li>
+                    <span style="position: relative; top: 8px; margin-right: 10px;">
+                        [<span class="sizeFiles">0</span>]
+                    </span>
+                </li>
+
                 <li class="dropdown">
-                    <a data-toggle="dropdown" href="#">
+                    <a data-toggle="dropdown" style="cursor: pointer;">
                         <i class="icon-list"></i>
                         <b class="caret"></b>
                     </a>
                     <ul class="dropdown-menu">
-                        <li class="fs-view" data-id="grid"><a href="#">Grid</a></li>
-                        <li class="fs-view" data-id="list"><a href="#">List</a></li>
+                        <li class="fs-view" data-id="grid"><a style="cursor: pointer;">Grid</a></li>
+                        <li class="fs-view" data-id="list"><a style="cursor: pointer;">List</a></li>
                     </ul>
                 </li>
 
                 <li class="dropdown">
-                    <a data-toggle="dropdown" href="#">
+                    <a data-toggle="dropdown" style="cursor: pointer;">
                         <i class="icon-sort"></i>
                         <b class="caret"></b>
                     </a>
                     <ul class="dropdown-menu">
-                        <li class="fs-sort" data-id="name"><a href="#">Sort by name</a></li>
-                        <li class="fs-sort" data-id="size"><a href="#">Sort by size</a></li>
-                        <li class="fs-sort" data-id="date"><a href="#">Sort by date</a></li>
+                        <li class="fs-sort" data-id="name"><a style="cursor: pointer;">Sort by name</a></li>
+                        <li class="fs-sort" data-id="size"><a style="cursor: pointer;">Sort by size</a></li>
+                        <li class="fs-sort" data-id="date"><a style="cursor: pointer;">Sort by date</a></li>
+                    </ul>
+                </li>
+
+                <li class="dropdown">
+                    <a data-toggle="dropdown" style="cursor: pointer;">
+                        <i class="icon-gear"></i>
+                        <b class="caret"></b>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li>
+                            <label>
+                                <input type="checkbox" class="check-type" name="check-type-other" value="other" />
+                                <i class="adv-menu-img icon-file"></i> Other(<span id="typeOther"></span>)
+                            </label>
+                        </li>
+
+                        <li>
+                            <label>
+                                <input type="checkbox" class="check-type" name="check-type-image" value="image" />
+                                <i class="adv-menu-img icon-camera"></i> Images(<span id="typeImage"></span>)
+                            </label>
+                        </li>
+                        <li>
+                            <label>
+                                <input type="checkbox" class="check-type" name="check-type-video" value="video" />
+                                <i class="adv-menu-img icon-film"></i> Video(<span id="typeVideo"></span>)
+                            </label>
+                        </li>
+                        <li>
+                            <label>
+                                <input type="checkbox" class="check-type" name="check-type-music" value="music" />
+                                <i class="adv-menu-img icon-music"></i> Music(<span id="typeAudio"></span>)
+                            </label>
+                        </li>
+
                     </ul>
                 </li>
             </ul>
@@ -55,168 +94,61 @@
 
 </div>
 
-<div id="file-context-menu" class="dropdown clearfix" data-id="">
+<div id="file-context-menu" class="dropdown clearfix" data-id="" data-name="">
     <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu" style="display:block;">
         <li>
-            <a tabindex="-1" href="#" data-role="open"><i class="icon-folder-open"></i> Open</a>
+            <a tabindex="-1" style="cursor: pointer;" data-role="open"><i class="icon-folder-open"></i> Open</a>
         </li>
         <li>
-            <a tabindex="-1" href="#" data-role="download"><i class="icon-download-alt"></i> Download</a>
+            <a tabindex="-1" style="cursor: pointer;" data-role="download"><i class="icon-download-alt"></i> Download</a>
         </li>
         <li>
-            <a tabindex="-1" href="#" data-role="copy"><i class="icon-copy"></i> Copy</a>
+            <a tabindex="-1" style="cursor: pointer;" data-role="rename"><i class="icon-edit"></i> Rename</a>
         </li>
         <li>
-            <a tabindex="-1" href="#" data-role="remove"><i class="icon-remove"></i> Delete</a>
+            <a tabindex="-1" style="cursor: pointer;" data-role="copy"><i class="icon-copy"></i> Copy</a>
+        </li>
+        <li>
+            <a tabindex="-1" style="cursor: pointer;" data-role="remove"><i class="icon-remove"></i> Delete</a>
         </li>
     </ul>
 </div>
 
-<div id="folder-context-menu" class="dropdown clearfix" data-id="">
+<div id="folder-context-menu" class="dropdown clearfix" data-id="" data-name="">
     <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu" style="display:block;">
         <li>
-            <a tabindex="-1" href="#" data-role="open"><i class="icon-folder-open"></i> Open</a>
+            <a tabindex="-1" style="cursor: pointer;" data-role="open"><i class="icon-folder-open"></i> Open</a>
         </li>
         <li>
-            <a tabindex="-1" href="#" data-role="copy"><i class="icon-copy"></i> Copy</a>
+            <a tabindex="-1" style="cursor: pointer;" data-role="rename"><i class="icon-edit"></i> Rename</a>
         </li>
         <li>
-            <a tabindex="-1" href="#" data-role="remove"><i class="icon-remove"></i> Delete</a>
+            <a tabindex="-1" style="cursor: pointer;" data-role="copy"><i class="icon-copy"></i> Copy</a>
+        </li>
+        <li>
+            <a tabindex="-1" style="cursor: pointer;" data-role="remove"><i class="icon-remove"></i> Delete</a>
         </li>
     </ul>
 </div>
 
-<div id="file-trash-context-menu" class="dropdown clearfix" data-id="">
+<div id="file-trash-context-menu" class="dropdown clearfix" data-id="" data-name="" data-path="">
     <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu" style="display:block;">
         <li>
-            <a tabindex="-1" href="#" data-role="open"><i class="icon-folder-open"></i> Open</a>
+            <a tabindex="-1" style="cursor: pointer;" data-role="restore"><i class="icon-undo"></i> Restore</a>
         </li>
         <li>
-            <a tabindex="-1" href="#" data-role="download"><i class="icon-download-alt"></i> Download</a>
-        </li>
-        <li>
-            <a tabindex="-1" href="#" data-role="restore"><i class="icon-undo"></i> Restore</a>
-        </li>
-        <li>
-            <a tabindex="-1" href="#" data-role="remove"><i class="icon-remove"></i> Delete</a>
+            <a tabindex="-1" style="cursor: pointer;" data-role="remove"><i class="icon-remove"></i> Delete</a>
         </li>
     </ul>
 </div>
 
-<div id="folder-trash-context-menu" class="dropdown clearfix" data-id="">
+<div id="folder-trash-context-menu" class="dropdown clearfix" data-id="" data-name="" data-path="">
     <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu" style="display:block;">
         <li>
-            <a tabindex="-1" href="#" data-role="restore"><i class="icon-undo"></i> Restore</a>
+            <a tabindex="-1" style="cursor: pointer;" data-role="restore"><i class="icon-undo"></i> Restore</a>
         </li>
         <li>
-            <a tabindex="-1" href="#" data-role="remove"><i class="icon-remove"></i> Delete</a>
+            <a tabindex="-1" style="cursor: pointer;" data-role="remove"><i class="icon-remove"></i> Delete</a>
         </li>
     </ul>
 </div>
-
-<!-- LIST TEMPLATES -->
-<script type="text/x-kendo-template" id="dirListTemplate">
-    <div class="ddir fm_file_li" title="#: name #" data-id="#: id #" style="cursor: pointer">
-        <div class="fm_unsellabel" id="#: name #">
-            <div style="float: left; padding-right: 5px;"><img src="/img/mediabox/ftypes/folder.png" style="width: 15px;" alt="[DIR]" /></div>
-            <div style="float: left;" class="dname">#: name #</div>
-
-            <div class="dname_li">#: date #</div>
-            <div class="ddate_li">[folder]</div>
-        </div>
-    </div>
-</script>
-
-<script type="text/x-kendo-template" id="fileListTemplate">
-    <div title="#: name #" data-type="#: type #" data-id="#: id #" data-mimetype="#: mimetype #" data-ext="#: ext #" class="dfile fm_file_li" style="cursor: pointer">
-        <div class="fm_unsellabel" id="#: name #">
-            <div style="float: left; padding-right: 5px;" class="fm_pre"><img src="#: ico #" style="height: 15px;" alt="[FILE]" /></div>
-            <div style="float: left;" class="fname"><a class="file-open-link">#: name #</a></div>
-
-            <div class="file_list_date">#: date #</div>
-            <div class="file_list_size">#: size #</div>
-        </div>
-    </div>
-</script>
-
-<script type="text/x-kendo-template" id="imageListTemplate">
-    <div title="#: name #" data-type="#: type #" data-id="#: id #" data-mimetype="#: mimetype #" data-ext="#: ext #" class="dfile fm_file_li image_dfile" style="cursor: pointer">
-        <div class="fm_unsellabel" id="#: name #">
-            <div style="float: left; padding-right: 5px;" class="fm_pre swipebox" data-url="#: href #"><img src="#: ico #" style="height: 15px;" alt="[FILE]" /></div>
-            <div style="float: left;" class="fname"><a class="file-open-link">#: name #</a></div>
-
-            <div class="file_list_date">#: date #</div>
-            <div class="file_list_size">#: size #</div>
-        </div>
-    </div>
-</script>
-<!-- END LIST TEMPLATES -->
-
-<!-- GRID TEMPLATES -->
-<script type="text/x-kendo-template" id="dirGridTemplate">
-    <div title="#: name #" data-id="#: id #" class="ddir fm_file" style="text-align: center; cursor: pointer">
-        <div class="fm_unsellabel" id="#: name #">
-            <div class="fm_pre"><img src="/img/mediabox/ftypes/folder.png" style="height: 70px;" alt="[DIR]" /></div>
-            <div class="fname">#: shortname #</div>
-            <div class="fullname" style="display: none">#: name #</div>
-        </div>
-    </div>
-</script>
-
-<script type="text/x-kendo-template" id="fileGridTemplate">
-    <div title="#: name #" data-type="#: type #" data-mimetype="#: mimetype #" data-id="#: id #" data-ext="#: ext #" class="dfile fm_file" style="text-align: center; cursor: pointer">
-        <div class="fm_unsellabel" id="#: name #">
-            <div class="fm_pre" href="#: href #"><a class="fm_pre"><img src="#: ico #" style="height: 70px;" alt="[FILE]" /></a></div>
-            <div class="fname"><a class="file-open-link">#: shortname #</a></div>
-            <div class="fullname" style="display: none">#: name #</div>
-
-            <div class="file_icon_size">#: size #</div>
-        </div>
-    </div>
-</script>
-
-<script type="text/x-kendo-template" id="imageGridTemplate">
-    <div title="#: name #" data-type="image" data-id="#: id #" data-mimetype="#: mimetype #" data-ext="#: ext #" class="dfile fm_file image_dfile" style="text-align: center; cursor: pointer">
-        <div class="fm_unsellabel icons" id="#: name #">
-            <div class="fm_pre swipebox" data-url="#: href #"><img class="file-img-preview" src="/fm/getThumb/?name=#: id #" alt="[FILE]" /></div>
-            <div class="fname_icon"><a class="file-open-link">#: shortname #</a></div>
-            <div class="fullname" style="display: none">#: name #</div>
-
-            <div class="file_icon_size">#: size #</div>
-        </div>
-    </div>
-</script>
-<!-- END GRID TEMPLATES -->
-
-
-<div id="rm-window" style="display: none;">
-    <div class="control-group">
-        Confirm?
-    </div>
-    <hr />
-    <div style="text-align: right;">
-        <button id="rm-window-yes" class="k-button">Yes</button>
-        <button id="rm-window-no" class="k-button">No</button>
-    </div>
-</div>
-
-<div id="move-to-trash-window" style="display: none;">
-    <div class="control-group">
-        Confirm?
-    </div>
-    <hr />
-    <div style="text-align: right;">
-        <button id="move-to-trash-window-yes" class="k-button">Yes</button>
-        <button id="move-to-trash-window-no" class="k-button">No</button>
-    </div>
-</div>
-
-<div id="new-folder-window" style="display: none;">
-    <input type="text" name="fname" id="fname" />
-    <hr />
-    <div style="text-align: right;">
-        <button id="new-folder-ok" class="k-button">Ok</button>
-        <button id="new-folder-cancel" class="k-button">Cancel</button>
-    </div>
-</div>
-

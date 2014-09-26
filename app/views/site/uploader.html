@@ -1,0 +1,59 @@
+<nav id="mainnav">
+    <div class="container">
+        <h1 class="xvidMediaBox_25px h1logo">Xvid MediaBox</h1>
+
+        <ul class="nav nav-pills">
+            <li id="advanced-uploader-back">
+                <a>
+                    <i class="icon-remove"></i>&nbsp;<span>Back</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+<section class="container">
+
+    <input name="files" id="files" type="file" />
+
+    <div id="adv-menu-upload">drop files here</div>
+
+    <div id="splitter">
+        <div class="perc"></div>
+    </div>
+
+</section>
+
+
+<script type="text/x-kendo-template" id="fileUploadTemplate">
+    <ul class="k-upload-files k-reset">
+        <li class="k-file u_#: id #">
+            <span class="k-icon k-success">uploaded</span>
+            <span class="k-filename" title="#: name #">
+            <span class="uploader-long-name">#: name #</span>
+            <div class="upload-status">
+                <div class="upload-status-progress" style="width: 0%;"></div>
+            </div>
+            </span>
+            </span>
+            <div class="k-button k-button-icontext k-upload-action uploaderRemove" data-id="#: name #" type="button" title="Stop">
+                <i class="icon-stop"></i> Stop
+            </div>
+        </li>
+    </ul>
+</script>
+
+<script type="text/x-kendo-template" id="fileUploadDropdownTemplate">
+    <ul class="k-upload-files k-reset">
+        <li class="k-file u_#: id #">
+            <span class="k-icon k-success">uploaded</span>
+            <span class="k-filename" title="#: name #">
+            <span class="uploader-long-name">#: name #</span>
+            <div class="upload-status">
+                <div class="upload-status-progress" style="width: 0%;"></div>
+            </div>
+            </span>
+            </span>
+        </li>
+    </ul>
+</script>

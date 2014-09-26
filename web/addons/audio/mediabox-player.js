@@ -7,60 +7,15 @@ define(function (require) {
     require('kendo/kendo.slider.min');
     require('kendo/kendo.menu.min');
     require('kendo/kendo.upload.min');
-    var mxFunctions = require('/js/mediabox/mediabox-functions.js');
-    var MediaboxFunctions = new mxFunctions();
 
     var MediaboxConfiguration = require('/js/mediabox/configuration.js');
     var config = new MediaboxConfiguration();
-
-    var slider = $(".mx-pos-slider").kendoSlider({
-        showButtons: false,
-        tickPlacement: "none",
-        min: 0,
-        max: 0
-    }).data("kendoSlider");
-
-    $("#volume").kendoSlider({
-        orientation: "vertical",
-        min: 0,
-        max: 100,
-        value: $("#volume-level").val(),
-        smallStep: 1,
-        largeStep: 20,
-        showButtons: false,
-        slide: function(e) {
-            if (player)
-                player.volume = e.value/100;
-        },
-        change: function(e) {
-            $.ajax({type:"GET",url: "/audio/volume/",data:"level="+e.value});
-            $("#volume-level").val(e.value);
-            if (player)
-                player.volume = e.value/100;
-        }
-    });
-
-    $("#volumeButton").click(function(){
-        var volume = $("#volume").data("kendoSlider");
-
-        if (volume.value() > 0) {
-            $("i", this).removeClass("icon-volume-up").addClass("icon-volume-off");
-           volume.value(0);
-            if (player)
-                player.volume = 0;
-        } else {
-            $("i", this).removeClass("icon-volume-off").addClass("icon-volume-up");
-            volume.value($("#volume-level").val());
-            if (player)
-                player.setVolume($("#volume-level").val()/100);
-        }
-    })
 
     var methods = {
         init: function( options ) {
             var track = this;
             var data_id = $(track).attr('data-id');
-            var uri = config.storage.getFileUri(data_id);
+            var uri = config.storage.getFileUri($(track).attr("data-path"), $(track).attr("data-name"));
 
 
             $("#" + mediaElement).attr("src", uri);
@@ -85,18 +40,18 @@ define(function (require) {
 
                         $("#current-track-duration").text(duration);
 
-                        $("#track-slider").html('<input class="mx-pos-slider" />');
+                        $("#mx-pos-slider-div").click(function(e){
+                            var x = (e.pageX - $(this).offset().left)/$(this).width() * 100;
 
-                        slider = $(".mx-pos-slider").kendoSlider({
-                            showButtons: false,
-                            tickPlacement: "none",
-                            change: function(e) { player.setCurrentTime(e.value); },
-                            min: 0,
-                            max: player.duration
-                        }).data("kendoSlider");
+                            $("#mx-pos-slider-div").html("<div style='width: " + x + "%; height: 5px; padding: 1px; background-color: #004499;'></div>");
+
+                            var cur_pos = (e.pageX - $(this).offset().left)/$(this).width() * player.duration;
+                            player.setCurrentTime(cur_pos);
+                        });
                     };
                     var onTimeupdate = function() {
-                        slider.value(parseInt(player.currentTime, 10));
+                        var cur_pos =  player.currentTime / player.duration * 100;
+                        $("#mx-pos-slider-div").html("<div style='width: " + cur_pos + "%; height: 5px; padding: 1px; background-color: #004499;'></div>");
 
                         var sec = parseInt(player.currentTime - Math.floor(player.currentTime / 60)*60);
                         if (!isNaN(sec)) {
@@ -123,7 +78,7 @@ define(function (require) {
                             $(currenttrack).next().addClass("playlist-track-current");
                             $(".playlist-track-current").player("load").player("play");
                         } else {
-                            slider.value(0);
+                            $("#mx-pos-slider-div").html("<div style='width: 0%; height: 5px; padding: 1px; background-color: #004499;'></div>");
                             $("#current-track-time").text("--:--");
 
                             var current = $(".track-pause");
@@ -150,7 +105,10 @@ define(function (require) {
         load: function( options ) {
             var track = this;
             var data_id = $(track).attr('data-id');
-            var uri = MediaboxFunctions.getFileUri(data_id)
+            var uri = config.storage.getFileUri($(track).attr("data-path"), $(track).attr("data-name"));
+
+            $(".track").removeClass("playlist-track-current");
+            $(track).addClass("playlist-track-current");
 
             if (!player) {
                 $(track).player("init");
@@ -161,6 +119,9 @@ define(function (require) {
             }
 
             return this
+        },
+        get: function( options ) {
+            return player;
         },
         play: function() {
             player.play();
@@ -173,7 +134,7 @@ define(function (require) {
             $("i", current).removeClass("icon-play").addClass("icon-pause");
             $(current).removeClass("track-play").addClass("track-pause");
 
-            $("#current-track").text($(this).attr("title"));
+            $("#current-track").text(decodeURIComponent($(this).attr("title").replace(/\+/g, ' ')));
         },
         pause: function() {
             player.pause();
@@ -199,7 +160,7 @@ define(function (require) {
             $("i", current).removeClass("icon-pause").addClass("icon-play");
             $(current).removeClass("track-pause").addClass("track-play");
 
-            slider.value(0);
+            $("#mx-pos-slider-div").html("<div style='width: 0%; height: 5px; padding: 1px; background-color: #004499;'></div>");
             $("#current-track-time").text("--:--");
         }
     };
@@ -215,13 +176,85 @@ define(function (require) {
 });
 
 $(document).ready(function() {
-    $("#pl-audio").on("click", ".track", function() {
-        $(this).player("load").player("play");
 
-        $("#playerMenu").attr("data-id",  $(this).attr("data-id"));
+    $("#volume").kendoSlider({
+        orientation: "vertical",
+        min: 0,
+        max: 100,
+        value: $("#volume-level").val(),
+        smallStep: 1,
+        largeStep: 20,
+        showButtons: false,
+        slide: function(e) {
+            var player = $(".playlist-track-current").player("get");
+            player.volume = e.value/100;
+        },
+        change: function(e) {
+            $.ajax({type:"GET",url: "/audio/volume/",data:"level="+e.value});
+            $("#volume-level").val(e.value);
+            var player = $(".playlist-track-current").player("get");
+            player.volume = e.value/100;
+        }
+    });
+
+    function trackToPlaylist(id, path, ext, title) {
+        $("#pl-audio").append("<div class='track' data-ext='" + ext + "' data-id='" + id + "' data-path='" + path + "' data-name='" + title + "' title='" + decodeURIComponent(title).replace(/\+/g, ' ') + "'><div class='track-title'>" + decodeURIComponent(title).replace(/\+/g, ' ') + "</div><div class='track-delete' title='Delete track'><i class='icon-minus' style='font-size: 10px;'></i></div></div>");
+    }
+
+    function savePlaylist() {
+        var data = new Array();
+        $("#pl-audio > .track").each(function() {
+            data[data.length] = "track[]=" + $(this).attr("data-id")
+        });
+
+        $.ajax({ type: "POST", url: '/audio/saveList/', dataType: "JSON", data: data.join("&"), cache: false });
+    }
+
+    $.ajax({ type: "GET", url: '/audio/getTracksList/', dataType: "JSON", cache: false })
+        .done(function(data) {
+
+            var mxFunctions = require('/js/mediabox/mediabox-functions.js');
+            var MediaboxFunctions = new mxFunctions();
+
+            $.each(data, function( key, value ) {
+                trackToPlaylist(value.id, value.path, MediaboxFunctions.getExtension(value.name), value.name);
+            });
+        });
+
+    $("#pl-audio").on("click", ".track-delete", function() {
+        var track_id = $(this).closest(".track").attr("data-id");
+        $(".track[data-id='"+track_id+"']").remove();
+        savePlaylist();
+    });
+
+    $("#pl-audio").on("click", ".track-title", function() {
+        var $this = $(this).closest(".track");
+        $($this).player("load").player("play");
+
+        $("#playerMenu").attr("data-id",  $($this).attr("data-id"));
 
         if ($(".fs-track-current").width() > 0) {
             $(".fs-track-current").removeClass("fs-track-current").removeClass("icon-pause").addClass("icon-play");
+        }
+    });
+
+    $("#player-playlists-control").on("click", ".toPlaylist", function(){
+        var data = new Array();
+
+        $(".dfile[data-type='audio']").each(function() {
+            if ($("div", this).hasClass("fm_sellabel")) {
+                trackToPlaylist($(this).attr("data-id"), $("#current_path_string").val(), $(this).attr("data-ext"), $(this).attr("title"));
+            };
+        });
+
+        savePlaylist();
+    });
+
+    $("#player-playlists-control").on("click", ".clearPlaylist", function(){
+        if (confirm("Really, remove all tracks from playlist?")) {
+            $("#pl-audio").html("");
+
+            savePlaylist();
         }
     });
 
@@ -253,17 +286,111 @@ $(document).ready(function() {
         $("#playerMenu").attr("data-id",  next.attr("data-id"));
     });
 
-    $(".droptarget").kendoDropTarget({
-        drop: function(e) {
-            $("#pl-audio").append("<div class='track' data-ext='"+e.draggable.currentTarget.attr("data-ext")+"' data-id='" + e.draggable.currentTarget.attr("data-id") + "' title='"+e.draggable.currentTarget.attr("title")+"'><div class='track-title'>" + e.draggable.currentTarget.attr("title") + "</div><div class='track-duration'></div></div>");
 
-            //$("#pl-audio .track:odd").addClass("k-alt");
+    $("#player-playlists-control").on("click", "#create-new-playlist", function(){
+        $("#new-playlist-window").kendoWindow({
+            width: "300px",
+            height: "120px",
+            modal: true,
+            title: "New playlist"
+        });
+        $("#new-playlist-window").data("kendoWindow").center().open();
+    });
+    $("#new-playlist-close").click(function(){
+        $("#new-playlist-window").data("kendoWindow").close();
+    });
+    $("#new-playlist-save").click(function(){
+        $.ajax({ type: "GET", url: '/audio/createList/', data: "name=" + $("#new-playlist-name").val(), cache: false })
+            .done(function(res) {
 
-            // Save playlist
-            $.ajax({ type: "POST", url: '/audio/saveList/', dataType: "JSON", data: "track[]=" + e.draggable.currentTarget.attr("data-id"), cache: false })
-                .done(function(data) {
+                $("#pl-audio").html("");
 
-                })
+                $.ajax({ type: "GET", url: '/audio/GetTracksList/', dataType: "JSON", cache: false })
+                    .done(function(data) {
+
+                        var mxFunctions = require('/js/mediabox/mediabox-functions.js');
+                        var MediaboxFunctions = new mxFunctions();
+
+                        $.each(data, function(key, value) {
+                            trackToPlaylist(value.id, value.path, MediaboxFunctions.getExtension(value.name), value.name);
+                        });
+                    });
+
+                $("#new-playlist-window").data("kendoWindow").close();
+            })
+    });
+
+    $("#close-playlist").click(function(){
+        $.ajax({ type: "GET", url: '/audio/setPlaylist/', cache: false })
+            .done(function(data) {
+                $("#pl-audio").html("");
+                    $.ajax({ type: "GET", url: '/audio/GetTracksList/', dataType: "JSON", cache: false })
+                        .done(function(data) {
+
+                            var mxFunctions = require('/js/mediabox/mediabox-functions.js');
+                            var MediaboxFunctions = new mxFunctions();
+
+                            $.each(data, function(key, value) {
+                                trackToPlaylist(value.id, value.path, MediaboxFunctions.getExtension(value.name), value.name);
+                            });
+                        });
+            });
+    });
+
+    $("#show-playlists").click(function(){
+        $("#user-playlists").html("");
+
+        $.ajax({ type: "GET", url: '/audio/showList/', dataType: "JSON", cache: false })
+            .done(function(data) {
+                $.each(data, function(key, value) {
+                    $("#user-playlists").append("<div class='row-fluid'><div class='span7'><a href='#' class='playlist-item' data-id='" + value.id + "'>" + value.name + "</a></div><div class='span5'><a class='delete-playlist' data-id='" + value.id + "'>Delete</a></div></div>");
+                });
+            })
+    });
+
+    $("#show-playlist").click(function(){
+        $("#pl-audio").html("");
+
+        $.ajax({ type: "GET", url: '/audio/getTracksList/', dataType: "JSON", cache: false })
+            .done(function(data) {
+                $.each(data, function(key, value) {
+                    trackToPlaylist(value.id, value.path, MediaboxFunctions.getExtension(value.name), value.name);
+                });
+            })
+    });
+
+    $("#user-playlists").on("click", ".playlist-item", function(){
+        $.ajax({ type: "GET", url: '/audio/setPlaylist/', data: "playlist-id=" + $(this).attr("data-id"), cache: false })
+            .done(function(data) {
+                $("#pl-audio").html("");
+                $.ajax({ type: "GET", url: '/audio/getTracksList/', dataType: "JSON", cache: false })
+                    .done(function(data) {
+
+                        var mxFunctions = require('/js/mediabox/mediabox-functions.js');
+                        var MediaboxFunctions = new mxFunctions();
+
+                        $.each(data, function( key, value ) {
+                            trackToPlaylist(value.id, value.path, MediaboxFunctions.getExtension(value.name), value.name);
+                        });
+                    });
+            });
+    });
+
+    $("#user-playlists").on("click", ".delete-playlist", function(){
+        if (confirm('Really delete playlist?')) {
+            $.ajax({ type: "GET", url: '/audio/deletePlaylist/', data: "playlist-id=" + $(this).attr("data-id"), cache: false })
+                .done(function(){
+                    $.ajax({ type: "GET", url: '/audio/GetTracksList/', dataType: "JSON", cache: false })
+                        .done(function(data) {
+
+                            var mxFunctions = require('/js/mediabox/mediabox-functions.js');
+                            var MediaboxFunctions = new mxFunctions();
+
+                            $.each(data, function(key, value) {
+                                trackToPlaylist(value.id, value.path, MediaboxFunctions.getExtension(value.name), value.name);
+                            });
+                        });
+                });
         }
     });
 
@@ -280,4 +407,20 @@ $(document).ready(function() {
 
         $(".track[data-id='"+audio.src+"'] > .track-duration").html(d);
     }
+
+    $("#pl-audio").kendoDropTarget({
+        drop: function(e) {
+            if (e.draggable.currentTarget.attr("data-type") == 'audio') {
+                trackToPlaylist(
+                    e.draggable.currentTarget.attr("data-id"),
+                    $("#current_path_string").val(),
+                    e.draggable.currentTarget.attr("data-ext"),
+                    e.draggable.currentTarget.attr("title")
+                );
+            }
+
+            savePlaylist();
+        }
+    });
+
 });

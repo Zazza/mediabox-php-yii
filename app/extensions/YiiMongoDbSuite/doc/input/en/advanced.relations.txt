@@ -1,0 +1,49 @@
+Title: Relations
+Author: Dariusz Górecki <darek.krk@gmail.com>
+
+---
+
+- In NoSQL World Relations are not so obvious as in RDBMS
+- Because NoSQL databases are designed for performance, there is no need of defining something more complex than correct use of find() method and indexing for fetching related records
+- This is just an *idea/concept/example* you can do things in yours preferred way! this is schema-less world, think different!
+- MongoDB Documentation has a clean examples and how-to's for handling relations, *please* read them for better understanding of relations in NoSQL world
+
+# HAS_ONE relation {#hasone}
+
+~~~
+[php]
+// just define method in yours model class (assume we have client collection, and address collection in client model
+public function address()
+{
+	return Address::model()->findByAttributes(array('attribute_with_client_id'=>$this->primaryKey()));
+}
+~~~
+
+# BELONGS_TO relation {#belongsto}
+
+~~~
+[php]
+// define in address model
+public function client()
+{
+	return Client::model()->findByPk($this->attribute_with_client_id);
+}
+~~~
+
+# HAS_MANY relation {#hasmany}
+
+~~~
+[php]
+
+
+// assume we have clients and orders collection
+// define in client:
+public function orders()
+{
+	return Client::model()->findAllByAttributes(array('client_id'=>$this->primaryKey()));
+}
+~~~
+
+# MANY_MANY relation {#manymany}
+
+As simple as defining reverse HAS_MANY relation in orders model. You can view the Example models for details.

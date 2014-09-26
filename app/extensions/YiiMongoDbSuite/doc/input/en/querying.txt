@@ -1,0 +1,10 @@
+Title: Querying
+Author: Dariusz Górecki <darek.krk@gmail.com>
+
+---
+
+This is one of the things that makes this extension great. It's very easy to query for the objects you want.
+
+This section covers all possibilities of querying the DB for results.
+
+Basically this covers usage of `EMongoCriteria` object.

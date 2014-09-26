@@ -1,0 +1,113 @@
+Title: Multimodel Collections
+Author: Dariusz Górecki <darek.krk@gmail.com>
+
+---
+
+You can have different models in single collection, example:
+
+~~~
+[php]
+class Client extends EMongoDocument
+{
+	public $first_name;
+	public $second_name;
+
+	// define property for finding type
+	public $type;
+	// and some const for better remember
+	const NORMAL_CLIENT = 0;
+	const BUSINESS_CLIENT = 1;
+		
+	public function getCollectionName()
+	{
+		return 'clients';
+	}
+	
+	/**
+	 * We can override the instantiate method to return correct models
+	 */
+	protected function instantiate($attributes)
+	{
+		if($attributes['type'] == self::NORMAL_CLIENT)
+			$model = new NormalClient(null); // We have to set scenario to null, it will be set, by populateRecord, later
+		else if($attributes['type'] == self::BUSINESS_CLIENT)
+			$model = new BusinessClient(null);
+
+		$model->initEmbeddedDocuments(); // We have to do it manually here!
+		$model->setAttributes($attributes, false);
+		return $model;
+	}
+	
+	public static function model($className=__CLASS__)
+	{
+		return parent::model($className);
+	}
+}
+	
+class NormalClient extends Client
+{
+	public $additionalField;
+
+	public function defaultScope()
+	{
+		return array(
+			'conditions'=>array('type'=>array('==' => self::NORMAL_CLIENT)),
+		);
+	}
+
+	public function beforeSave()
+	{
+		if(parent::beforeSave())
+		{
+			$this->type = self::NORMAL_CLIENT;
+			return true;
+		}
+		else return false
+	}
+
+	public static function model($className=__CLASS__)
+	{
+		return parent::model($className);
+	}
+}
+
+class BusinessClient extends Client
+{
+	public $taxNo;
+
+	public function defaultScope()
+	{
+		return array(
+			'conditions'=>array('type'=>array('==' => self::BUSINESS_CLIENT)),
+		);
+	}
+
+	public function beforeSave()
+	{
+		if(parent::beforeSave())
+		{
+			$this->type = self::BUSINESS_CLIENT;
+			return true;
+		}
+		else return false
+	}
+
+	public static function model($className=__CLASS__)
+	{
+		return parent::model($className);
+	}
+}
+~~~
+
+Now we can:
+
+~~~
+[php]
+// now you can:
+$bclients = BuissnessClient::model()->findAll();
+$clients = NormalClient::model()->findAll();
+
+$allClients = Client::model()->findAll();
+
+// but they're kept in single collection ! and can be indexed with single field etc.
+~~~

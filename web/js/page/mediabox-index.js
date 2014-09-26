@@ -7,6 +7,9 @@ define(function (require) {
 
     var mxVar = require('/js/mediabox/mediabox-var.js');
 
+    var templateContent = $("#fsTemplate").html();
+    $("#splitter").html(templateContent);
+
     var swipebox = require('swipebox');
     var mediaboxUploader = require('mediaboxUploader');
     var mxFunctions = require('/js/mediabox/mediabox-functions.js');
@@ -15,24 +18,78 @@ define(function (require) {
     var MediaboxConfiguration = require('/js/mediabox/configuration.js');
     var config = new MediaboxConfiguration();
 
-    var imageFs = require('/js/mediabox/mediabox-image-fs.js');
-    var MediaboxImageFs = new imageFs();
     require('kendo/kendo.slider.min');
     require('kendo/kendo.treeview.min');
     require('mediaboxImage');
+    require('mediaboxTrash');
     require('Jcrop');
     require('mediaboxPlayer');
     require('mediaboxVideo');
     require('mediaelement');
 
+    require('mousewheel');
+    require('jscrollpane');
+    require('up');
+
     $(document).ready(function() {
-        MediaboxImageFs.getTagsAndCrops();
+
+        if (typeof $("#LoginForm_session") == "object") {
+            $("#LoginForm_session").val(config.session);
+        }
+
+        MediaboxFunctions.getParam("access_token", function(result){ $("#access_token").val(result); });
+
+        $("#LoginForm").on("click", "#LoginForm_submit", function(){
+            var data = {
+                login: $("#LoginForm_username").val(),
+                password: $("#LoginForm_password").val(),
+                session: $("#LoginForm_session").val()
+            };
+            $.ajax({ type: "POST", url: "/site/login/" + "?noCache=" + (new Date().getTime()) + Math.random(), data: data, dataType: "json" })
+                .done(function(result) {
+                    if (result.error) {
+                        $("#LoginForm_error").show();
+                    } else {
+                        config.storage.auth($("#LoginForm_session").val(), function(response){
+                            if (response.result) {
+                                MediaboxFunctions.setParam("access_token", response.access_token, function(response){
+                                    document.location.href = "/";
+                                });
+                            } else {
+                                document.location.href = "/";
+                            }
+
+
+                        });
+                    }
+                });
+        });
+
+        $("#left-menu").on("click", ".left-menu-section", function(){
+            if ($(this).attr("data-id") == "treeview") {
+                $("#treeview").show();
+                $("#left-player").hide();
+            }
+            if ($(this).attr("data-id") == "player") {
+                $("#treeview").hide();
+                $("#left-player").show();
+            }
+        });
 
         var fs = new kendo.data.HierarchicalDataSource({
             transport: {
-                read: {
-                    url: "/fm/fs/" + "?noCache=" + (new Date().getTime()) + Math.random(),
-                    dataType: "json"
+                read: function(options) {
+                    if (options.data.id) {
+                        var data = {id: options.data.id};
+                    } else {
+                        var data = {};
+                    }
+                    $.ajax({ type: "GET", url: "/fm/fs/" + "?noCache=" + (new Date().getTime()) + Math.random(), data: data, dataType: "json" })
+                        .done(function(res) {
+                            options.success(res);
+
+                            /*$('#treeview').jScrollPane();*/
+                        });
                 }
             },
             schema: {}
@@ -73,11 +130,11 @@ define(function (require) {
         /**
          * End temporary solution
          */
-        $("#file-topmenu").show();
+//        $("#file-topmenu").show();
 
         MediaboxFunctions.chdir($("#start_dir").val());
 
-        $("#newDirWin").click(function(){
+        $("#mx-topmenu").on("click", "#newDirWin", function(){
             $("#new-folder-window").kendoWindow({
                 width: "300px",
                 height: "124px",
@@ -97,21 +154,26 @@ define(function (require) {
             if (fname != "") {
                 var treeview = $("#treeview").data("kendoTreeView");
 
-                var data = "name=" + fname;
-                $.ajax({ type: "GET", url: "/fm/create/", data: data, dataType: "json" })
-                    .done(function(res) {
-                        var barDataItem = treeview.dataSource.get(res.parent);
-                        var barElement = treeview.findByUid(barDataItem.uid);
+                //Storage create folder
+                config.storage.createFolder($("#current_path_string").val(), fname, function(response){
+                    if (response.result) {
+                        var data = "name=" + fname;
+                        $.ajax({ type: "GET", url: "/fm/create/", data: data, dataType: "json" })
+                            .done(function(res) {
+                                var barDataItem = treeview.dataSource.get(res.parent);
+                                var barElement = treeview.findByUid(barDataItem.uid);
 
-                        treeview.append({
-                            id: res.id,
-                            text: fname,
-                            spriteCssClass: "folder"
-                        }, barElement);
+                                treeview.append({
+                                    id: res.id,
+                                    text: fname,
+                                    spriteCssClass: "folder"
+                                }, barElement);
 
-                        MediaboxFunctions.addFolderToFS(res);
-                    })
-                    .fail(function(res) { alert(res.responseText); })
+                                MediaboxFunctions.addFolderToFS(res);
+                            })
+                            .fail(function(res) { console.log(res.responseText); })
+                    }
+                });
 
                 $("#new-folder-window").data("kendoWindow").close();
             }
@@ -123,22 +185,65 @@ define(function (require) {
 
 
 
+        $("body").on("click", ".mediabox-show", function(){
+            $("#mx-main").show();
+            $(".mx-advanced").hide();
+        });
 
-
-
+        // Uploader
         $("body").on("click", ".upload", function(){
             uploaderShow();
         });
+        $("body").on("click", "#advanced-uploader-back", function(){
+            uploaderHide();
+        });
 
         function uploaderShow() {
-            $("#advanced-overlay").fadeIn();
-            $("#adv-menu-upload").show();
+            $("#mx-main").hide();
+            $(".mx-advanced").hide();
+
+            $("#advanced-uploader").show();
+        }
+
+        function uploaderHide() {
+            $("#mx-main").show();
+            $(".mx-advanced").hide();
+
+            $("#advanced-uploader").hide();
         }
 
         $("body").on("click", ".buffer", function(){
-            $("#advanced-overlay").fadeIn();
-            $("#adv-menu-buffer").show();
+            $("#mx-main").hide();
+            $(".mx-advanced").hide();
+
+            $("#advanced-buffer").show();
         });
+
+        $("body").on("click", "#advanced-buffer-back", function(){
+            $("#advanced-buffer").hide();
+            $(".mx-advanced").hide();
+
+            $("#mx-main").show();
+        });
+
+        $("body").on("click", ".settings-show", function(){
+            $("#mx-main").hide();
+            $(".mx-advanced").hide();
+
+            $("#advanced-settings").show();
+        });
+
+        $("body").on("click", "#advanced-settings-back", function(){
+            $("#mx-main").show();
+            $(".mx-advanced").hide();
+
+            $("#advanced-settings").hide();
+        });
+
+
+
+
+
 
 
         $("#fs").on("dblclick", ".ddir", function(){
@@ -155,7 +260,7 @@ define(function (require) {
             $("#folder-context-menu").hide();
 
             $("#file-context-menu").attr("data-id", $(this).attr("data-id"));
-            $("#file-context-menu").attr("data-name", $(this).attr("title"));
+            $("#file-context-menu").attr("data-name", $(this).attr("data-name"));
 
             $("#file-context-menu").css({
                 display: "block",
@@ -167,6 +272,7 @@ define(function (require) {
         });
         $("#file-context-menu").on("click", "a", function() {
             var file_id = $("#file-context-menu").attr("data-id");
+            var file_name = $("#file-context-menu").attr("data-name");
             var role = $(this).attr("data-role");
 
             switch(role) {
@@ -175,7 +281,11 @@ define(function (require) {
                     break
                 };
                 case 'download': {
-                    window.location.href = config.storage.getFileUri(file_id)
+                    window.location.href = config.storage.getFileUri($("#current_path_string").val(), file_name)
+                    break
+                };
+                case 'rename': {
+                    renameFile(file_name, file_id)
                     break
                 };
                 case 'copy': {
@@ -193,6 +303,7 @@ define(function (require) {
             $("#file-context-menu").hide();
 
             $("#folder-context-menu").attr("data-id", $(this).attr("data-id"));
+            $("#folder-context-menu").attr("data-name", $(this).attr("data-name"));
 
             $("#folder-context-menu").css({
                 display: "block",
@@ -204,11 +315,16 @@ define(function (require) {
         });
         $("#folder-context-menu").on("click", "a", function() {
             var dir_id = $("#folder-context-menu").attr("data-id");
+            var dir_name = $("#folder-context-menu").attr("data-name");
             var role = $(this).attr("data-role");
 
             switch(role) {
                 case 'open': {
                     MediaboxFunctions.chdir(dir_id);
+                    break
+                };
+                case 'rename': {
+                    renameFolder(dir_name, dir_id)
                     break
                 };
                 case 'copy': {
@@ -228,16 +344,15 @@ define(function (require) {
         });
 
 
-
-        $(".fs-actions").on("click", ".copy", function(){
+        $("#mx-topmenu").on("click", ".copy", function(){
             copyFiles();
         });
 
-        $(".fs-actions").on("click", ".past", function(){
+        $("#mx-topmenu").on("click", ".past", function(){
             pastFiles();
         });
 
-        $(".fs-actions").on("click", ".delete", function(){
+        $("#mx-topmenu").on("click", ".delete", function(){
             win_to_trash();
         });
 
@@ -258,24 +373,6 @@ define(function (require) {
     //            alert(res);
     //        });
     //}
-
-    $(".left-section").on("click", ".toPlaylist", function(){
-        $(".dfile").each(function() {
-            $("#pl-audio").append("<div class='track' data-ext='"+$(this).attr("data-ext")+"' data-id='" + $(this).attr("data-id") + "' title='"+$(this).attr("title")+"'><div class='track-title'>" + $(this).attr("title") + "</div><div class='track-duration'></div></div>");
-        });
-
-        var data = new Array();
-        $("#pl-audio > .track").each(function() {
-            data[data.length] = "track[]=" + $(this).attr("data-id")
-        });
-
-        // Save playlist
-        $.ajax({ type: "POST", url: '/audio/saveList/', dataType: "JSON", data: data.join("&"), cache: false })
-            .done(function(data) {
-
-            })
-        //$("#pl-audio .track:odd").addClass("k-alt");
-    });
 
     // Trash
     $("#move-to-trash-window-no").click(function(){
@@ -346,14 +443,89 @@ define(function (require) {
     }
     // END Trash
 
+    function renameFile(file_name, file_id) {
+        $("#old_filename").val(file_name);
+        $("#file_id").val(file_id);
+
+        $("#rename_filename").val(file_name);
+
+        $("#rename-file-window").kendoWindow({
+            width: "300px",
+            height: "124px",
+            modal: true,
+            title: "New file name:"
+        });
+        $("#rename-file-window").data("kendoWindow").center().open();
+    }
+
+    $("#rename-file-ok").click(function(){
+        var path = $("#current_path_string").val();
+        var old_name = $("#old_filename").val();
+        var new_name = $("#rename_filename").val();
+
+        //Storage rename file
+        config.storage.rename(path, old_name, new_name, function(response){
+            if (response.result) {
+                $.ajax({ type: "GET", url: "/fm/renameFile/", data: "id=" + $("#file_id").val() + "&name=" + $("#rename_filename").val() })
+                    .done(function(res) {
+                        $(".dfile").attr("data-name", new_name);
+                        $(".dfile").find(".fname").text(new_name);
+                        $(".dfile").find(".fname_li").text(new_name);
+
+                        $("#rename-file-window").data("kendoWindow").close();
+                    });
+            }
+        });
+    });
+
+    $("#rename-file-cancel").click(function(){
+        $("#rename-file-window").data("kendoWindow").close();
+    });
+
+    function renameFolder(dir_name, dir_id) {
+        $("#old_foldername").val(dir_name);
+        $("#folder_id").val(dir_id);
+
+        $("#rename_foldername").val(dir_name);
+
+        $("#rename-folder-window").kendoWindow({
+            width: "300px",
+            height: "124px",
+            modal: true,
+            title: "New folder name:"
+        });
+        $("#rename-folder-window").data("kendoWindow").center().open();
+    }
+
+    $("#rename-folder-ok").click(function(){
+        var path = $("#current_path_string").val();
+        var old_name = $("#old_foldername").val();
+        var new_name = $("#rename_foldername").val();
+
+        //Storage rename folder
+        config.storage.rename(path, old_name, new_name, function(response){
+            if (response.result) {
+                $.ajax({ type: "GET", url: "/fm/renameFolder/", data: "id=" + $("#folder_id").val() + "&name=" + $("#rename_foldername").val() })
+                    .done(function(res) {
+                        $(".ddir").attr("data-name", new_name);
+                        $(".ddir").find(".file-open-link").text(new_name);
+
+                        $("#rename-folder-window").data("kendoWindow").close();
+                    });
+            }
+        });
+    });
+
+    $("#rename-folder-cancel").click(function(){
+        $("#rename-folder-window").data("kendoWindow").close();
+    });
 
 
     function bufferPast(value) {
         var templateContent = $("#bufferFileTemplate").html();
         var template = kendo.template(templateContent);
 
-        var filename = decodeURIComponent(value["name"]);
-        var shortname =  filename.substr(0, 10) + ".." + filename.substr(filename.length - 2);
+        var filename = decodeURIComponent((value["name"]+'').replace(/\+/g, '%20'));
         var extension = MediaboxFunctions.getExtension(filename);
         var type = MediaboxFunctions.getType(extension);
         var ico = MediaboxFunctions.getIco(type);
@@ -361,7 +533,7 @@ define(function (require) {
         var data = [
             {
                 id:         value["id"],
-                shortname:  shortname,
+                name:       filename,
                 date:       MediaboxFunctions.formatDate(value["date"]),
                 size:       MediaboxFunctions.formatSize(value["size"]),
                 ico:        ico,
@@ -445,15 +617,25 @@ define(function (require) {
     });
 
     function pastFiles() {
-        $.ajax({ type: "GET", url: "/fm/past/" })
-            .done(function(res) {
-                $("#buffer").html("");
-                $(".bufferCount").text(0);
+        $.ajax({ type: "GET", url: "/fm/getMoveFiles/", dataType: "JSON" })
+            .done(function(data) {
 
-                MediaboxFunctions.chdir($("#start_dir").val());
-            })
-            .fail(function(res) {
-                alert(res.responseText);
-            })
+                //Storage move file
+                config.storage.move($("#current_path_string").val(), data, function(response){
+                    if (response.result) {
+
+                        $.ajax({ type: "GET", url: "/fm/past/" })
+                            .done(function(res) {
+                                $("#buffer").html("");
+                                $(".bufferCount").text(0);
+
+                                MediaboxFunctions.chdir($("#start_dir").val());
+                            })
+                            .fail(function(res) {
+                                alert(res.responseText);
+                            })
+                    }
+                });
+        });
     }
 });

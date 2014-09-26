@@ -1,0 +1,163 @@
+Title: GridFS
+Author: Dariusz Górecki <darek.krk@gmail.com>
+
+---
+
+You can use MongoDB GridFS feature to save big files within MongoDB collections.
+
+The first thing you need to do, it to define model for yours GridFS collection, see example:
+
+~~~
+[php]
+class Image extends EMongoGridFS
+{
+	/**
+	 * This field is optional, but:
+	 * from PHP MongoDB driver manual:
+	 *
+	 * 'You should be able to use any files created by MongoGridFS with any other drivers, and vice versa.
+	 * However, some drivers expect that all metadata associated with a file be in a "metadata" field.
+	 * If you're going to be using other languages, it's a good idea to wrap info you might want them
+	 * to see in a "metadata" field.'
+	 *
+	 * @var array $metadata array of additional info/metadata about a file
+	 */
+	public $metadata = array();
+	
+	// this method should return the collection name for storing files
+	public function getCollectionName()
+	{
+		return 'images';
+	}
+	
+	// normal rules method, if you use metadata field, set it as a 'safe' attribute
+	public function rules()
+	{
+		return array(
+			array('filename, metadata','safe'),
+			array('filename','required'),
+		);
+	}
+	
+	/**
+	 * Just like normal ActiveRecord/EMongoDocument classes
+	 */
+	public static function model($className=__CLASS__)
+	{
+		return parent::model($className);
+	}
+}
+~~~
+
+> [important]
+> Every EMongoGridFS has a special field "filename", that is mandatory!
+
+<!-- # -->
+
+> [information]
+> `EMongoGridFS` has a feature that holds files in temporary folder, between operations,
+> it can be set on global level in EMongoDB class, by setting property `gridFStemporaryFolder` to some dirname,
+> or on model/object level by using `gridFStemporaryFolder()` setter
+
+This part of documentation is not yet complete, for now, follow usage examples:
+
+~~~
+[php]
+Yii::import('ext.YiiMongoDbSuite.examples.MongoImage');
+
+//create a new image
+$image = new MongoImage();
+$image->filename = '/var/www/myImage.JPG';
+$image->metadata = array('value1'=>1, 'value2'=>2);
+
+$res = $image->save();
+
+if($res !== true)
+	echo 'error saving file';
+
+//find image
+
+$image = MongoImage::model()->find();
+
+if(!($image instanceof MongoImage))
+	echo 'error finding object';
+
+//findall images
+
+$images = MongoImage::model()->findAll();
+
+if(!is_array($images))
+	echo 'error on findall';
+	
+//delete images
+
+$image = MongoImage::model()->find();
+
+if($image instanceof MongoImage)
+{
+	$result = $image->delete();
+	if($result !== true)
+		echo 'delete notok';
+}
+else
+	echo 'no image found to delete';
+
+//deleteAll images
+
+$result = MongoImage::model()->deleteAll();
+
+if(is_array($result)===true)
+{
+	echo ' isarray';
+	if(isset($result['err']) === true )
+		echo ' error deleting images:'.$result['err'];
+	else
+		echo ' elements deleted:'.$result['n'];
+}
+
+//deletebyPk image
+$image = MongoImage::model()->find();
+if($image instanceof MongoImage)
+{
+	$result = MongoImage::model()->deleteByPk($image->_id);
+	if($result !== true)
+		echo 'error';
+}
+else
+	echo 'no image found to delete by pk';
+
+//insert image and update
+
+$image = new MongoImage();
+
+$image->filename = '/var/www/myImage.JPG';
+$image->metadata = array('value1'=>1, 'value2'=>2);
+$res = $image->save();
+
+$image->filename =  '/var/www/myImageUpdated.JPG';
+$image->metadata = array('value1'=>3, 'value2'=>4);
+$res = $image->save();
+
+if($res !== true)
+	echo 'error updating';
+
+//MongoGridFSFile functions
+
+$image = MongoImage::model()->find();
+
+//getBytes function
+
+$bytes = $image->getBytes();
+
+//getFilename
+
+$filename = $image->getFilename();
+
+//getSize
+
+$size = $image->getSize();
+
+//write
+
+$image->write();
+~~~

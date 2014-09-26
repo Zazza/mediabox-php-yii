@@ -1,5 +1,10 @@
 <?php
 
+header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Methods: POST, GET, OPTIONS');
+header('Access-Control-Allow-Headers: X-Requested-With, Content-Type');
+header('Access-Control-Max-Age: 600');
+
 require __DIR__.'/../vendor/autoload.php';
 
 // change the following paths if necessary

@@ -17,14 +17,17 @@ define(function (require) {
             var track = this;
             var data_id = $(track).attr('data-id');
             var mimetype = $(track).attr('data-mimetype');
-            var uri = config.storage.getFileUri($(track).attr('data-id'));
+            var uri = config.storage.getFileUri($("#current_path_string").val(), $(track).attr('data-name'));
 
             $(this).addClass("current");
 
-            $("#splitter").fadeOut();
-            $("#video-preview").fadeIn();
+//            $("#splitter").fadeOut();
+//            $("#video-preview").fadeIn();
 
-            $("#video-second-panel").show();
+//            $("#video-second-panel").show();
+            $("#mx-main").hide();
+            $("#mx-advanced").show();
+            $("#advanced-video").show();
 
             $("#" + mediaElement).attr("src", uri)
             $("#" + mediaElement).attr("type", mimetype);
@@ -34,8 +37,8 @@ define(function (require) {
              */
             $("#video-meta .name").html("");
             $("#video-meta .name").html($(track).attr("title"));
-            $("#video-meta .order").html("");
-            $("#video-meta .order").html("[" + (parseInt($(".current").index())+parseInt(1)) + "/" + $(".dfile").length + "]");
+            //$("#video-meta .order").html("");
+            //$("#video-meta .order").html("[" + (parseInt($(".current").index())+parseInt(1)) + "/" + $(".dfile").length + "]");
             $("#video-meta .size").html("");
             $("#video-meta .size").html($(".current .file_icon_size").text());
             $("#video-meta .download").attr("href", uri);

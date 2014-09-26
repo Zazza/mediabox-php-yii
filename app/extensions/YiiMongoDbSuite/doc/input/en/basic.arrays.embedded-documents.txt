@@ -1,0 +1,57 @@
+Title: Array of Embedded Documents
+Author: Dariusz Górecki <darek.krk@gmail.com>
+
+---
+
+*There is no way (that I know) where I can easily provide mechanism for this, you have to write Your own*
+
+This is how I accomplish it for now.
+
+Within suite package you should have and `extra` folder that contains (not only)
+`EEmbeddedArraysBehavior` class, we can use it to store an arrays of embedded documents.
+
+Example:
+
+~~~
+[php]
+class User extends EMongoDocument
+{
+	// ...
+	
+	// Add property for storing array
+	public $addresses;
+	
+	// Add EEmbeddedArraysBehavior
+	public function behaviors()
+	{
+		return array(
+			'embeddedArrays' => array(
+				'class'=>'ext.YiiMongoDbSuite.extra.EEmbeddedArraysBehavior',
+				'arrayPropertyName'=>'addresses',		// name of property, that will be used as an array
+				'arrayDocClassName'=>'ClientAddress'	// class name of embedded documents in array
+			),
+		);
+	}
+	
+	// ...
+}
+~~~
+
+Now you can use property arrays as an array of embedded documents:
+
+~~~
+[php]
+$user = new User();
+$user->addresses[0] = new ClientAddress();
+$user->addresses[0]->city = 'New York';
+
+$user->save(); // Behavior will automatically handle of validation, saving etc.
+
+// OR:
+
+$user = User::model()->find();
+foreach($user->addresses as $userAddress)
+{
+	echo $userAddress->city;
+}
+~~~

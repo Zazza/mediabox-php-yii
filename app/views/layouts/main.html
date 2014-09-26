@@ -9,6 +9,7 @@
     <!-- the styles -->
     <link href="/css/xvid.css" rel="stylesheet">
     <link href="/css/mediabox/mediabox.css" rel="stylesheet">
+    <link href="/css/jquery.jscrollpane.css " rel="stylesheet">
     <!--[if lt IE 9]>
     <script src="/js/html5.js"></script>
     <![endif]-->
@@ -24,29 +25,45 @@
     <div class="navbar-inner">
         <div class="container">
             <ul class="nav pull-right">
-                    <li>
-                        <a href="/">Mediabox</a>
-                    </li>
                 {% if App.user.id %}
-                    {% if App.user.role == 'admin' %}
-                    <li>
-                        <a href="/user/">Users</a>
-                    </li>
-                    {% endif %}
-                    <li>
-                        <a href="/site/logout/">Logout</a>
-                    </li>
+                <li class="mediabox-show">
+                    <a href="#">Mediabox</a>
+                </li>
+
+                <li>
+                    <a href="/site/logout/">Logout</a>
+                </li>
                 {% endif %}
             </ul>
         </div>
     </div>
 </div>
 
-<div class="page">
-
+<div id="mx-main" class="page">
     {{ content|raw }}
-
 </div>
+
+<div id="advanced-uploader" style="display: none;" class="mx-advanced page">
+    {% include "/views/site/uploader.html" %}
+</div>
+
+<div id="advanced-buffer" style="display: none;" class="mx-advanced page">
+    {% include "/views/site/buffer.html" %}
+</div>
+
+<div id="advanced-image" style="display: none;" class="mx-advanced page">
+    {% include "/views/site/image-preview.html" %}
+</div>
+
+<div id="advanced-video" style="display: none;" class="mx-advanced page">
+    {% include "/views/site/video-preview.html" %}
+</div>
+
+<div id="advanced-settings" style="display: none;" class="mx-advanced page">
+    {% include "/views/site/settings.html" %}
+</div>
+
+<div id="scrollup"><i class="icon-angle-up"></i></div>
 
 <footer id="pageFooter" class="container">
     Mediabox beta (05.2014)
@@ -56,5 +73,6 @@
     </div>
 </footer>
 
+<script data-main="/js/common" data-slug="mediabox-index" src="/js/require.js"></script>
 </body>
 </html>

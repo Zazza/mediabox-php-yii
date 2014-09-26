@@ -2,20 +2,46 @@ define(function (require) {
     "use strict";
 
     require('shifty');
-    require('webtoolkit');
 
     var MediaboxConfiguration = require('/js/mediabox/configuration.js');
     var config = new MediaboxConfiguration();
 
     var MediaboxFunctions = function() {
+        this.setParam = function(param, value, callback) {
+            setParam(param, value, callback);
+        }
+
+        function setParam(param, value, callback) {
+            var data = {
+                param: param,
+                value: value
+            }
+            $.ajax({ type: "POST", url: "/site/set/" + "?noCache=" + (new Date().getTime()) + Math.random(), data: data })
+                .done(function(result){
+                    callback(result);
+                });
+        }
+
+        this.getParam = function(param, callback) {
+            getParam(param, callback);
+        }
+
+        function getParam(param, callback) {
+            var data = {
+                param: param
+            }
+            $.ajax({ type: "POST", url: "/site/get/" + "?noCache=" + (new Date().getTime()) + Math.random(), data: data })
+                .done(function(result){
+                    callback(result);
+                });
+        }
+
         this.openFile = function(file) {
             openFile(file);
         }
         function openFile(file) {
             var type = $(file).attr("data-type");
-
-            var ext = $(file).attr("title");
-            ext = ext.substring(ext.lastIndexOf('.')+1);
+            var ext = $(file).attr("data-ext");
 
             if (type == "image") {
                 $(file).image("init").image("one").image("loadImg");
@@ -29,7 +55,7 @@ define(function (require) {
             } else if (type == "all") {
                 //stop the browser from following
                 //e.preventDefault();
-                window.location.href = config.storage.getFileUri($(file).attr("data-id"));
+                window.location.href = config.storage.getFileUri($("#current_path_string").val(), $(file).attr("data-name"));
             }
         };
 
@@ -80,12 +106,21 @@ define(function (require) {
                     el.removeClass("fm_sellabel").addClass("fm_unsellabel");
                 }
             });
+            $('.dfile_trash > div').shifty({
+                className: 'f-file-select',
+                select: function(el){
+                    el.removeClass("fm_unsellabel").addClass("fm_sellabel");
+                },
+                unselect: function(el){
+                    el.removeClass("fm_sellabel").addClass("fm_unsellabel");
+                }
+            });
         }
 
-        this.addFolderToFS = function(value) {
-            addFolderToFS(value);
+        this.addFolderToFS = function(value, trash) {
+            addFolderToFS(value, trash);
         }
-        function addFolderToFS(value) {
+        function addFolderToFS(value, trash) {
             var viewList = $("#view-selector").data("kendoDropDownList");
             if ($("#mediabox-view").val() == "list") {
                 var templateContent = $("#dirListTemplate").html();
@@ -94,19 +129,28 @@ define(function (require) {
             }
             var template = kendo.template(templateContent);
 
-            var foldername = Url.decode(value["name"]);
+            var foldername = decodeURIComponent((value["name"]+'').replace(/\+/g, '%20'));
             if (foldername.length > 20) {
                 var shortname = foldername.substr(0, 10) + ".." + foldername.substr(foldername.length - 2);
             } else {
                 var shortname = foldername;
             }
 
+            if (trash == 1) {
+                var div_class = "ddir_trash";
+            } else {
+                var div_class = "ddir";
+            }
+
             var data = [
                 {
-                    id: value["id"],
-                    name: foldername,
-                    shortname: shortname,
-                    date: formatDate(value["date"])
+                    id:         value["id"],
+                    path:       value["path"],
+                    name:       foldername,
+                    shortname:  shortname,
+                    div_class:  div_class,
+                    ico:        getIco("folder"),
+                    date:       formatDate(value["date"])
                 }
             ];
 
@@ -126,28 +170,15 @@ define(function (require) {
         	$.ajax({ type: "get", url: config.storage.remove, data: "id=" + id, dataType: "JSONP" });
         }
 
-        this.removeFileByName = function(value) {
-            removeFileByName(value)
-        }
-        function removeFileByName(name) {
-            $.ajax({ type: "GET", url: '/fm/removeFileByName/', data: "name=" + name })
-                .done(function(res) {
-                    var id = res;
-
-                    removeByStorage(id);
-
-                    // Remove from FS Structure
-                    $(".dfile[data-id='"+id+"']").fadeOut();
-                })
-        }
-
         this.getIco = function(type) {
             return getIco(type)
         }
         function getIco(type) {
             //mediatypes /config/ico.js
-
-            return config.mediaTypes[type];
+            if (config.mediaTypes[type])
+                return config.mediaTypes[type];
+            else
+                return config.mediaTypes["any"];
         }
 
         this.getType = function(needle) {
@@ -160,7 +191,7 @@ define(function (require) {
             var found = false, part, key;
             for (part in extension) {
                 for (key in extension[part]) {
-                    if ( (extension[part][key] === needle) || (extension[part][key] == needle) ) {
+                    if ( (extension[part][key] === needle.toLowerCase()) || (extension[part][key] == needle.toLowerCase()) ) {
                         found = part;
                         break;
                     }
@@ -190,13 +221,13 @@ define(function (require) {
             }
         }
 
-        this.addFileToFS = function(value) {
-            addFileToFS(value)
+        this.addFileToFS = function(value, trash) {
+            addFileToFS(value, trash)
         }
-        function addFileToFS(value) {
+        function addFileToFS(value, trash) {
             var viewList = $("#view-selector").data("kendoDropDownList");
 
-            var filename = Url.decode(value["name"]);
+            var filename = decodeURIComponent((value["name"]+'').replace(/\+/g, '%20'));
             if (filename.length > 20) {
                 var shortname = filename.substr(0, 10) + ".." + filename.substr(filename.length - 2);
             } else {
@@ -204,12 +235,6 @@ define(function (require) {
             }
             var extension = getExtension(filename);
             var type = getType(extension);
-
-            if (type == "image") {
-                var ico = "fm/getThumb/?name=" +  value["id"];
-            } else {
-                var ico = getIco(type);
-            }
 
             var mimetype = getMimetype(extension, type);
 
@@ -219,27 +244,46 @@ define(function (require) {
                 } else {
                     var templateContent = $("#fileListTemplate").html();
                 }
+
+                var ico = getIco(type);
+
             } else if ($("#mediabox-view").val() == "grid") {
+                if (type == "image") {
+                    var ico = "fm/getThumb/?name=" +  value["id"];
+                } else {
+                    var ico = getIco(type);
+                }
+
                 if (type == "image") {
                     var templateContent = $("#imageGridTemplate").html();
                 } else {
                     var templateContent = $("#fileGridTemplate").html();
                 }
             }
+
             var template = kendo.template(templateContent);
+
+            if (trash == 1) {
+                var div_class = "dfile_trash";
+            } else {
+                var div_class = "dfile";
+            }
 
             var data = [
                 {
                     id:         value["id"],
+                    path:       value["path"],
+                    trash:      trash,
                     name:       filename,
                     shortname:  shortname,
+                    div_class:  div_class,
                     date:       formatDate(value["date"]),
                     size:       formatSize(value["size"]),
                     ico:        ico,
                     ext:        extension,
                     mimetype:   mimetype,
                     type:       type,
-                    href:       config.storage.getFileUri(value["id"])
+                    href:       config.storage.getFileUri($("#current_path_string").val(), filename)
                 }
             ];
 
@@ -266,7 +310,7 @@ define(function (require) {
                 }
             }
 
-            shiftyAdd();
+            //shiftyAdd();
         }
 
         this.chdir = function(start_id) {
@@ -275,39 +319,56 @@ define(function (require) {
 
             $(".fm_ajax-loader").show();
 
-            $("#start_dir").val(start_id);
+            if (start_id != "trash") {
+                $.ajax({ type: "GET", url: '/fm/getTypesNum/', dataType: "JSON", data: "id=" + start_id })
+                    .done(function(res) {
+                        $.each(res, function(key, value) {
+                            if(key == "other") {
+                                $("#typeOther").html(value);
+                            }
+                            if(key == "image") {
+                                $("#typeImage").html(value);
+                            }
+                            if(key == "video") {
+                                $("#typeVideo").html(value);
+                            }
+                            if(key == "audio") {
+                                $("#typeAudio").html(value);
+                            }
 
-            $.ajax({ type: "GET", url: '/fm/getTypesNum/', dataType: "JSON", data: "id=" + start_id })
-                .done(function(res) {
-                    $.each(res, function(key, value) {
-                        if(key == "other") {
-                            $("#typeOther").html(value);
-                        }
-                        if(key == "image") {
-                            $("#typeImage").html(value);
-                        }
-                        if(key == "video") {
-                            $("#typeVideo").html(value);
-                        }
-                        if(key == "audio") {
-                            $("#typeAudio").html(value);
-                        }
-
-                        if(key == "path") {
-                            $("#current_path").html(value);
-                        }
-                    });
-                })
+                            if(key == "path") {
+                                $("#current_path").html(value);
+                            }
+                        });
+                    })
+            }
 
             var fs;
             $.ajax({ type: "GET", url: '/fm/chdir/', dataType: "JSON", data: "id=" + start_id, cache: false })
                 .done(function(res) {
+
+                    $("#start_dir").val(start_id);
+                    $("#current_path_string").val(res.current_path);
+
+                    if (res.trash == 0) {
+                        var trash = 0;
+
+                        var templateContent = $("#topMenuIndexTemplate").html();
+                    }
+                    if (res.trash == 1) {
+                        var trash = 1;
+
+                        var templateContent = $("#topMenuTrashTemplate").html();
+                    }
+
+                    $("#mx-topmenu").html(templateContent);
+
                     var size = 0;
-                    $.each(res, function(key, value) {
+                    $.each(res.files, function(key, value) {
                         if (value["obj"] == "folder") {
-                            addFolderToFS(value);
+                            addFolderToFS(value, trash);
                         } else if (value["obj"] == "file") {
-                            addFileToFS(value);
+                            addFileToFS(value, trash);
 
                             size += parseInt(value["size"]);
                         }
@@ -332,40 +393,8 @@ define(function (require) {
                     $(".swipebox").swipebox();
 
                     shiftyAdd();
-                })
-        }
 
-        this.trash = function(start_id) {
-            $("#fm_folders").html("");
-            $("#fm_files").html("");
-
-            $(".fm_ajax-loader").show();
-
-            //$("#start_dir").val(start_id);
-
-
-
-            var fs;
-            $.ajax({ type: "GET", url: '/fm/getTrash/', dataType: "JSON", data: "id=" + start_id, cache: false })
-                .done(function(res) {
-                    var size = 0;
-                    $.each(res, function(key, value) {
-                        if (value["obj"] == "folder") {
-                            addFolderToFS(value);
-                        } else if (value["obj"] == "file") {
-                            addFileToFS(value);
-
-                            size += parseInt(value["size"]);
-                        }
-                    })
-
-                    $(".sizeFiles").text(formatSize(size));
-
-                    $(".fm_file_li:odd").addClass("f-list-alt");
-
-                    $(".fm_ajax-loader").hide();
-
-                    shiftyAdd();
+                    /*$('.structure').jScrollPane();*/
                 })
         }
     }

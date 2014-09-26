@@ -1,0 +1,33 @@
+Title: Simple Arrays
+Author: Dariusz Górecki <darek.krk@gmail.com>
+
+---
+
+**Just define a property in yours model, and store an array in it! YES This is that simple**
+
+Example:   
+
+~~~
+[php]
+class User extends EMongoDocument
+{
+	// ...
+	
+	public $myArray;
+	
+	// ...
+}
+
+$myArray = array('our', 'simple', 'example', 'array');
+
+$user = new User();
+
+$user->myArray = $myArray;
+$user->save();
+// that's it!
+// in any time after when you get yours model form DB
+$user = User::model()->find();
+
+echo $user->myArray[1];
+// will return 'simple' 
+~~~

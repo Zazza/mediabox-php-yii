@@ -1,0 +1,49 @@
+Title: Setup
+Author: Dariusz Górecki <darek.krk@gmail.com>
+
+---
+
+In your main configuration file, witch is by default: `protected/config/main.php` config file.
+
+Add the following to the file:
+
+~~~
+[php]
+'import' => array(
+	// ...
+	'ext.YiiMongoDbSuite.*',
+),
+
+'components' => array(
+	// ...
+	'mongodb' => array(
+		'class'				=> 'EMongoDB',
+		'connectionString'	=> 'mongodb://localhost',
+		'dbName'			=> 'myDatabaseName',
+		'fsyncFlag'			=> false,
+		'safeFlag'			=> false,
+		'useCursor'			=> false,
+	),
+	// ...
+),
+~~~
+
+- `connectionString`: 'localhost' should be changed to the ip or hostname of your host being connected to. For example if connecting
+  to a server it might be `'connectionString' => 'mongodb://username@xxx.xx.xx.xx'` where xx.xx.xx.xx is the ip (or hostname)
+  of your webserver or host.
+- `dbName`: is the name you want the collections to be stored in. The database name.
+- `fsyncFlag` and `safeFlag` - see the [Write Queries Flags Section][advanced.write-flags],
+  **state of this flags has massive impact on behavior of this extension, PLEASE read the linked chapter!**
+- `useCursor` flag see [Use cursor special topic][special#usecursorflag]
+- For more info see the [MongoDB connection page on php.net](http://php.net/manual/en/mongo.connecting.php).
+
+That's all you have to do for setup. You can use it very much like the active record.
+Short example:
+
+~~~
+[php]
+$client = new Client;
+$client->first_name='something';
+$client->save();
+$clients = Client::model->findAll();
+~~~

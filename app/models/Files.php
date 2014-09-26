@@ -1,116 +1,62 @@
 <?php
 
-/**
- * This is the model class for table "files".
- *
- * The followings are the available columns in table 'files':
- * @property string $id
- * @property string $user_id
- * @property string $name
- * @property string $parent
- * @property integer $trash
- * @property string $size
- * @property string $type
- * @property string $timestamp
- */
-class Files extends CActiveRecord
+class Files extends EMongoDocument
 {
-	/**
-	 * @return string the associated database table name
-	 */
-	public function tableName()
-	{
-		return 'files';
-	}
+    public $user_id;
+    public $name;
+    public $parent;
+    public $trash;
+    public $size;
+    public $type;
+    public $timestamp;
 
-	/**
-	 * @return array validation rules for model attributes.
-	 */
+    public function getCollectionName()
+    {
+        return 'files';
+    }
+
 	public function rules()
 	{
-		// NOTE: you should only define rules for those attributes that
-		// will receive user inputs.
 		return array(
 			array('user_id, name, parent, size', 'required'),
 			array('trash', 'numerical', 'integerOnly'=>true),
-			array('user_id, parent', 'length', 'max'=>10),
+			array('user_id, parent', 'length', 'max'=>64),
 			array('name', 'length', 'max'=>128),
 			array('size', 'length', 'max'=>20),
-			//array('type', 'length', 'max'=>32),
-			// The following rule is used by search().
-			// @todo Please remove those attributes that should not be searched.
-			array('id, user_id, name, parent, trash, size, type, timestamp', 'safe', 'on'=>'search'),
 		);
 	}
 
-	/**
-	 * @return array relational rules.
-	 */
-	public function relations()
-	{
-		// NOTE: you may need to adjust the relation name and the related
-		// class name for the relations automatically generated below.
-		return array(
-		);
-	}
-
-	/**
-	 * @return array customized attribute labels (name=>label)
-	 */
-	public function attributeLabels()
-	{
-		return array(
-			'id' => 'ID',
-			'user_id' => 'User',
-			'name' => 'Name',
-			'parent' => 'Parent',
-			'trash' => 'Trash',
-			'size' => 'Size',
-			'type' => 'Type',
-			'timestamp' => 'Timestamp',
-		);
-	}
-
-	/**
-	 * Retrieves a list of models based on the current search/filter conditions.
-	 *
-	 * Typical usecase:
-	 * - Initialize the model fields with values from filter form.
-	 * - Execute this method to get CActiveDataProvider instance which will filter
-	 * models according to data in model fields.
-	 * - Pass data provider to CGridView, CListView or any similar widget.
-	 *
-	 * @return CActiveDataProvider the data provider that can return the models
-	 * based on the search/filter conditions.
-	 */
-	public function search()
-	{
-		// @todo Please modify the following code to remove attributes that should not be searched.
-
-		$criteria=new CDbCriteria;
-
-		$criteria->compare('id',$this->id,true);
-		$criteria->compare('user_id',$this->user_id,true);
-		$criteria->compare('name',$this->name,true);
-		$criteria->compare('parent',$this->parent,true);
-		$criteria->compare('trash',$this->trash);
-		$criteria->compare('size',$this->size,true);
-		$criteria->compare('type',$this->type,true);
-		$criteria->compare('timestamp',$this->timestamp,true);
-
-		return new CActiveDataProvider($this, array(
-			'criteria'=>$criteria,
-		));
-	}
-
-	/**
-	 * Returns the static model of the specified AR class.
-	 * Please note that you should have this exact method in all your CActiveRecord descendants!
-	 * @param string $className active record class name.
-	 * @return Files the static model class
-	 */
 	public static function model($className=__CLASS__)
 	{
 		return parent::model($className);
 	}
+
+    public  function getPath()
+    {
+        $path = array();
+
+        $parent_id = $this->parent;
+        while($parent_id != "0") {
+            $criteria = new EMongoCriteria();
+            $criteria->_id = new MongoId($parent_id);
+
+            $model = Fs::model()->find($criteria);
+            if (isset($model->_id)) {
+                if ($model->parent != "0") {
+                    $parent_id = $model->parent->{'$id'};
+                } else {
+                    $parent_id = "0";
+                }
+                $path[] = $model->name;
+            } else {
+                exit();
+            }
+        }
+
+        if (count($path) > 0) {
+            return "/" . join("/", array_reverse($path)) . "/";
+        } else {
+            return "/";
+        }
+    }
 }

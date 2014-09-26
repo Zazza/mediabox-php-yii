@@ -1,143 +1,22 @@
-<div id="tab-treeview" class="tab-left">
-    <div id="leftTopMenu">
-        <div id="treeview"></div>
+<div id="leftSide">
 
-        <div class="sub">Media</div>
-        <div class="blocked left-section" id="mediaTypes">
-            <div>
-                <label>
-                    <input type="checkbox" class="check-type" name="check-type-other" value="other" />
-                    <i class="adv-menu-img icon-file"></i> Other(<span id="typeOther"></span>)
-                </label>
-            </div>
-            <div>
-                <label>
-                    <input type="checkbox" class="check-type" name="check-type-image" value="image" />
-                    <i class="adv-menu-img icon-camera"></i> Images(<span id="typeImage"></span>)
-                </label>
-            </div>
-            <div>
-                <label>
-                    <input type="checkbox" class="check-type" name="check-type-video" value="video" />
-                    <i class="adv-menu-img icon-film"></i> Video(<span id="typeVideo"></span>)
-                </label>
-            </div>
-            <div>
-                <label>
-                    <input type="checkbox" class="check-type" name="check-type-music" value="music" />
-                    <i class="adv-menu-img icon-music"></i> Music(<span id="typeAudio"></span>)
-                </label>
-            </div>
-        </div>
+    <ul id="left-menu" class="nav nav-pills">
+        <li>
+            <a class="left-menu-section" data-id="treeview">
+                <i class="icon-home"></i>
+            </a>
+        </li>
+        <li>
+            <a class="left-menu-section" data-id="player">
+                <i class="icon-music"></i>
+            </a>
+        </li>
+    </ul>
 
-        <div class="sub" id="mediabox-left-audio">Playlists</div>
-        <div class="blocked left-section">
-            <div class="row-fluid">
-                <div class="span9"><a id="create-new-playlist"><i class="adv-menu-img icon-plus"></i> Create playlist</a></div>
-                <div class="span3">
-                    <div class="dropdown">
-                        <a href="#" id="show-playlists" data-toggle="dropdown" title="Playlists">
-                            <i class="icon-list"></i>
-                            <b class="caret"></b>
-                        </a>
-                        <div class="dropdown-menu" id="user-playlists"></div>
-                    </div>
-                </div>
-            </div>
+    <div id="treeview" class="left-section"></div>
 
-            <div class="toPlaylist"><i class="adv-menu-img icon-music"></i> <a>All to playlist</a></div>
-        </div>
-
-        {% if App.user.role == 'admin' %}
-        <div class="sub">More</div>
-        <div class="blocked left-section">
-            <div data-id="all"><i class="adv-menu-img icon-trash"></i> <a href="/trash/">Trash</a></div>
-        </div>
-        {% endif %}
-
-        <div class="sub">Images tags</div>
-        <div class="blocked left-section">
-            <div id="allTags"></div>
-        </div>
-
-        <div class="sub">Images marks</div>
-        <div class="blocked left-section">
-            <div id="allCrops"></div>
-        </div>
+    <div id="left-player" style="display: none;">
+            {% include "/views/site/music.html" %}
     </div>
 
-
-    <!-- Player -->
-    <div id="player-controls" class="left-section player-controls-zero">
-        <audio id="mediaElement" src="" type=""></audio>
-
-        <div id="div-current-track">
-            <div id="current-track">&nbsp;</div>
-        </div>
-
-        <div id="playerMenu" class="btn-toolbar">
-            <div class="btn-group">
-                <a id="track-prev" class="btn">
-                    <i class="icon-step-backward"></i>
-                </a>
-                <a class="track-play btn">
-                    <i class="icon-play"></i>
-                </a>
-                <a id="track-next" class="btn">
-                    <i class="icon-step-forward"></i>
-                </a>
-
-                <a class="btn dropup" id="show-playlist">
-                    <div class="dropdown-toggle" data-toggle="dropdown">
-                        <i class="icon-list"></i>
-                        <span class="caret"></span>
-                    </div>
-                    <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
-                        <div class="droptarget k-block">
-                            <div id="pl-audio" style="text-align: left;"></div>
-                        </div>
-                    </ul>
-                </a>
-
-                <a class="btn dropup" id="playlist-volume">
-                    <div class="dropdown-toggle" data-toggle="dropdown">
-                        <i class="icon-volume-up"></i>
-                        <span class="caret"></span>
-                    </div>
-                    <ul class="dropdown-menu" id="dropdown-volume">
-                        <div class="k-block">
-                            <input id="volume" />
-                        </div>
-                    </ul>
-                </a>
-
-            </div>
-        </div>
-
-        <div>
-
-            <div>
-                <div id="track-slider"><input class="mx-pos-slider" /></div>
-                <div id="playerButtons">
-                    <div id="current-track-time">0:00</div>
-                    <div class="ml">[</div>
-                    <div id="current-track-duration">0:00</div>
-                    <div>]</div>
-                </div>
-            </div>
-
-        </div>
-
-    </div>
-    <!-- END Player -->
-
-</div>
-
-<div id="new-playlist-window" style="display: none;">
-    <input id="new-playlist-name" />
-    <hr />
-    <div style="text-align: right;">
-        <button id="new-playlist-save" class="k-button">Save</button>
-        <button id="new-playlist-close" class="k-button">Cancel</button>
-    </div>
 </div>

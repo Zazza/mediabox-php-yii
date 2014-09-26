@@ -1,3 +1,7 @@
+Важно: по всем изменениям планирую позже отписаться подробнее
+
+---
+
 mediabox-php
 ============
 ## Demo Site:
@@ -19,25 +23,12 @@ Login/password: test/test
 
 6) chmod -R 770 app/runtime/ web/assets/
 
-7) Install DB form /sql:
-mediabox-structure.sql
-mediabox-data.sql
-
-8) edit /app/config/main.php:
-
-<pre>
-'db'=>array(
-    'connectionString' => 'mysql:host=localhost;dbname=mediabox',
-    'emulatePrepare' => true,
-    'username' => 'mediabox',
-    'password' => 'mediabox',
-    'charset' => 'utf8',
-),
-</pre>
-
-<pre>
-'storage' => 'http://storage'
-</pre>
+7) Install DB
+```
+cd sql/dump/
+mongorestore mediabox/user.bson
+```
+8) Edit: web/config/storage.js
 
 9) /etc/init.d/apache2 restart or /etc/init.d/nginx restart
 

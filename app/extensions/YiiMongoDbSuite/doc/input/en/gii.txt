@@ -1,0 +1,45 @@
+Title: Gii Support
+Author: Dariusz Górecki <darek.krk@gmail.com>
+
+---
+
+# Model generation {#model}
+
+Since version 1.3.4 you can generate mongo document models based on existing SQL tables, just enable gii generators
+provided within package (see below) and use `MongoModel` generator. 
+
+# CRUD Generation {#crud}
+
+Now you can generate CRUD for yours MongoDB Documents! just you have to add generator path to yours Gii config
+
+> [Important]
+> By default generated models will use mongo `_id` field as a primary key (using MongoId class)
+> this generator will use different field as a primary key, if you will override `primaryKey()` method to return
+> something different than '_id'. Note that generator cannot handle with multifield primary key,
+
+~~~
+[php]
+// in yours main.php config file:
+'modules'=>array(
+	// ...
+
+	'gii'=>array(
+		'class'=>'system.gii.GiiModule',
+		'password'=>'yours_password_to_gii',
+		// add additional generator path
+		'generatorPaths'=>array(
+			'ext.YiiMongoDbSuite.gii'
+		),
+	),
+
+	// ...
+),
+// Now login to Gii and start using Mongocrud generator !
+~~~
+
+
+# Forms generation {#forms}
+
+- This is a good news, Gii can generate the worst part of developer job, forms for mongo records ;]
+- When generating a form from mongo record, comment out embedded docs array, or you'll see error about array/object creation
+- For embedded docs just generate forms in separed way for each one

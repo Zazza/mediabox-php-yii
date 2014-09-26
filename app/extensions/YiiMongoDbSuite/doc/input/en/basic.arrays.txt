@@ -1,0 +1,6 @@
+Title: Arrays
+Author: Dariusz Górecki <darek.krk@gmail.com>
+
+---
+
+You can in extreme simple way store any arrays in MongoDB, next sections will describe how to get it done.

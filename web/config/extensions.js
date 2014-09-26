@@ -1,5 +1,5 @@
 var extension = {
-    image: ['image', 'bmp', 'jpg', 'jpeg', 'gif', 'png'],
+    image: ['bmp', 'jpg', 'jpeg', 'gif', 'png'],
     audio: ['ogg', 'mp3'],
     video: ['mp4', 'mov', 'wmv', 'flv', 'avi', 'mpg', '3gp', 'ogv', 'webm'],
     text: ['txt'],

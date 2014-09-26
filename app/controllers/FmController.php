@@ -8,7 +8,7 @@ class FmController extends Controller
     {
         return array(
             array('allow',
-                'actions'=>array('fs', 'chdir', 'upload', "thumb", 'getThumb', 'copy', 'restore', 'getTypesNum', 'create', 'getTrash', 'fileToTrash', 'folderToTrash', 'remove', 'rmFolder', 'removeFileByName', 'buffer', 'past', 'deleteFileFromBuffer', 'clearBuffer', 'sort', 'view', 'types'),
+                'actions'=>array('fs', 'chdir', 'upload', "thumb", 'getThumb', 'copy', 'restore', 'getTypesNum', 'create', 'fileToTrash', 'folderToTrash', 'remove', 'rmFolder', 'removeFileByName', 'buffer', 'past', 'deleteFileFromBuffer', 'clearBuffer', 'getMoveFiles', 'sort', 'view', 'types'),
                 'users'=>array('@'),
             ),
             array('deny',
@@ -32,28 +32,43 @@ class FmController extends Controller
     public function actionFs()
     {
         if (!isset($_GET["id"])) {
-            $array = array(0 => array(
-                "text"              => "Upload",
-                "id"                => "0",
-                "expanded"          => true,
-                "hasChildren"       => true,
-                "spriteCssClass"    => "rootfolder"
-            ));
+            $array = array(
+                0 => array(
+                    "text"              => "Upload",
+                    "id"                => "0",
+                    "expanded"          => true,
+                    "hasChildren"       => true,
+                    "spriteCssClass"    => "rootfolder"
+                ),
+                1 => array(
+                    "text"              => "Trash",
+                    "id"                => "trash",
+                    "expanded"          => false,
+                    "hasChildren"       => false,
+                    "spriteCssClass"    => "rootfolder"
+                ),
+            );
 
             echo json_encode($array);
-        } else {
+        } elseif ($_GET["id"] != "trash") {
             $array = array();
 
-            $nodes = Fs::model()->findAll(
-                "parent = :parent AND trash = 0",
-                array(":parent" => $_GET["id"])
-            );
+            $criteria = new EMongoCriteria();
+            if ($_GET["id"] === "0") {
+                $criteria->parent = "0";
+            } else {
+                $criteria->parent = new MongoId($_GET["id"]);
+            }
+            $criteria->trash != "1";
+            $criteria->sort('name', EMongoCriteria::SORT_ASC);
+            $nodes = Fs::model()->findAll($criteria);
 
             foreach($nodes as $node) {
                 $array[] = array(
                     "text"              => $node->name,
-                    "id"                => $node->id,
-                    "hasChildren"       => $this->hasChildren($node->id),
+                    "id"                => $node->_id->{'$id'},
+                    "trash"             => "0",
+                    "hasChildren"       => $this->hasChildren($node->_id),
                     "spriteCssClass"    => "folder"
                 );
             }
@@ -63,26 +78,99 @@ class FmController extends Controller
     }
 
     public function hasChildren($id) {
-        if (Fs::model()->exists(
-            "parent = :parent AND trash = 0",
-            array(":parent" => $_GET["id"])
-        )) {
+        $criteria = new EMongoCriteria();
+        $criteria->parent = $id;
+        $criteria->trash != "1";
+        $exists = Fs::model()->find($criteria);
+
+        if ($exists) {
             return true;
         } else {
             return false;
         }
     }
 
-    public function actionChdir() {
-        if (!isset($_GET["id"])) {
-            $id = 0;
+    private function getFilePath($id)
+    {
+        $file = Files::model()->findByPk($id);
+
+        $path = array();
+        $parent_id = $file->parent;
+        while($parent_id != "0") {
+            $criteria = new EMongoCriteria();
+            $criteria->_id = new MongoId($parent_id);
+
+            $model = Fs::model()->find($criteria);
+            if (isset($model->_id)) {
+                $parent_id = $model->parent;
+                $path[] = $model->name;
+            } else {
+                exit();
+            }
+        }
+
+        return "/" . join("/", array_reverse($path)) . "/" . $file->name;
+    }
+
+    private function getPath($parent_id)
+    {
+        $path = array();
+        while($parent_id != "0") {
+            $criteria = new EMongoCriteria();
+            $criteria->_id = new MongoId($parent_id);
+
+            $model = Fs::model()->find($criteria);
+            if (isset($model->_id)) {
+                if ($model->parent != "0") {
+                    $parent_id = $model->parent->{'$id'};
+                } else {
+                    $parent_id = "0";
+                }
+                $path[] = $model->name;
+            } else {
+                exit();
+            }
+        }
+
+        if (count($path) > 0) {
+            return "/" . join("/", array_reverse($path)) . "/";
         } else {
+            return "/";
+        }
+    }
+
+    public function actionChdir() {
+        if ( (!isset($_GET["id"])) or ($_GET["id"] === "0") ) {
+            $id = "0";
+
+            $trash = "0";
+
+            $files = array("trash" => "0");
+        } elseif ($_GET["id"] != "trash") {
             $id = $_GET["id"];
-        };
+
+            $parent = Fs::model()->findByPk(new MongoID($id));
+
+            $trash = "0";
+
+            $files = array("trash" => $parent->trash);
+        } else {
+            $id = "0";
+
+            $trash = "1";
+
+            $files = array("trash" => "1");
+        }
 
         Yii::app()->session['current_directory'] = $id;
 
-        $files = array();
+        if (isset($parent->_id)) {
+            Yii::app()->session['current_path'] = $this->getPath($id);
+        } else {
+            Yii::app()->session['current_path'] = "/";
+        }
+        $files["current_path"] = Yii::app()->session['current_path'];
+        $files["files"] = array();
 
         if ($this->_sort == "date") {
             $dir_sort = "timestamp";
@@ -96,38 +184,63 @@ class FmController extends Controller
         };
 
         // Get Dirs
-        $criteria = new CDbCriteria;
-        $criteria->condition = 'parent = :parent AND trash = 0';
-        $criteria->order = $dir_sort;
-        $criteria->params = array(":parent" => $_GET["id"]);
-        $nodes = Fs::model()->findAll($criteria);
+        if ($trash == "0") {
+            $criteria = new EMongoCriteria();
+            if ($id === "0") {
+                $criteria->parent = "0";
+            } else {
+                $criteria->parent = new MongoId($id);
+            }
+            $criteria->trash = "0";
+            $criteria->sort($dir_sort, EMongoCriteria::SORT_ASC);
+            $nodes = Fs::model()->findAll($criteria);
+        } else {
+            $criteria = new EMongoCriteria();
+            $criteria->trash = "1";
+            $criteria->sort($dir_sort, EMongoCriteria::SORT_ASC);
+            $nodes = Fs::model()->findAll($criteria);
+        }
 
         foreach($nodes as $node) {
             $folder = new Folder();
 
             $folder->name = urlencode($node->name);
-            $folder->id = $node->id;
+            $folder->id = $node->_id->{'$id'};
+            $folder->path = $this->getPath($node->parent);
             $folder->date = $node->timestamp;
 
-            $files[] = $folder;
+            $files["files"][] = $folder;
         };
 
         // Get Files
-        $criteria = new CDbCriteria;
-        $criteria->condition = 'parent = :parent AND trash = 0';
-        $criteria->order = $file_sort;
-        $criteria->params = array(":parent" => $_GET["id"]);
-        $nodes = Files::model()->findAll($criteria);
+        if ($trash == "0") {
+            $criteria = new EMongoCriteria();
+            if ($id === "0") {
+                $criteria->parent = "0";
+            } else {
+                $criteria->parent = new MongoId($id);
+            }
+            $criteria->trash = "0";
+            $criteria->sort($file_sort, EMongoCriteria::SORT_ASC);
+            $nodes = Files::model()->findAll($criteria);
+        } else {
+            $criteria = new EMongoCriteria();
+            $criteria->trash = "1";
+            $criteria->sort($file_sort, EMongoCriteria::SORT_ASC);
+            $nodes = Files::model()->findAll($criteria);
+        }
 
         foreach($nodes as $node) {
             $file = new File();
 
-            $file->id = $node["id"];
-            $file->name = urlencode($node["name"]);
-            $file->size = $node["size"];
-            $file->date = $node["timestamp"];
+            $file->id = $node->_id->{'$id'};
+            $file->path = $this->getPath($node->parent);
+            $file->name = urlencode($node->name);
+            $file->size = $node->size;
+            $file->date = $node->timestamp;
+            $file->type = $node->type;
 
-            $files[] = $file;
+            $files["files"][] = $file;
         }
 
         if (count($files) > 0) {
@@ -139,62 +252,79 @@ class FmController extends Controller
 
     public function actionUpload() {
         $file = new Files();
-        $file->parent = Yii::app()->session['current_directory'];
+        if (Yii::app()->session['current_directory'] == "0") {
+            $file->parent = "0";
+        } else {
+            $file->parent = new MongoId(Yii::app()->session['current_directory']);
+        }
         $file->name = $_GET["file"];
+        $file->trash = "0";
         $file->user_id = Yii::app()->user->id;
         $file->size = $_GET["size"];
+        $file->type = $_GET["type"];
+        $file->timestamp = date("Y-m-d H:i:s");
 
         if ($file->validate()) {
             $file->save();
 
             $model = new File();
 
-            $model->id = $file->id;
+            $model->id   = $file->_id->{'$id'};
             $model->name = $file->name;
             $model->size = $file->size;
+            $model->type = $file->type;
             $model->date = $file->timestamp;
 
             echo json_encode($model);
         }
     }
 
-    public function actionThumb($id) {
+    public function actionThumb() {
         $image = new Image();
-        $image->file_id = $id;
+        $image->file_id = new MongoId($_POST["id"]);
         $image->data = $_POST["data"];
         if ($image->validate()) {
             $image->save();
+        } else {
+            print_r($image->getErrors());
         }
     }
 
     public function actionGetThumb() {
-        $image = Image::model()->find(
-            "file_id = :file_id",
-            array(":file_id" => $_GET["name"])
-        );
+        $criteria = new EMongoCriteria();
+        $criteria->file_id = new MongoId($_GET["name"]);
+        $image = Image::model()->find($criteria);
 
         header('Content-Type: image/png');
         echo base64_decode($image->data);
     }
 
     private function getFolder($id) {
-        $fs = Fs::model()->findByPk($id);
+        $criteria = new EMongoCriteria();
+        $criteria->_id = new MongoID($id);
+        $fs = Fs::model()->find($criteria);
 
         $model = new Folder();
 
-        $model->id = $fs->id;
+        $model->id = $fs->_id->{'$id'};
         $model->name = urlencode($fs->name);
         $model->date = $fs->timestamp;
-        $model->parent = $fs->parent;
+        if ($fs->parent == "0") {
+            $model->parent = "0";
+        } else {
+            $model->parent = $fs->parent->{'$id'};
+        }
 
         return $model;
     }
 
     private function getFile($id) {
-        $file = Files::model()->findByPk($id);
+        $criteria = new EMongoCriteria();
+        $criteria->_id = new MongoID($id);
+        $file = Files::model()->find($criteria);
 
         $model = new File();
-        $model->id = $file->id;
+        $model->id = $file->_id->{'$id'};
         $model->name = urlencode($file->name);
         $model->size = $file->size;
         $model->date = $file->timestamp;
@@ -243,16 +373,20 @@ class FmController extends Controller
     public function actionRestore() {
         if (isset($_POST["file"])) {
             foreach($_POST["file"] as $part) {
-                $model = Files::model()->findByPk($part);
-                $model->trash = 0;
+                $criteria = new EMongoCriteria();
+                $criteria->_id = new MongoID($part);
+                $model = Files::model()->find($criteria);
+                $model->trash = "0";
 
                 $model->save();
             }
         }
         if (isset($_POST["folder"])) {
             foreach($_POST["folder"] as $part) {
-                $model = Fs::model()->findByPk($part);
-                $model->trash = 0;
+                $criteria = new EMongoCriteria();
+                $criteria->_id = new MongoID($part);
+                $model = Fs::model()->find($criteria);
+                $model->trash = "0";
 
                 $model->save();
             }
@@ -263,24 +397,50 @@ class FmController extends Controller
 
         $type = array();
         $type["path"] = "";
+        $path = array();
 
         $tmp_id = $_GET["id"];
 
-        while($tmp_id != 0) {
-            if(Fs::model()->exists($_GET["id"])) {
-                $fs = Fs::model()->findByPk($_GET["id"]);
-
+        while($tmp_id !== "0") {
+            $criteria = new EMongoCriteria();
+            $criteria->_id = new MongoId($tmp_id);
+            $fs = Fs::model()->find($criteria);
+            if(isset($fs->_id)) {
                 $tmp_id = $fs->parent;
 
-                $type["path"] = " > " . "<a href='#' class='one_folder' data-id=" . $fs->id . ">" . $fs->name . "</a>" . $type["path"];
+                $count = count($path);
+                $path[$count]["id"] = $fs->_id->{'$id'};
+                $path[$count]["name"] = $fs->name;
             } else {
-                $tmp_id = 0;
+                $tmp_id = "0";
             }
         }
 
-        $type["path"] = "<nobr><a href='#' class='one_folder' data-id='0'>Upload</a>" . $type["path"] . "</nobr>";
+        $path = array_reverse($path);
 
-        $files = Files::model()->findAll("parent = :parent AND trash = 0", array(":parent" => $_GET["id"]));
+        if (count($path) > 2) {
+            $pre = '<a href="#" class="btn btn-default one_folder" data-id=' . $path[count($path)-2]["id"] . '><div>' . $path[count($path)-2]["name"] . '</div></a>';
+            $last = '<a href="#" class="btn btn-default one_folder" data-id=' . $path[count($path)-1]["id"] . '><div>' . $path[count($path)-1]["name"] . '</div></a>';
+
+            $type["path"] = '<a href="#" class="btn btn-default one_folder" data-id="' . $path[count($path)-3]["id"] . '"><i class="icon-chevron-left"></i></a>' . $pre . $last;
+        } else {
+            $type["path"] = '<a href="#" class="btn btn-default one_folder" data-id="0"><i class="icon-home"></i></a>';
+            if (isset($path["0"])) {
+                $type["path"] .= '<a href="#" class="btn btn-default one_folder" data-id=' . $path[0]["id"] . '><div>' . $path[0]["name"] . '</div></a>';
+            }
+            if (isset($path["1"])) {
+                $type["path"] .= '<a href="#" class="btn btn-default one_folder" data-id=' . $path[1]["id"] . '><div>' . $path[1]["name"] . '</div></a>';
+            }
+        }
+
+        $criteria = new EMongoCriteria();
+        if ($_GET["id"] == "0") {
+            $criteria->parent = "0";
+        } else {
+            $criteria->parent = new MongoId($_GET["id"]);
+        }
+        $criteria->trash != "1";
+        $files = Files::model()->findAll($criteria);
 
         $type["all"] = 0;
         $type["image"] = 0;
@@ -316,86 +476,28 @@ class FmController extends Controller
 
     public function actionCreate() {
         $fs = new Fs();
-        $fs->parent = Yii::app()->session['current_directory'];
+        if (Yii::app()->session['current_directory'] == "0") {
+            $fs->parent = "0";
+        } else {
+            $fs->parent = new MongoId(Yii::app()->session['current_directory']);
+        }
         $fs->name = $_GET["name"];
         $fs->user_id = Yii::app()->user->id;
+        $fs->trash = "0";
 
         if ($fs->validate()) {
             $fs->save();
 
-            echo json_encode($this->getFolder($fs->id));
-        }
-    }
-
-    public function actionGetTrash() {
-        if (!isset($_GET["id"])) {
-            $id = 0;
-        } else {
-            $id = $_GET["id"];
-        };
-
-        Yii::app()->session['current_directory'] = $id;
-
-        $files = array();
-
-        if ($this->_sort == "date") {
-            $dir_sort = "timestamp";
-            $file_sort = "timestamp";
-        } else if ($this->_sort == "name") {
-            $dir_sort = "name";
-            $file_sort = "name";
-        } else if ($this->_sort == "size") {
-            $dir_sort = "name";
-            $file_sort = "size";
-        };
-
-        // Get Dirs
-        $criteria = new CDbCriteria;
-        $criteria->condition = 'parent = :parent AND trash = 1';
-        $criteria->order = $dir_sort;
-        $criteria->params = array(":parent" => $_GET["id"]);
-        $nodes = Fs::model()->findAll($criteria);
-
-        foreach($nodes as $node) {
-            $folder = new Folder();
-
-            $folder->name = urlencode($node->name);
-            $folder->id = $node->id;
-            $folder->date = $node->timestamp;
-
-            $files[] = $folder;
-        };
-
-
-
-        // Get Files
-        $criteria = new CDbCriteria;
-        $criteria->condition = 'parent = :parent AND trash = 1';
-        $criteria->order = $file_sort;
-        $criteria->params = array(":parent" => $_GET["id"]);
-        $nodes = Files::model()->findAll($criteria);
-
-        foreach($nodes as $node) {
-            $file = new File();
-
-            $file->id = $node["id"];
-            $file->name = urlencode($node["name"]);
-            $file->size = $node["size"];
-            $file->date = $node["timestamp"];
-
-            $files[] = $file;
-        }
-
-        if (count($files) > 0) {
-            echo json_encode($files);
-        } else {
-            echo json_encode(array());
+            echo json_encode($this->getFolder($fs->_id));
         }
     }
 
     public function actionFileToTrash() {
-        $file = Files::model()->findByPk($_GET["id"]);
-        $file->trash = 1;
+        $criteria = new EMongoCriteria();
+        $criteria->_id = new MongoId($_GET["id"]);
+
+        $file = Files::model()->find($criteria);
+        $file->trash = "1";
 
         if ($file->validate()) {
             $file->save();
@@ -403,34 +505,43 @@ class FmController extends Controller
     }
 
     public function actionFolderToTrash() {
-        $fs = Fs::model()->findByPk($_GET["id"]);
-        $fs->trash = 1;
+        $criteria = new EMongoCriteria();
+        $criteria->_id = new MongoId($_GET["id"]);
+
+        $fs = Fs::model()->find($criteria);
+        $fs->trash = "1";
         if ($fs->validate()) {
             $fs->save();
         }
     }
 
     public function actionRemove() {
-        $file = Files::model()->findByPk($_GET["id"]);
+        $criteria = new EMongoCriteria();
+        $criteria->_id = new MongoId($_GET["id"]);
 
-        if ($file->type = "image") {
-            ImagesCrops::model()->deleteAll("file_id = :file_id", array(":file_id"=>$file->id));
-            ImagesTags::model()->deleteAll("file_id = :file_id", array(":file_id"=>$file->id));
-            ImagesComments::model()->deleteAll("file_id = :file_id", array(":file_id"=>$file->id));
+        $file = Files::model()->find($criteria);
+
+        if ($file->type == "image") {
+            $criteria = new EMongoCriteria();
+            $criteria->file_id = $file->_id;
+
+            ImagesCrops::model()->deleteAll($criteria);
+            ImagesTags::model()->deleteAll($criteria);
+            ImagesComments::model()->deleteAll($criteria);
         }
 
         $file->delete();
     }
 
     public function actionRmFolder() {
-        Fs::model()->deleteByPk($_GET["id"]);
+        Fs::model()->deleteByPk(new MongoId($_GET["id"]));
     }
 
     public function actionRemoveFileByName() {
-        $file = Files::model()->find("parent = :parent AND name = :name", array(
-            ":parent" => Yii::app()->session['current_directory'],
-            ":name" => $_GET["name"]
-        ));
+        $criteria = new EMongoCriteria();
+        $criteria->parent = new MongoId(Yii::app()->session['current_directory']);
+        $criteria->name = $_GET["name"];
+        $file = Files::model()->find($criteria);
 
         $file_id = $file->id;
 
@@ -441,6 +552,21 @@ class FmController extends Controller
 
     public function actionBuffer() {
         echo json_encode(Buffer::getBuffer());
+    }
+
+    public function actionGetMoveFiles() {
+        $result = array();
+        $buffer = Buffer::getBuffer();
+        foreach($buffer as $part) {
+            if ($part->obj == "file") {
+                $result[] = urlencode($this->getFilePath($part->id));
+            }
+            if ($part->obj == "folder") {
+                $result[] = urlencode($this->getPath($part->id));
+            }
+        }
+
+        echo json_encode($result);
     }
 
     public function actionPast() {
@@ -484,5 +610,23 @@ class FmController extends Controller
         $types["music"] = $_GET["music"];
 
         Yii::app()->session['types'] = $types;
+    }
+
+    public function actionRenameFile() {
+        $result = array();
+
+        $model = Files::model()->findByPk(new MongoId($_GET["id"]));
+        $model->name = $_GET["name"];
+        if ($model->validate()) {
+            $model->save(false);
+        }
+    }
+
+    public function actionRenameFolder() {
+        $folder = Fs::model()->findByPk(new MongoId($_GET["id"]));
+        $folder->name = $_GET["name"];
+        if ($folder->validate()) {
+            $folder->save(false);
+        }
     }
 }

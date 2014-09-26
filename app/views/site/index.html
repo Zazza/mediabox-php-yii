@@ -2,100 +2,23 @@
     <div class="container">
         <h1 class="xvidMediaBox_25px h1logo">Xvid MediaBox</h1>
 
-        <ul class="nav nav-pills" id="file-topmenu" style="display: none;">
-            {% for section in navigation %}
-            <li {% if section.active %} class="active" {% endif %} ><a href="../{{section.name}}/">{{ section.text }}</a></li>
-            {% endfor %}
-
-            <li class="dropdown fs-actions">
-                <a class="dropdown-toggle" role="button" data-toggle="dropdown" href="#">
-                    Actions <i class="icon-list-alt"></i>
-                    <b class="caret"></b>
-                </a>
-                <ul class="dropdown-menu">
-                    <li class="copy">
-                        <a href="#"><i class="icon-copy"></i> Copy</a>
-                    </li>
-                    <li class="past">
-                        <a href="#"><i class="icon-paste"></i> Paste</a>
-                    </li>
-                    <li class="delete">
-                        <a href="#"><i class="icon-remove"></i> Delete</a>
-                    </li>
-                </ul>
-            </li>
-
-            <li id="newDirWin">
-                <a href="#"><i class="icon-folder-open"></i> New Folder</a>
-            </li>
-            <li class="slideshow">
-                <a href="#"><i class="icon-fullscreen"></i> Slideshow</a>
-            </li>
-
-
-            <li class="nav pull-right">
-                <ul class="files-adv-actions nav nav-pills">
-
-                    <li class="advanced-panel-show upload upload-empty">
-                        <a href="#"><i class="icon-upload"></i> Upload</a>
-                    </li>
-                    <li class="dropdown upload-isset" style="display: none;">
-                        <a class="dropdown-toggle upload-dropdown-show" role="button" data-toggle="dropdown" href="#">
-                            <i class="icon-uploadalt"></i> Upload
-                            [<span class="uploadCount">0</span>]
-                            <b class="caret"></b>
-                        </a>
-
-                        <ul class="dropdown-menu">
-                            <li>
-                                <div>
-                                    <a class="k-button k-upload-button advanced-panel-show upload">Show upload</a>
-                                </div>
-                                <div class="upload-dropdown">
-                                    <div class="percDropdown"></div>
-                                </div>
-                            </li>
-                        </ul>
-                    </li>
-
-                    <li class="advanced-panel-show buffer">
-                        <a href="#"><i class="icon-paste"></i> Buffer [<span class="bufferCount">0</span>]</a>
-                    </li>
-
-                </ul>
-            </li>
-        </ul>
-
+        <ul class="nav nav-pills" id="mx-topmenu"></ul>
     </div>
 </nav>
 
 <section class="container">
-    {% include "/views/site/advanced.html" %}
-
     <div id="splitter" class="row">
-        <div class="span3" id="left-vertical">
-            {% include "/views/site/left.html" %}
-        </div>
-
-        <div class="span9" id="vertical">
-            <div id="fs-container">
-                <div id="fs" class="fs-container-div">
-                    {% include "/views/site/files.html" %}
-                </div>
-            </div>
-        </div>
-
-
+        {% include "/views/site/files.html" %}
     </div>
-
-    {% include "/views/site/image-preview.html" %}
-    {% include "/views/site/video-preview.html" %}
 </section>
 
+{% include "/views/site/top-menu.html" %}
 
 <input type="hidden" id="start_dir" value="{{ App.session.startdir }}" />
+<input type="hidden" id="current_path_string" value="{{ App.session.current_path }}" />
 <input type="hidden" id="volume-level" value="{{ App.session.volume_level }}" />
 <input type="hidden" id="buffer_count" value="" />
+<input type="hidden" id="access_token" value="" />
 {#
 {% if App.session.playlist is defined %}
 <input type="hidden" id="current-playlist" value="{{ App.session.playlist }}" />
@@ -115,6 +38,5 @@
 <input type="hidden" id="y1" />
 <input type="hidden" id="y2" />
 
+{% include "/views/site/files-templates.html" %}
 
-
-<script data-main="/js/common" data-slug="mediabox-index" src="/js/require.js"></script>

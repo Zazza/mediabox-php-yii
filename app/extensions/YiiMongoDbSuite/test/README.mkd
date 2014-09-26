@@ -1,0 +1,123 @@
+# Fixture manager for MongoRecords
+
+## Setup
+
+In your protected/config/main.php config file, add the following :
+
+
+~~~
+[php]
+
+
+    'import' => array(
+      ...
+      'ext.YiiMongoDbSuite.*',
+      'ext.YiiMongoDbSuite.test.*',
+    ),
+
+    'components' => array(
+		'fixture'=>array(
+			'class'=>'EMongoDbFixtureManager',
+		),
+      ...
+    ),
+
+
+~~~
+
+
+That's all you can start using the fixture manager right now.
+
+
+## MongoDocument object
+
+~~~
+[php]
+
+    class User extends EMongoDocument
+    {
+      public $login;
+      public $name;
+      public $pass;
+
+      // This has to be defined in every model, this is same as with standard Yii ActiveRecord
+      public static function model($className=__CLASS__)
+      {
+        return parent::model($className);
+      }
+
+      // This method is required!
+      public function getCollectionName()
+      {
+        return 'Users';
+      }
+
+      public function rules()
+      {
+        return array(
+          array('login, pass', 'required'),
+          array('login, pass', 'length', 'max' => 20),
+          array('name', 'length', 'max' => 255),
+        );
+      }
+
+      public function attributeLabels()
+      {
+        return array(
+          'login'  => 'User Login',
+          'name'   => 'Full name',
+          'pass'   => 'Password',
+        );
+      }
+    }
+
+
+~~~
+
+
+## Create fixture
+
+Define the fixture collection like for ActiveRecords. Please
+check http://www.yiiframework.com/doc/guide/1.1/en/test.fixture
+
+Fixture file Users.php for collection elements User
+~~~
+[php]
+return array(
+    'sample1'=>array(
+        'login'=>'userLogin',
+        'name'=>'User firstname',
+        'pass'=>'pass fixture value',
+    ),
+    'sample2'=>array(
+        'login'=>'otherLogin',
+        'name'=>'Other User firstname',
+        'pass'=>'other pass value',
+    ),
+);
+~~~
+
+## Use it
+
+Now you can use your fixtured records in your test cases
+~~~
+[php]
+class UserTest extends EMongoDbTestCase {
+	public $fixtures = array(
+		'Users'=>'User',
+	);
+	public function testFindUser() {
+		$criteria = new EMongoCriteria();
+		$criteria->login('==',$this->Users['sample1']['login']);
+		$userFromDb = User::model()->find($criteria);
+		$this->assertEquals($userFromDb->login, $this->users['sample1']['login']);
+	}
+}
+~~~
+
+
+## Embedded documents
+
+Embedded document can be defined in fixtures as array as all the 
+difficult work to map embedded documents is done in the EMongoDocument class. 
+

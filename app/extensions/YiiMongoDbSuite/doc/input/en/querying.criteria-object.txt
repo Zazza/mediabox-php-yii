@@ -1,0 +1,163 @@
+Title: The EMongoCriteria Object
+Author: Dariusz Górecki <darek.krk@gmail.com>
+
+---
+
+By default MongoDB requires to build advanced query arrays if you want advanced search for documents in DB.
+
+The EMongoCriteria object simplifies process of building this query arrays.
+
+First of all create the object instance: `$criteria = new EMongoCriteria();`
+
+You may define query criteria in three simple ways:
+
+1. Simple 'equlas' condition, that is equivalent of SQL: `WHERE fieldName = 'fieldValue'`:
+    - `$criteria->fieldName = 'fieldValue';`
+2. By field name call ie. SQL: `WHERE fieldName > 1234`:
+    - `$criteria->fieldName('>', 1234);`
+3. By addCond method ie. SQL: `WHERE fieldName <= 1234`:
+    - `$criteria->addCond('fieldName', '<=', 1234);`
+
+You can add multiple conditions, using any of the above techniques, they will be mixed together.
+
+In addition to above the criteria object has additional special methods.
+
+1. `limit($value)` that takes as parameter the query results limit, same as SQL `LIMIT` directive
+2. `offset($value)` that takes as parameter the query results offset to get, same as SQL `LIMIT` directive second parameter
+3. `sort($fieldName, $sortDirection)` this will be covered shortly
+4. `select($array)` this will be covered shortly
+
+> [information]
+> If you want to add simple criteria, that will use field name that is a method name from the above list,
+> you can use the addCond method ie. `$criteria->addCond('limit', '==', 1234);`
+
+## sort EMongoCriteria method {#sort}
+
+The sort method takes two parameters
+
+- first is a field name, to use for sorting
+- second is a sort direction, witch may be one of:
+    1. `EMongoCriteria::SORT_ASC` for ascending sorting (positive value 1)
+    2. `EMongoCriteria::SORT_DESC` for descending sorting (negative value -1)
+
+You can call sort method as many times as you wish, the sorting criteria will be mixed together.
+
+## select EMongoCriteria method {#select}
+
+The select method takes only one argument, array of field names.
+
+By default MongoDB will return all fields from of document, use this method to tell mongo that
+you want only specified field list.
+
+> [important]
+> - MongoDB regardless of anything, will always return the _id field within result sets
+> - You can call sort method multiple times, all calls will be merged using array_merge function
+
+## List of supported operators {#oplist}
+
+List consist of operators and after `|` available shortcut (if any)
+
+> [information]
+> Operators are case-insensitive
+
+~~~
+- 'greater'   | >
+- 'greaterEq' | >=
+- 'less'      | <
+- 'lessEq'    | <=
+- 'notEq'     | !=, <>
+- 'in'        |
+- 'notIn'     |
+- 'all'       |
+- 'size'      |
+- 'exists'    |
+- 'notExists' |
+- 'type'      | // BSON type see mongodb docs for this
+- 'mod'       | %
+- 'equals'    | ==
+- 'elemMatch' |
+- 'or' |
+~~~
+
+> [warning]
+> the $or operator in newer versions of mongodb. It works only with versions MongoDB 1.5.3+
+
+
+For examples and use for how to use these operators effectively, use the [MongoDB Operators Documentation here](http://www.mongodb.org/display/DOCS/Advanced+Queries).
+
+## Examples: {#examples}
+
+~~~
+[php]
+// first you must create a new criteria object
+$criteria = new EMongoCriteria;
+
+// find the single user with the personal_number == 12345
+$criteria->personal_number('==', 12345);
+// OR like this:
+$criteria->personal_number = 12345; 
+
+$user = User::model->find($criteria);
+
+// find all users in New York. This will search in the embedded document of UserAddress
+$criteria->address->city('==', 'New York');
+// Or
+$criteria->address->city = 'New York';
+$users = User::model()->findAll($criteria);
+
+// Ok now try this. Only active users, only show at most 10 users, and sort by first name, descending, and offset by 20 (pagination):
+// note the sort syntax. it must have an array value and use the => syntax.
+$criteria->status('==', 1)->limit(10)->sort(array('firstName' => EMongoCriteria::SORT_DESC))->offset(20);
+$users = User::model()->findAll($criteria);
+
+// A more advanced case. All users with a personal_number evenly divisible by 10, sorted by first name ascending, limit 10 users, offset by 25 users (pagination), and remove any address fields from the returned result.
+$criteria->personal_number('%', array(10, 0)) // modulo => personal_number % 10 == 0
+	->sort(array('firstName' => EMongoCriteria::SORT_ASC))
+	->limit(10)
+	->offset(25);
+$users = User::model()->findAll($criteria);
+
+//using $or operator
+
+//Find all contacts where the FirstName can be Paris OR City can be Paris
+$criteria = new EMongoCriteria();
+$criteria->addCond('contactFirstname', 'or', 'Paris');
+$criteria->addCond('contactCity', 'or', 'Paris');
+$contacts = ContactsDb::model()->findAll($criteria);
+~~~
+
+##Regexp / SQL LIKE replacement {#regexp}
+
+You can use native PHP Mongo driver class MongoRegex, to query:
+
+~~~
+[php]
+// Create criteria
+$criteria = new EMongoCriteria;
+// Find all records witch have first name starring on a, b and c, case insensitive search
+$criteria->first_name = new MongoRegex('/[abc].*/i');
+$clients = Client::model()->findAll($criteria);
+// see phpdoc for MongoRegex class for more examples
+~~~
+
+##Creating criteria object from an array: {#array}
+
+~~~
+[php]
+// Example criteria
+$array = array(
+	'conditions'=>array(
+		// field name => operator definition
+		'FieldName1'=>array('greaterEq' => 10), // Or 'FieldName1'=>array('>=' => 10)
+		'FieldName2'=>array('in' => array(1, 2, 3)),
+		'FieldName3'=>array('exists'),
+	),
+	'limit'=>10,
+	'offset'=>25,
+	'sort'=>array('fieldName1' => EMongoCriteria::SORT_ASC, 'fieldName4' => EMongoCriteria::SORT_DESC),
+);
+
+$criteria = new EMongoCriteria($array);
+// or
+$clients = ClientModel::model()->findAll($array);
+~~~

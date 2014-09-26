@@ -1,0 +1,102 @@
+Title: Changelog
+Author: Dariusz Górecki <darek.krk@gmail.com>
+
+---
+
+This is the **1.3.6** release
+
+New features in 1.3.6
+
+- Few annoying bugs fixed
+- Documentation corrects
+- **Added `EMongoPartialDocument` class, that supports full-featured partial loading of documents from DB**
+- **Added fixtures manager, that can replace the Yii default one, and work with Mongo model**
+- **Ability to do massive [partial updates of multiple documents][advanced.partial-batch-update]**
+
+New features in 1.3.5
+
+- A lot of BUGs fixed, improved code readability, better in-code documentation, better exception handling
+- Added support for PHP Mongo driver versions below 1.0.5
+- **Ability to do *Extreme Efficent* document [partial updates][advanced.partial-update], that make use of MongoDB `$set` operator/feature**
+- Support for partial loading of documents from DB
+- Improved EEmbeddedArraysBehavior class implementation, with cache support
+- Added Gii MongoCRUD *light* template, that will produce one index view instead of two admin/index views pair
+
+New features in 1.3.4
+
+- Added "Soft" Documents support, soft documents do not have fixed attribute lists, for more info see [soft models section][advanced.soft-models]
+- Added support for global temporary folder used by GridFS
+- Added missing deleteByPk method to `EmongoDocument`
+- Added support for generating Mongo models from existing SQL tables, see [Gii section][gii#model]
+
+New features in 1.3.3
+
+- Ability to set FSync and Safe flag on different scopes, see the [Write queries flags][advanced.write-flags] documentation part
+- **Ability to use efficient Cursors instead of raw array, returned by the findAll* methods** see [Use Cursor Flag][special#useCursorFlag] documentation part
+
+New features in 1.3.2
+
+- Fixed bug that find* methods don't accept criteria in array format
+- Lazy loading/creating of embedded documents
+- Little performance boost, save embedded documents configs in static array
+
+New features in 1.3.1
+
+- Fixed few major bugs in EMongoCriteria class
+- *Bugfixes to criteria object had forced to change the criteria object creation from array, please see the [updated doc][querying.criteria-object#array] for it*
+- Fixed bug that in massive assign way, embedded documents always used only safe attributes
+- Setup of PHPUnit testing framework
+- Written test cases for EMongoDB class and EMongoCriteria class 
+
+New features in 1.3
+
+- MongoDB [GridFS feature support][advanced.gridfs], thanks to work of: Jose Martinez and Philippe Gaultier
+
+New features in 1.2.3
+
+- Gii CRUD generator, now generates advanced search form in admin (like in regular Yii CRUD generator)
+- Search form now supports comparsion operators ( > | < | >= | <= | <> | != | == | = )
+- In v1.2.2 all search attributes where treated as a string regex, now you can test numbers to, just juse comparsion operators, example:
+    - search for '1234' will try to find a string matching regexp /1234/i (this will not work if field is numeric)
+    - search for '= 1234' will try to find numberic value 1234
+    - search for '>= 1234' will try to find any record with field greater or equals numeric value 1234 
+
+New features in 1.2.2
+
+- Magic method search() delivered with every EMongoDocument object
+- Gii CRUD generator now uses search method, to provide text search in admin view (by default using case-insensitive regexp)
+- EMongoDocument search() method has one parameter:
+    - $caseSensitive true|false, default to false, whathever to use case-sensitive string comparsion 
+
+New features in 1.2.1
+
+- **Support for [generating CRUD][gii#crud] for EMongoDocument models!**
+- Few minor bug fixes
+
+New features in 1.2
+
+- Support for using any other than [_id field as a Primary Key][advanced.primary-key#ownpk]
+- Better names scopes handling, support for default scope
+- *Support to have different models in single collection! see [Multimodel collection topic][special.multimodel]*
+- Better memory management, now there is only one collection object instance, per model
+
+New features in 1.1
+
+- [automated efficient index][advanced.indexing] definition for collections, per model
+
+New features in 1.0:
+
+- [Named scopes][advanced.named-scopes] just like in AR
+- Very easy to use [criteria object][querying.criteria-object], you don't have to create complex MongoDB query arrays!
+- Better exeption handling
+- A lot more PHPDocs in code 
+
+Features:
+
+- Support of using Class::model()->find / findAll / count / countByAttributes and other Yii ActiveRecord syntax
+- Support of schema-less documents with Yii standard rules and validation features
+- Endless Embedded/Nested document support (Embedded documents are their own Model class with their own rules and other methods.
+- (almost, limited only by MongoDB 4MB limit of single document) endless document embedding/nesting
+- Ready to go out-of-box *EFFICIENT* DataProvider, witch use native php db driver sort, limit and offset features for returning results!
+- Records and embedded documents inherit from CModel, so you can use every class witch can handle of CModel (ie: Gii form generator)
+- [relation support *idea/concept/example*][advanced.relations]

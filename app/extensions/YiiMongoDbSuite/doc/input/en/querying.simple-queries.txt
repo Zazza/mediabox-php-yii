@@ -1,0 +1,25 @@
+Title: Simple queries
+Author: Dariusz Górecki <darek.krk@gmail.com>
+
+---
+
+You can use methods that you have used to with standard Yii `CActiveRecord`'s
+
+- To find only one first matched document simply call
+
+`$model = ModelClass::model()->find()`
+
+- To find document that has some arguments set call 
+
+`$model = ModelClass::model()->findByAttributes(array('attributeName'=>'attributeValue', 'attribute2'=>'otherValue'))`
+
+- You can search models by theyre primary key
+
+`$model = ModelClass::model()->findByPk(new MongoID(/* ... */))`
+
+To understand PK queries refer to [Primary Keys Section][advanced.primaryKeys]
+
+- All of above methods have the 'All' version, ie: `findAll()`, `findAllByAttributes`
+- They may return an array of models, or models cursor, we'll cover the cursor later
+
+**This is almost the same behavior like standard Yii ActiveRecord models, refer to them for a basic idea**

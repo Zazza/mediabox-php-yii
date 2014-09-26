@@ -1,0 +1,31 @@
+Title: Document Partial Updates
+ShortTitle: Partial updates
+Author: Dariusz Górecki <darek.krk@gmail.com>
+
+---
+
+Since the `v1.3.5` You can do *partial updates* of documents.
+
+> [information]
+> Normally this extension, when using `EmongoDocument::save()` will always **replace** all contents of document
+in DB with the actual values of fields in Yours `EMongoDocument` instance (including all embedded documents etc.)
+
+You can pass to `EMongoDocument::update()` method a list of attributes for update, this will use an extreme efficient
+Mongo `$set` operator to update only listed fields, see example:
+
+~~~
+[php]
+$model = ModelClass::model()->find(); // Find some document to work with
+
+// change some fields
+$model->field1 = 1;
+$model->field2 = 'value';
+
+// Optional: run validation, of changed fields:
+$model->validate(array('field1', 'field2'));
+
+// Use partial update
+$model->update(array('field1', 'field2'), true /* <- second parameter indicates to use partial update mechanism */);
+~~~
+
+And thats it, this will only update those 2 fields, rest in DB will not be touched.

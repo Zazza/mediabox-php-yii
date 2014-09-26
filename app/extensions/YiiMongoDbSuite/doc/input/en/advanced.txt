@@ -1,0 +1,6 @@
+Title: The Advanced Stuff
+Author: Dariusz Górecki <darek.krk@gmail.com>
+
+---
+
+YiiMongoDbSuite enables you to do even more fun things!

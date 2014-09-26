@@ -1,0 +1,65 @@
+Title: Named Scopes
+Author: Dariusz Górecki <darek.krk@gmail.com>
+
+---
+
+Now you can use AR style named scopes just define scopes method in yours model:
+
+~~~
+[php]
+class Client extends EMongoDocument
+{
+	// (...)
+
+	public function scopes()
+	{
+		return array(
+			'scopeName'=>array(/* Array for criteria object creation see Criteria from array topic */),
+		);
+	}
+
+	public function defaultScope()
+	{
+		return array(
+			'conditions'=>array(
+				'active'=>array('==', true),
+			),
+		);
+	}
+
+	// (...)
+}
+
+// now You can:
+// this will find only clients that are active (default scope) and clients matching 'scopeName'
+$all = Client::model()->scopeName()->findAll();
+~~~
+
+# Parameterized Named Scopes {#pns}
+
+~~~
+[php]
+class Client extends EMongoDocument
+{
+	// (...)
+
+	public function byStatus($status)
+	{
+		$criteria = $this->getDbCriteria();
+		$criteria->status = $status;
+		$this->setDbCriteria($criteria);
+
+		return $this;
+	}
+
+	// (...)
+}
+
+// now You can:
+// this will find only clients that have status set to parameter value:
+$all = Client::model()->byStatus(1)->findAll();
+~~~
+
+> [information]
+> ### You can chain multiple named scopes
+> example: `Client::model()->active()->byStatus(1)->findAll();`

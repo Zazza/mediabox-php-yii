@@ -17,17 +17,34 @@ class AudioController extends Controller
 
     public function actionSaveList() {
         if ( (!isset(Yii::app()->session['current_playlist'])) or (Yii::app()->session['current_playlist'] == "") ) {
+            $criteria = new EMongoCriteria();
+            $criteria->user_id = Yii::app()->user->id;
+            $playlist = PlaylistsDefaultTracks::model()->deleteAll($criteria);
+
+            if (!isset($_POST["track"])) {
+                return;
+            }
+
             foreach($_POST["track"] as $track) {
                 $playlist = new PlaylistsDefaultTracks();
                 $playlist->user_id = Yii::app()->user->id;
-                $playlist->file_id = $track;
+                $playlist->file_id = new MongoId($track);
                 $playlist->save();
             }
         } else {
+            $criteria = new EMongoCriteria();
+            $criteria->playlist_id = new MongoId(Yii::app()->session['current_playlist']);
+            $criteria->user_id = Yii::app()->user->id;
+            $playlist = PlaylistsTracks::model()->deleteAll($criteria);
+
+            if (!isset($_POST["track"])) {
+                return;
+            }
+
             foreach($_POST["track"] as $track) {
                 $playlist = new PlaylistsTracks();
-                $playlist->playlist_id = Yii::app()->session['current_playlist'];
-                $playlist->file_id = $track;
+                $playlist->playlist_id = new MongoId(Yii::app()->session['current_playlist']);
+                $playlist->file_id = new MongoId($track);
                 $playlist->save();
             }
         }
@@ -37,24 +54,32 @@ class AudioController extends Controller
         $tracks = array();
 
         if ( (!isset(Yii::app()->session['current_playlist'])) or (Yii::app()->session['current_playlist'] == "") ) {
-            $db = PlaylistsDefaultTracks::model()->findAll("user_id = :user_id", array(":user_id" => Yii::app()->user->id));
+            $criteria = new EMongoCriteria();
+            $criteria->user_id = Yii::app()->user->id;
+            $db = PlaylistsDefaultTracks::model()->findAll($criteria);
 
             foreach($db as $part) {
                 $array = array();
 
-                $array["id"] = $part->file_id;
-                $array["name"] = $part->file->name;
+                $array["id"] = $part->file_id->{'$id'};
+                $file = Files::model()->findByPk($part->file_id);
+                $array["name"] = urlencode($file->name);
+                $array["path"] = urlencode($file->getPath());
 
                 $tracks[] = $array;
             }
         } else {
-            $db = PlaylistsTracks::model()->findAll("playlist_id = :playlist_id", array(":playlist_id" => Yii::app()->session['current_playlist']));
+            $criteria = new EMongoCriteria();
+            $criteria->playlist_id = new MongoId(Yii::app()->session['current_playlist']);
+            $db = PlaylistsTracks::model()->findAll($criteria);
 
             foreach($db as $part) {
                 $array = array();
 
-                $array["id"] = $part->file_id;
-                $array["name"] = $part->file->name;
+                $array["id"] = $part->file_id->{'$id'};
+                $file = Files::model()->findByPk($part->file_id);
+                $array["name"] = urlencode($file->name);
+                $array["path"] = urlencode($file->getPath());
 
                 $tracks[] = $array;
             }
@@ -67,20 +92,31 @@ class AudioController extends Controller
         $playlist = new Playlists();
         $playlist->name = $_GET["name"];
         $playlist->user_id = Yii::app()->user->id;
-        $playlist->save();
+        if ($playlist->validate()) {
+            $playlist->save();
 
-        Yii::app()->session['current_playlist'] = $playlist->id;
+            Yii::app()->session['current_playlist'] = $playlist->_id->{'$id'};
+        } else {
+            // NEED: Сохранять ошибки
+            print_r($playlist->getErrors());
+
+            return;
+        }
+
+        Yii::app()->session['current_playlist'] = $playlist->_id->{'$id'};
     }
 
     public function actionShowList() {
         $playlists = array();
 
-        $db = Playlists::model()->findAll("user_id = :user_id", array(":user_id" => Yii::app()->user->id));
+        $criteria = new EMongoCriteria();
+        $criteria->user_id = Yii::app()->user->id;
+        $db = Playlists::model()->findAll($criteria);
 
         foreach($db as $part) {
             $array = array();
 
-            $array["id"] = $part->id;
+            $array["id"] = $part->_id->{'$id'};
             $array["name"] = $part->name;
 
             $playlists[] = $array;
@@ -92,16 +128,18 @@ class AudioController extends Controller
     public function actionSetPlaylist() {
         if ( (isset($_GET["playlist-id"])) and ($_GET["playlist-id"] != "") ){
             Yii::app()->session['current_playlist'] = $_GET["playlist-id"];
+        } else {
+            Yii::app()->session['current_playlist'] = "";
         }
     }
 
     public function actionDeletePlaylist() {
-        $db = Playlists::model()->find("id = :playlist_id AND user_id = :user_id", array(
-            ":playlist_id" => $_GET["playlist-id"],
-            ":user_id" => Yii::app()->user->id
-        ));
+        $criteria = new EMongoCriteria();
+        $criteria->user_id = Yii::app()->user->id;
+        $criteria->_id = new MongoId($_GET["playlist-id"]);
+        $db = Playlists::model()->find($criteria);
 
-        if (Yii::app()->session['current_playlist'] == $db->id) {
+        if (Yii::app()->session['current_playlist'] == $db->_id->{'$id'}) {
             Yii::app()->session['current_playlist'] = "";
         }
 

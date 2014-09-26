@@ -1,14 +1,14 @@
 var mediaTypes = {
-    image: '/img/mediabox/ftypes/image.png',
-    doc: '/img/mediabox/ftypes/msword.png',
-    pdf: '/img/mediabox/ftypes/pdf.png',
-    txt: '/img/mediabox/ftypes/text.png',
-    exe: '/img/mediabox/ftypes/executable.png',
-    xls: '/img/mediabox/ftypes/excel.png',
-    audio: '/img/mediabox/ftypes/audio.png',
-    html: '/img/mediabox/ftypes/html.png',
-    zip: '/img/mediabox/ftypes/compress.png',
-    video: '/img/mediabox/ftypes/flash.png',
-    any: '/img/mediabox/ftypes/unknown.png',
-    folder: '/img/mediabox/ftypes/folder.png'
+    image: '/img/mediabox/faenza/gnome-mime-image.png',
+    doc: '/img/mediabox/faenza/office-document.png',
+    pdf: '/img/mediabox/faenza/pdf.png',
+    txt: '/img/mediabox/faenza/application-text.png',
+    exe: '/img/mediabox/faenza/gnome-fs-executable.png',
+    xls: '/img/mediabox/faenza/office-spreadsheet.png',
+    audio: '/img/mediabox/faenza/audio-x-generic.png',
+    html: '/img/mediabox/faenza/www.png',
+    zip: '/img/mediabox/faenza/zip.png',
+    video: '/img/mediabox/faenza/video.png',
+    any: '/img/mediabox/faenza/empty.png',
+    folder: '/img/mediabox/faenza/folder.png'
 };

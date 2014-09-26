@@ -1,0 +1,139 @@
+<script type="text/x-kendo-template" id="fsTemplate">
+    <div class="span3" id="left-vertical">
+        {% include "/views/site/left.html" %}
+    </div>
+
+    <div class="span9" id="vertical">
+        <div id="fs-container">
+            <div id="fs" class="fs-container-div">
+                {% include "/views/site/files.html" %}
+            </div>
+        </div>
+    </div>
+</script>
+
+<!-- LIST TEMPLATES -->
+<script type="text/x-kendo-template" id="dirListTemplate">
+    <div class="#: div_class # fm_file_li" title="#: name #" data-id="#: id #" data-name="#: name #" data-path="#: path #" style="cursor: pointer">
+        <div class="fm_unsellabel" id="#: name #">
+            <div style="float: left; padding-right: 5px;"><img src="#: ico #" alt="[DIR]" /></div>
+            <div style="float: left;" class="dname">#: name #</div>
+
+            <div class="dname_li">#: date #</div>
+            <div class="ddate_li">[folder]</div>
+        </div>
+    </div>
+</script>
+
+<script type="text/x-kendo-template" id="fileListTemplate">
+    <div title="#: name #" data-type="#: type #" data-id="#: id #" data-name="#: name #" data-mimetype="#: mimetype #" data-ext="#: ext #" data-path="#: path #" class="#: div_class # fm_file_li" style="cursor: pointer">
+        <div class="fm_unsellabel" id="#: name #">
+            <div style="float: left; padding-right: 5px;" class="fm_pre"><img src="#: ico #" alt="[FILE]" /></div>
+            <div style="float: left;" class="fname_li"><a class="file-open-link">#: name #</a></div>
+
+            <div class="file_list_date">#: date #</div>
+            <div class="file_list_size">#: size #</div>
+        </div>
+    </div>
+</script>
+
+<script type="text/x-kendo-template" id="imageListTemplate">
+    <div title="#: name #" data-type="#: type #" data-id="#: id #" data-name="#: name #" data-mimetype="#: mimetype #" data-ext="#: ext #" data-path="#: path #" class="#: div_class # fm_file_li image_dfile" style="cursor: pointer">
+        <div class="fm_unsellabel" id="#: name #">
+            <div style="float: left; padding-right: 5px;" class="fm_pre swipebox" data-url="#: href #"><img src="#: ico #" alt="[FILE]" /></div>
+            <div style="float: left;" class="fname_li"><a class="file-open-link">#: name #</a></div>
+
+            <div class="file_list_date">#: date #</div>
+            <div class="file_list_size">#: size #</div>
+        </div>
+    </div>
+</script>
+<!-- END LIST TEMPLATES -->
+
+<!-- GRID TEMPLATES -->
+<script type="text/x-kendo-template" id="dirGridTemplate">
+    <div title="#: name #" data-id="#: id #" data-name="#: name #" data-path="#: path #" class="#: div_class # fm_file" style="text-align: center; cursor: pointer">
+        <div class="fm_unsellabel" id="#: name #">
+            <div class="fm_pre"><img src="#: ico #" style="height: 54px;" alt="[DIR]" /></div>
+            <div class="fname">#: shortname #</div>
+            <div class="fullname" style="display: none">#: name #</div>
+        </div>
+    </div>
+</script>
+
+
+<script type="text/x-kendo-template" id="fileGridTemplate">
+    <div title="#: name #" data-type="#: type #" data-mimetype="#: mimetype #" data-id="#: id #" data-name="#: name #" data-ext="#: ext #" data-path="#: path #" class="#: div_class # fm_file" style="text-align: center; cursor: pointer">
+        <div class="fm_unsellabel" id="#: name #">
+            <div class="fm_pre" href="#: href #"><a class="fm_pre"><img src="#: ico #" style="height: 54px;" alt="[FILE]" /></a></div>
+            <div class="fname"><a class="file-open-link">#: shortname #</a></div>
+            <div class="fullname" style="display: none">#: name #</div>
+
+            <div class="file_icon_size">#: size #</div>
+        </div>
+    </div>
+</script>
+
+<script type="text/x-kendo-template" id="imageGridTemplate">
+    <div title="#: name #" data-type="image" data-id="#: id #" data-name="#: name #" data-mimetype="#: mimetype #" data-ext="#: ext #" data-path="#: path #" class="#: div_class # fm_file image_dfile" style="text-align: center; cursor: pointer">
+        <div class="fm_unsellabel icons" id="#: name #">
+            <div class="fm_pre swipebox" data-url="#: href #"><img class="file-img-preview" src="/fm/getThumb/?name=#: id #" alt="[FILE]" /></div>
+            <div class="fullname" style="display: none">#: name #</div>
+        </div>
+    </div>
+</script>
+<!-- END GRID TEMPLATES -->
+
+
+<div id="rm-window" style="display: none;">
+    <div class="control-group">
+        Confirm?
+    </div>
+    <hr />
+    <div style="text-align: right;">
+        <button id="rm-window-yes" class="k-button">Yes</button>
+        <button id="rm-window-no" class="k-button">No</button>
+    </div>
+</div>
+
+<div id="move-to-trash-window" style="display: none;">
+    <div class="control-group">
+        Confirm?
+    </div>
+    <hr />
+    <div style="text-align: right;">
+        <button id="move-to-trash-window-yes" class="k-button">Yes</button>
+        <button id="move-to-trash-window-no" class="k-button">No</button>
+    </div>
+</div>
+
+<div id="new-folder-window" style="display: none;">
+    <input type="text" name="fname" id="fname" />
+    <hr />
+    <div style="text-align: right;">
+        <button id="new-folder-ok" class="k-button">Ok</button>
+        <button id="new-folder-cancel" class="k-button">Cancel</button>
+    </div>
+</div>
+
+<div id="rename-file-window" style="display: none;">
+    <input type="text" id="rename_filename" />
+    <input type="hidden" id="old_filename" />
+    <input type="hidden" id="file_id" />
+    <hr />
+    <div style="text-align: right;">
+        <button id="rename-file-ok" class="k-button">Ok</button>
+        <button id="rename-file-cancel" class="k-button">Cancel</button>
+    </div>
+</div>
+
+<div id="rename-folder-window" style="display: none;">
+    <input type="text" id="rename_foldername" />
+    <input type="hidden" id="old_foldername" />
+    <input type="hidden" id="folder_id" />
+    <hr />
+    <div style="text-align: right;">
+        <button id="rename-folder-ok" class="k-button">Ok</button>
+        <button id="rename-folder-cancel" class="k-button">Cancel</button>
+    </div>
+</div>

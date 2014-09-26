@@ -1,0 +1,47 @@
+Title: Introduction
+Author: Dariusz Górecki <darek.krk@gmail.com>
+
+---
+
+This extension is an almost complete, ActiveRecord like support for MongoDB in Yii
+
+It originally started as a fork of [MongoRecord](http://www.yiiframework.com/extension/mongorecord "MongoRecord")
+extension written by [tyohan](http://www.yiiframework.com/user/31/ "tyohan"),
+to fix some major bugs, and add full featured suite for [MongoDB](http://www.mongodb.org "MongoDB") developers.
+
+## Limitations:
+
+- The main limitations are only those present in MongoDB itself, like the 4MB single document data limit. But That's not a big deal either.
+- In it's current incarnation, This extension does NOT work with the OR operator. When we get it working we will remove this line and add an example.
+
+## Requirements:
+
+- Yii 1.1.5 is required
+- MongoDB latest stable is recommended. Untested with older versions.
+
+## Known bugs
+
+- Remember, this is not complete yet. So at this stage, it can have some ;]
+- If you find any please let me know
+- As said before, it does not work with the OR operators
+
+## Resources
+
+ * [Project page on GitHub](https://github.com/canni/YiiMongoDbSuite)
+ * [MongoDB documentation](http://www.mongodb.org/display/DOCS/Home)
+ * [On-Line version of this documentation](http://canni.github.com/YiiMongoDbSuite)
+ * [PHP MongoDB Driver docs](http://www.php.net/manual/en/book.mongo.php)
+ * [Standard Yii ActiveRecord Documentation](http://www.yiiframework.com/doc/guide/1.1/en/database.ar)
+
+## Contribution needed!
+
+- I'm not English native speaker, need someone who can correct/rewrite/write my documentation and/or PHPDoc's in code
+- Any help would be great :)
+- Contact me: darek.krk on a gmail dot com or via GitHub PM
+
+## Big thanks goes to:
+
+- tyohan: for first inspirations and idea of extension
+- luckysmack: for big help with testing and documentation
+- Jose Martinez and Philippe Gaultier, for implementing and sharing GridFS support
+- Nagy Attila Gábor, for big help with new functionality and testing
